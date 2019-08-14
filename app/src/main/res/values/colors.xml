@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#F16521</color>
+    <color name="colorPrimaryDark">#D55920</color>
+    <color name="colorAccent">#F16521</color>
+    <color name="activity_backround">#F5EEED</color>
+    <color name="text_color">#FFFFFF</color>
+
+    <color name="table_background">#F0D5CA</color>
+
+    <color name="tabIndicator">#ffffff</color>
+    <color name="tabTextcolor">#ffffff</color>
+
+    <color name="placeholder_background">#E4DBDB</color>
+</resources>

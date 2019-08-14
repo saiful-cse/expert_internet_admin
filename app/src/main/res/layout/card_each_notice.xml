@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="4dp"
+        android:layout_marginBottom="15dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:src="@drawable/logo"/>
+
+            <TextView
+                android:id="@+id/notice_serial_no"
+                android:layout_below="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:textSize="10sp"
+                android:text="--"/>
+
+            <TextView
+                android:layout_below="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/notice_date"
+                android:textSize="10sp"
+                android:text="---"/>
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_below="@+id/notice_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textSize="20sp"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold"
+                android:text="&quot;Notice&quot;"/>
+
+            <TextView
+                android:id="@+id/notice_desc"
+                android:layout_below="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="textStart"
+                android:textSize="15sp"
+                android:text="---"/>
+
+            <TextView
+                android:id="@+id/order"
+                android:layout_marginTop="25dp"
+                android:layout_below="@+id/notice_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:text="Owner and Managing Director"/>
+
+            <ImageView
+                android:id="@+id/sign"
+                android:layout_below="@+id/order"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/signature"/>
+
+            <Button
+                android:layout_below="@id/sign"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/btn_action"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Action"
+                android:textColor="@color/colorPrimary"
+                android:textAllCaps="false"
+                android:background="@drawable/button_round"/>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

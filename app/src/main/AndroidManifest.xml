@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.creativesaif.expert_internet_admin">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:name=".MySingleton"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_main_activity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".NewsFeed.NewsDetails"
+            android:label="@string/title_news_details"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".NewsFeed.NewsAdd"
+            android:label="@string/title_news_create"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".NewsFeed.NewsEdit"
+            android:label="@string/title_news_edit"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".ClientList.ClientList"
+            android:label="@string/title_client_list" />
+        <activity
+            android:name=".ClientList.ClientDetails"
+            android:label="@string/title_client_details" />
+        <activity
+            android:name=".ClientList.ClientDetailsEdit"
+            android:label="@string/title_client_detaisl_edit" />
+        <activity
+            android:name=".Dashboard.Dashboard"
+            android:label="@string/title_dashboard" />
+        <activity
+            android:name=".Notice.NoticeRead"
+            android:label="@string/title_notice"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Notice.NoticeCreate"
+            android:label="@string/title_notice_create" />
+        <activity
+            android:name=".Notice.NoticeEdit"
+            android:label="@string/title_notice_edit_delete" />
+        <activity
+            android:name=".Feedback.FeedbackList"
+            android:label="@string/title_feedback" />
+        <activity
+            android:name=".TransactionList.TransactionList"
+            android:label="@string/title_txn_list"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".TransactionList.MakeTransaction"
+            android:label="@string/title_txn_create" />
+    </application>
+
+</manifest>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".TransactionList.TransactionList"
+    tools:showIn="@layout/activity_transaction_list">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/relativelayout">
+
+                <Button
+                    android:id="@+id/btn_datepicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="Select Date"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_alignParentStart="true"
+                    android:textAllCaps="false"
+                    android:background="@drawable/button_round"/>
+
+
+                <TextView
+                    android:id="@+id/tvDateSelected"
+                    android:layout_width="wrap_content"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_height="40dp"
+                    android:textAlignment="center"
+                    android:gravity="center"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_centerHorizontal="true"
+                    android:textAllCaps="false" />
+
+
+                <Button
+                    android:id="@+id/btn_txn_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="View"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_alignParentEnd="true"
+                    android:textAllCaps="false"
+                    android:background="@drawable/button_round"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_marginTop="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:id="@+id/txnDetailsLayout">
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TableLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:showDividers="middle"
+                        android:dividerPadding="3dp">
+
+                        <TableRow android:background="@color/colorAccent">
+
+                            <TextView
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:text="Date"
+                                android:textAlignment="center"
+                                android:textColor="#ffffff"
+                                android:textSize="15sp" />
+
+                            <View style="@style/Divider" />
+
+                            <TextView
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:text="TxnID"
+                                android:textAlignment="center"
+                                android:textColor="#ffffff"
+                                android:textSize="15sp" />
+
+                            <View style="@style/Divider" />
+
+                            <TextView
+                                android:layout_width="150dp"
+                                android:layout_height="wrap_content"
+                                android:text="Details"
+                                android:textAlignment="center"
+                                android:textColor="#ffffff"
+                                android:textSize="15sp" />
+
+                            <View style="@style/Divider" />
+
+                            <TextView
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:text="Credit"
+                                android:textAlignment="center"
+                                android:textColor="#ffffff"
+                                android:textSize="15sp" />
+
+                            <View style="@style/Divider" />
+
+                            <TextView
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:text="Debit"
+                                android:textAlignment="center"
+                                android:textColor="#ffffff"
+                                android:textSize="15sp" />
+
+                        </TableRow>
+
+                        <LinearLayout
+                            android:id="@+id/txnDetailsRow"
+                            android:orientation="vertical"
+                            android:visibility="visible">
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/recyclerViewTnxRow"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"/>
+
+                        </LinearLayout>
+                    </TableLayout>
+                </HorizontalScrollView>
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

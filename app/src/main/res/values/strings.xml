@@ -1,0 +1,80 @@
+<resources>
+    <string name="app_name">expert_internet_admin</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- navigation drawer item name -->
+    <string name="menu_timeline">News Feed</string>
+    <string name="menu_dashboard">Dashboard</string>
+    <string name="menu_clientlist">Client List</string>
+    <string name="menu_notice">Notice</string>
+    <string name="menu_feedback">Feedback</string>
+    <string name="menu_txnlist">Transaction List</string>
+
+    <!-- activity title -->
+    <string name="title_main_activity">Admin Panel</string>
+    <string name="title_news_create">News Create</string>
+    <string name="title_news_edit">News Edit</string>
+    <string name="title_news_details">News Details</string>
+
+    <string name="title_dashboard">Dashboard</string>
+
+    <string name="title_client_list">Client List</string>
+    <string name="title_client_details">Client Details</string>
+    <string name="title_client_detaisl_edit">Client Details Edit</string>
+
+    <string name="title_notice">All Notice</string>
+    <string name="title_notice_create">Notice Create</string>
+    <string name="title_notice_edit_delete">Notice Edit/Delete</string>
+
+    <string name="title_feedback">All Feedback</string>
+
+    <string name="title_txn_list">Transaction List</string>
+    <string name="title_txn_create">Transaction Create</string>
+
+    <!--                server URL              -->
+
+    <!-- base url -->
+    <!-- <string name="base_url">http://192.168.1.9/expert_internet/api/</string> -->
+    <string name="base_url">https://creativesaif.com/api/expert_internet/</string>
+
+    <!-- news script directory -->
+    <!-- News CRUD -->
+    <string name="news_create">news/create.php</string>
+    <string name="news_read">news/read.php</string>
+    <string name="news_update">news/update.php</string>
+    <string name="news_delete">news/delete.php</string>
+    <string name="news_image_path">news/images/</string>
+    <string name="ads_details">Post Details</string>
+
+    <!-- Client script directory -->
+    <!-- Client CRUD -->
+    <string name="active_client_read">client/active_client.php</string>
+    <string name="inactive_client_read">client/inactive_client.php</string>
+    <string name="alert_client_read">client/alert_client.php</string>
+    <string name="client_details">client/client_details.php</string>
+    <string name="update_details">client/update.php</string>
+
+    <!-- Client txn -->
+    <string name="payment_details">txn/payment_details.php</string>
+    <string name="client_txn">txn/make_txn.php</string>
+    <string name="all_txn">txn/all_txn.php</string>
+    <string name="total_credit_debit">txn/total_credit_debit.php</string>
+    <string name="admin_txn">txn/admin_make_txn.php</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_data">dashboard/read.php</string>
+
+    <!-- Notice -->
+    <string name="all_notice_read">notice/read.php</string>
+    <string name="notice_delete">notice/delete.php</string>
+    <string name="notice_update">notice/update.php</string>
+
+    <!-- Feedback -->
+    <string name="feedback_read">feedback/read.php</string>
+
+</resources>
