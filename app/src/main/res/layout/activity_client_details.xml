@@ -281,13 +281,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
-                            android:text="WAN IP Address :"
+                            android:text="Username :"
                             android:textAlignment="center"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/wan_ip"
+                            android:id="@+id/username"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
@@ -307,98 +307,19 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
-                            android:text="Subnet Mask :"
+                            android:text="Password :"
                             android:textAlignment="center"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/subnet"
+                            android:id="@+id/password"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
                             android:text="---"
                             android:textAlignment="center"
                             android:textSize="15sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_marginTop="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:weightSum="1">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:text="Default Gateway :"
-                            android:textAlignment="center"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/gateway"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:text="---"
-                            android:textAlignment="center"
-                            android:textSize="15sp"/>
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:layout_marginTop="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:weightSum="1">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:text="Primary DNS :"
-                            android:textAlignment="center"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/dns1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:text="---"
-                            android:textAlignment="center"
-                            android:textSize="15sp"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_marginTop="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:weightSum="1">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:text="Secondary DNS :"
-                            android:textAlignment="center"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/dns2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:text="---"
-                            android:textAlignment="center"
-                            android:textSize="15sp"/>
                     </LinearLayout>
 
                     <LinearLayout

@@ -14,6 +14,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -101,9 +102,11 @@ public class MakeTransaction extends AppCompatActivity {
     public void make_txn()
     {
         progressDialog.showDialog();
+        //String url = getString(R.string.admin_txn_laravel);
         String url = getString(R.string.base_url)+getString(R.string.admin_txn);
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+
             @Override
             public void onResponse(String response) {
 
@@ -147,6 +150,9 @@ public class MakeTransaction extends AppCompatActivity {
 
             }
         };
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 8, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         MySingleton.getInstance().addToRequestQueue(stringRequest);
     }
 

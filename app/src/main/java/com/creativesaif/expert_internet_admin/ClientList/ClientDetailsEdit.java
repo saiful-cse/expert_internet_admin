@@ -31,12 +31,12 @@ import java.util.Map;
 
 public class ClientDetailsEdit extends AppCompatActivity {
 
-    EditText edname, edphone, edaddress, edemail, edint_type, edwan_ip, edsubnet,
-    edgateway, eddns1, eddns2, edonu_mac, edspeed, edfee, edbill_type;
+    EditText edname, edphone, edaddress, edemail, edint_type, edUsername,
+            edPassword, edonu_mac, edspeed, edfee, edbill_type;
 
     RadioGroup radioGroup;
 
-    String id, name, phone, address, email, int_type, wan_ip, subnet, gateway, dns1, dns2, onu_mac,
+    String id, name, phone, address, email, int_type, username, password, onu_mac,
             speed, fee, bill_type;
 
     Button buttonUpdate;
@@ -64,11 +64,8 @@ public class ClientDetailsEdit extends AppCompatActivity {
         edemail = findViewById(R.id.edEmail);
 
         edint_type = findViewById(R.id.edInt_type);
-        edwan_ip = findViewById(R.id.edWan_ip);
-        edsubnet = findViewById(R.id.edSubnet);
-        edgateway = findViewById(R.id.edGateway);
-        eddns1 = findViewById(R.id.edDns1);
-        eddns2 = findViewById(R.id.edDns2);
+        edUsername = findViewById(R.id.edUsername);
+        edPassword = findViewById(R.id.edPassword);
         edonu_mac = findViewById(R.id.edOnu_mac);
 
         edspeed = findViewById(R.id.edSpeed);
@@ -101,11 +98,8 @@ public class ClientDetailsEdit extends AppCompatActivity {
         edemail.setText(getIntent().getStringExtra("email"));
 
         edint_type.setText(getIntent().getStringExtra("int_type"));
-        edwan_ip.setText(getIntent().getStringExtra("wan_ip"));
-        edsubnet.setText(getIntent().getStringExtra("subnet"));
-        edgateway.setText(getIntent().getStringExtra("gateway"));
-        eddns1.setText(getIntent().getStringExtra("dns1"));
-        eddns2.setText(getIntent().getStringExtra("dns2"));
+        edUsername.setText(getIntent().getStringExtra("username"));
+        edPassword.setText(getIntent().getStringExtra("password"));
         edonu_mac.setText(getIntent().getStringExtra("onu_mac"));
 
         edspeed.setText(getIntent().getStringExtra("speed"));
@@ -126,11 +120,8 @@ public class ClientDetailsEdit extends AppCompatActivity {
                 email = edemail.getText().toString().trim();
 
                 int_type = edint_type.getText().toString().trim();
-                wan_ip = edwan_ip.getText().toString().trim();
-                subnet = edsubnet.getText().toString().trim();
-                gateway = edgateway.getText().toString().trim();
-                dns1 = eddns1.getText().toString().trim();
-                dns2 = eddns2.getText().toString().trim();
+                username = edUsername.getText().toString().trim();
+                password = edPassword.getText().toString().trim();
                 onu_mac = edonu_mac.getText().toString();
 
                 speed = edspeed.getText().toString().trim();
@@ -155,20 +146,11 @@ public class ClientDetailsEdit extends AppCompatActivity {
                 }else if(int_type.isEmpty()){
                     Snackbar.make(findViewById(android.R.id.content),"Write a Internet connection type",Snackbar.LENGTH_LONG).show();
 
-                }else if(wan_ip.isEmpty()){
-                    Snackbar.make(findViewById(android.R.id.content),"Write a IP address",Snackbar.LENGTH_LONG).show();
+                }else if(username.isEmpty()){
+                    Snackbar.make(findViewById(android.R.id.content),"Write a Username",Snackbar.LENGTH_LONG).show();
 
-                }else if(subnet.isEmpty()){
-                    Snackbar.make(findViewById(android.R.id.content),"Write a valid subnet",Snackbar.LENGTH_LONG).show();
-
-                }else if(gateway.isEmpty()){
-                    Snackbar.make(findViewById(android.R.id.content),"Write a valid gateway",Snackbar.LENGTH_LONG).show();
-
-                }else if(dns1.isEmpty()){
-                    Snackbar.make(findViewById(android.R.id.content),"Write a valid DNS 1",Snackbar.LENGTH_LONG).show();
-
-                }else if(dns2.isEmpty()){
-                    Snackbar.make(findViewById(android.R.id.content),"Write a valid DNS 2",Snackbar.LENGTH_LONG).show();
+                }else if(password.isEmpty()){
+                    Snackbar.make(findViewById(android.R.id.content),"Write a Password",Snackbar.LENGTH_LONG).show();
 
                 }else if(onu_mac.isEmpty()){
                     Snackbar.make(findViewById(android.R.id.content),"Write a valid ONU MAC address",Snackbar.LENGTH_LONG).show();
@@ -269,11 +251,8 @@ public class ClientDetailsEdit extends AppCompatActivity {
                 map.put("email", email);
 
                 map.put("int_conn_type", int_type);
-                map.put("wan_ip", wan_ip);
-                map.put("subnet", subnet);
-                map.put("default_gateway", gateway);
-                map.put("dns1", dns1);
-                map.put("dns2", dns2);
+                map.put("username", username);
+                map.put("password", password);
                 map.put("onu_mac", onu_mac);
 
                 map.put("speed", speed);

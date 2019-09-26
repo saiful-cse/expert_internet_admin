@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -52,7 +53,7 @@ public class ClientDetails extends AppCompatActivity {
 
     Button btnDetailsEdit;
     Client client;
-    private TextView tvWarning, tvId, tvName, tvPhone, tvAddress, tvEmail,tvIntConnType, tvWanIp, tvSubnet, tvGateway, tvdns1, tvdns2, tvOnuMac,
+    private TextView tvWarning, tvId, tvName, tvPhone, tvAddress, tvEmail,tvIntConnType, tvUsername, tvPassword, tvOnuMac,
     tvSpeed, tvFee, tvBillType, tvRegDate, tvActiveDate, tvInactiveDate;
 
     CardView cardViewAlert;
@@ -63,7 +64,7 @@ public class ClientDetails extends AppCompatActivity {
     /*
     Get text from server. store on string;
      */
-    String mode, id, name, phone, address, email, int_type, wan_ip, subnet, gateway, dns1, dns2, onu_mac,
+    String mode, id, name, phone, address, email, int_type, username, password, onu_mac,
     speed, fee, bill_type;
 
     /*
@@ -121,11 +122,8 @@ public class ClientDetails extends AppCompatActivity {
         tvEmail = findViewById(R.id.email);
 
         tvIntConnType = findViewById(R.id.int_type);
-        tvWanIp = findViewById(R.id.wan_ip);
-        tvSubnet = findViewById(R.id.subnet);
-        tvGateway = findViewById(R.id.gateway);
-        tvdns1 = findViewById(R.id.dns1);
-        tvdns2 = findViewById(R.id.dns2);
+        tvUsername = findViewById(R.id.username);
+        tvPassword = findViewById(R.id.password);
         tvOnuMac = findViewById(R.id.onu_mac);
 
         tvSpeed = findViewById(R.id.speed);
@@ -205,11 +203,8 @@ public class ClientDetails extends AppCompatActivity {
                 i.putExtra("email",email);
 
                 i.putExtra("int_type",int_type);
-                i.putExtra("wan_ip",wan_ip);
-                i.putExtra("subnet",subnet);
-                i.putExtra("gateway",gateway);
-                i.putExtra("dns1",dns1);
-                i.putExtra("dns2",dns2);
+                i.putExtra("username",username);
+                i.putExtra("password",password);
                 i.putExtra("onu_mac",onu_mac);
 
                 i.putExtra("speed",speed);
@@ -334,11 +329,8 @@ public class ClientDetails extends AppCompatActivity {
                             email = jsonObject1.getString("email");
 
                             int_type = jsonObject1.getString("int_conn_type");
-                            wan_ip = jsonObject1.getString("wan_ip");
-                            subnet = jsonObject1.getString("subnet");
-                            gateway = jsonObject1.getString("default_gateway");
-                            dns1 = jsonObject1.getString("dns1");
-                            dns2 = jsonObject1.getString("dns2");
+                            username = jsonObject1.getString("username");
+                            password = jsonObject1.getString("password");
                             onu_mac = jsonObject1.getString("onu_mac");
 
                             speed = jsonObject1.getString("speed");
@@ -355,11 +347,8 @@ public class ClientDetails extends AppCompatActivity {
                             tvEmail.setText(email);
 
                             tvIntConnType.setText(int_type);
-                            tvWanIp.setText(wan_ip);
-                            tvSubnet.setText(subnet);
-                            tvGateway.setText(gateway);
-                            tvdns1.setText(dns1);
-                            tvdns2.setText(dns2);
+                            tvUsername.setText(username);
+                            tvPassword.setText(password);
                             tvOnuMac.setText(onu_mac);
 
                             tvSpeed.setText(speed);
@@ -454,6 +443,7 @@ public class ClientDetails extends AppCompatActivity {
     {
         progressDialog.showDialog();
         isLoading = false;
+        //String url = getString(R.string.client_txn_laravel);
         String url = getString(R.string.base_url)+getString(R.string.client_txn);
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -506,6 +496,8 @@ public class ClientDetails extends AppCompatActivity {
 
             }
         };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 8, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         MySingleton.getInstance().addToRequestQueue(stringRequest);
     }
 

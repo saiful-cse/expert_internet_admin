@@ -40,7 +40,7 @@
 
     <!-- base url -->
     <!-- <string name="base_url">http://192.168.1.9/expert_internet/api/</string> -->
-    <string name="base_url">https://creativesaif.com/api/expert_internet/</string>
+    <string name="base_url">https://creativesaif.com/api/expert_internet2/</string>
 
     <!-- news script directory -->
     <!-- News CRUD -->
@@ -65,6 +65,10 @@
     <string name="all_txn">txn/all_txn.php</string>
     <string name="total_credit_debit">txn/total_credit_debit.php</string>
     <string name="admin_txn">txn/admin_make_txn.php</string>
+
+    <!-- laravel txn -->
+    <string name="admin_txn_laravel">https://creativesaif.com/api/exp-api/api/transation_owner</string>
+    <string name="client_txn_laravel">https://creativesaif.com/api/exp-api/api/transation_client</string>
 
     <!-- Dashboard -->
     <string name="dashboard_data">dashboard/read.php</string>
