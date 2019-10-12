@@ -148,7 +148,7 @@ public class NoticeEdit extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
 
-                //Toast.makeText(NewsEdit.this,response,Toast.LENGTH_SHORT).show();
+                Toast.makeText(NoticeEdit.this,response,Toast.LENGTH_SHORT).show();
 
                 progressDialog.hideDialog();
 

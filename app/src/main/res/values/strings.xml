@@ -53,11 +53,13 @@
 
     <!-- Client script directory -->
     <!-- Client CRUD -->
+    <string name="check_alert_client">client/check_alert_client.php</string>
     <string name="active_client_read">client/active_client.php</string>
     <string name="inactive_client_read">client/inactive_client.php</string>
     <string name="alert_client_read">client/alert_client.php</string>
     <string name="client_details">client/client_details.php</string>
     <string name="update_details">client/update.php</string>
+
 
     <!-- Client txn -->
     <string name="payment_details">txn/payment_details.php</string>
@@ -74,11 +76,15 @@
     <string name="dashboard_data">dashboard/read.php</string>
 
     <!-- Notice -->
+    <string name="notice_create">notice/create.php</string>
     <string name="all_notice_read">notice/read.php</string>
     <string name="notice_delete">notice/delete.php</string>
     <string name="notice_update">notice/update.php</string>
 
     <!-- Feedback -->
     <string name="feedback_read">feedback/read.php</string>
+    
+    <!-- Sms service -->
+    <string name="getting_alert_client">sms/getting_alert_client.php</string>
 
 </resources>

@@ -17,8 +17,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MainActivity"
-            android:label="@string/title_main_activity"
+            android:name=".SplashScreen"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,6 +25,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".NewsFeed.NewsDetails"
             android:label="@string/title_news_details"
@@ -56,10 +61,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Notice.NoticeCreate"
-            android:label="@string/title_notice_create" />
+            android:label="@string/title_notice_create"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
         <activity
             android:name=".Notice.NoticeEdit"
-            android:label="@string/title_notice_edit_delete" />
+            android:label="@string/title_notice_edit_delete"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
         <activity
             android:name=".Feedback.FeedbackList"
             android:label="@string/title_feedback" />

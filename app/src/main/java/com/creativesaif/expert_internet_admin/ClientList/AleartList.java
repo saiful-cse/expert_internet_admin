@@ -37,6 +37,8 @@ public class AleartList extends Fragment {
     private String last_id = "0";
     boolean isLoading = true;
 
+    public String total;
+
     LinearLayout linearLayout;
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -129,6 +131,10 @@ public class AleartList extends Fragment {
 
                     clientArrayList.clear();
                     JSONObject jsonObject = new JSONObject(response);
+
+                    total = jsonObject.getString("total");
+
+                    Toast.makeText(getContext(),"Total alert client is: "+total,Toast.LENGTH_LONG).show();
 
                     boolean m = jsonObject.has("message");
                     if (m)
