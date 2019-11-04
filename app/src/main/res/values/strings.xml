@@ -59,6 +59,7 @@
     <string name="alert_client_read">client/alert_client.php</string>
     <string name="client_details">client/client_details.php</string>
     <string name="update_details">client/update.php</string>
+    <string name="usernamelist">client/getting_all_username.php</string>
 
 
     <!-- Client txn -->
@@ -83,7 +84,7 @@
 
     <!-- Feedback -->
     <string name="feedback_read">feedback/read.php</string>
-    
+
     <!-- Sms service -->
     <string name="getting_alert_client">sms/getting_alert_client.php</string>
 

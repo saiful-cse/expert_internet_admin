@@ -5,18 +5,10 @@ import android.os.Parcelable;
 
 public class Client implements Parcelable {
 
-    private String id, mode, name, phone, total_alert_client;
+    private String id, mode, name, phone, total_alert_client, username;
 
     public Client(){
 
-    }
-
-    public Client(String id, String mode, String name, String phone, String total_alert_client) {
-        this.id = id;
-        this.mode = mode;
-        this.name = name;
-        this.phone = phone;
-        this.total_alert_client = total_alert_client;
     }
 
     public String getId() {
@@ -59,6 +51,17 @@ public class Client implements Parcelable {
         this.total_alert_client = total_alert_client;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public static Creator<Client> getCREATOR() {
+        return CREATOR;
+    }
 
     @Override
     public int describeContents() {
@@ -72,6 +75,7 @@ public class Client implements Parcelable {
         dest.writeString(this.name);
         dest.writeString(this.phone);
         dest.writeString(this.total_alert_client);
+        dest.writeString(this.username);
     }
 
     protected Client(Parcel in) {
@@ -80,6 +84,7 @@ public class Client implements Parcelable {
         this.name = in.readString();
         this.phone = in.readString();
         this.total_alert_client = in.readString();
+        this.username = in.readString();
     }
 
     public static final Parcelable.Creator<Client> CREATOR = new Parcelable.Creator<Client>() {

@@ -26,6 +26,7 @@ public class ClientList extends AppCompatActivity {
         adapter.addFragment(new AleartList(), "Alert");
         adapter.addFragment(new ActiveList(), "Active");
         adapter.addFragment(new InactiveList(), "Inactive");
+        adapter.addFragment(new UsernameList(), "Username");
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
     }
