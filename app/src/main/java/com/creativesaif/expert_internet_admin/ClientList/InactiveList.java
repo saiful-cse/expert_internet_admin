@@ -53,6 +53,7 @@ public class InactiveList extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(clientAdapter);
 
+        /*
         if (!isLoading){
             Toast.makeText(getContext(),"One request is being process, Try again later.",Toast.LENGTH_SHORT).show();
 
@@ -62,6 +63,7 @@ public class InactiveList extends Fragment {
             Toast.makeText(getContext(),"Please!! Check internet connection.",Toast.LENGTH_SHORT).show();
             isLoading = true;
         }
+        */
 
         //reload or refresh posts
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

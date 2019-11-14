@@ -25,28 +25,24 @@
                 android:id="@+id/relativelayout">
 
                 <Button
-                    android:id="@+id/btn_datepicker"
+                    android:id="@+id/btn_datepicker1"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
-                    android:text="Select Date"
+                    android:text="From"
                     android:textColor="@color/colorPrimary"
                     android:layout_alignParentStart="true"
                     android:textAllCaps="false"
                     android:background="@drawable/button_round"/>
 
-
-                <TextView
-                    android:id="@+id/tvDateSelected"
+                <Button
+                    android:id="@+id/btn_datepicker2"
                     android:layout_width="wrap_content"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
                     android:layout_height="40dp"
-                    android:textAlignment="center"
-                    android:gravity="center"
+                    android:text="To"
                     android:textColor="@color/colorPrimary"
                     android:layout_centerHorizontal="true"
-                    android:textAllCaps="false" />
-
+                    android:textAllCaps="false"
+                    android:background="@drawable/button_round"/>
 
                 <Button
                     android:id="@+id/btn_txn_view"

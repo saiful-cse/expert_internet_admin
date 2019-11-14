@@ -53,7 +53,7 @@ public class UsernameList extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(clientAdapter);
 
-        load_username();
+        //load_username();
 
         //reload or refresh posts
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -110,8 +110,8 @@ public class UsernameList extends Fragment {
                             JSONObject jsonObject1 = jsonArray.getJSONObject(i);
 
                             client.setName(jsonObject1.getString("name"));
-                            client.setId(jsonObject1.getString("mode"));
-                            client.setPhone("Username: "+jsonObject1.getString("username"));
+                            client.setId(jsonObject1.getString("id"));
+                            client.setPhone("Username: "+jsonObject1.getString("username")+" ("+jsonObject1.getString("mode")+")");
 
                             clientArrayList.add(client);
 

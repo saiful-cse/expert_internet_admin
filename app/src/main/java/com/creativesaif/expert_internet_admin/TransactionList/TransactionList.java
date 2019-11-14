@@ -45,9 +45,9 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
 
     ProgressDialog progressDialog;
 
-    Button buttonDatePicker,buttonTxnView;
-    TextView textViewDate;
-    String date, total_credit, total_debit;
+    Button buttonDatePicker1,buttonDatePicker2, buttonTxnView;
+
+    String first_date, last_date, total_credit, total_debit;
     private int mYear, mMonth, mDay;
 
     @Override
@@ -63,10 +63,12 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
         Initialize here
          */
 
-        buttonDatePicker = findViewById(R.id.btn_datepicker);
-        textViewDate = findViewById(R.id.tvDateSelected);
+        buttonDatePicker1 = findViewById(R.id.btn_datepicker1);
+        buttonDatePicker2 = findViewById(R.id.btn_datepicker2);
         buttonTxnView = findViewById(R.id.btn_txn_view);
-        buttonDatePicker.setOnClickListener(this);
+
+        buttonDatePicker1.setOnClickListener(this);
+        buttonDatePicker2.setOnClickListener(this);
         buttonTxnView.setOnClickListener(this);
 
         progressDialog = new ProgressDialog(this);
@@ -102,9 +104,9 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
 
-        if (v == buttonDatePicker){
+        if (v == buttonDatePicker1){
 
-            // Get Current Date
+            // Get first Date
             final Calendar c = Calendar.getInstance();
             mYear = c.get(Calendar.YEAR);
             mMonth = c.get(Calendar.MONTH);
@@ -117,8 +119,29 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
                         public void onDateSet(DatePicker view, int year,
                                               int monthOfYear, int dayOfMonth) {
 
-                            textViewDate.setText(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
-                            date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+                            buttonDatePicker1.setText(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+                            first_date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+                        }
+                    }, mYear, mMonth, mDay);
+            datePickerDialog.show();
+
+        }else if(v == buttonDatePicker2){
+
+            // Get first Date
+            final Calendar c = Calendar.getInstance();
+            mYear = c.get(Calendar.YEAR);
+            mMonth = c.get(Calendar.MONTH);
+            mDay = c.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                    new DatePickerDialog.OnDateSetListener() {
+
+                        @Override
+                        public void onDateSet(DatePicker view, int year,
+                                              int monthOfYear, int dayOfMonth) {
+
+                            buttonDatePicker2.setText(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+                            last_date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
                         }
                     }, mYear, mMonth, mDay);
             datePickerDialog.show();
@@ -128,12 +151,18 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
             if (!isNetworkConnected()){
                 Snackbar.make(findViewById(android.R.id.content),"Please!! Check Internet Connection or Try again later.",Snackbar.LENGTH_LONG).show();
 
-            }else if(date == null){
-                Snackbar.make(findViewById(android.R.id.content),"Select date",Snackbar.LENGTH_LONG).show();
+            }else if(first_date == null){
+                Snackbar.make(findViewById(android.R.id.content),"Select first date",Snackbar.LENGTH_LONG).show();
 
-            }else {
+            }else if(last_date == null){
+                Snackbar.make(findViewById(android.R.id.content),"Select last date",Snackbar.LENGTH_LONG).show();
+
+            }
+            else {
+
                 load_txn();
             }
+
         }
 
 
@@ -149,7 +178,7 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
     private void load_txn() {
 
         progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.all_txn)+"?date="+date;
+        String url = getString(R.string.base_url)+getString(R.string.all_txn)+"?first_date="+first_date+"&last_date="+last_date;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
@@ -214,7 +243,7 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
 
     public void total_credit_debit_load()
     {
-        String url = getString(R.string.base_url)+getString(R.string.total_credit_debit)+"?date="+date;
+        String url = getString(R.string.base_url)+getString(R.string.total_credit_debit)+"?first_date="+first_date+"&last_date="+last_date;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
