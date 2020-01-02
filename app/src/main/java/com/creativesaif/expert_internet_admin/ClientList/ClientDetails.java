@@ -116,8 +116,6 @@ public class ClientDetails extends AppCompatActivity {
 
         cardViewAlert = findViewById(R.id.cardViewAlert);
         tvWarning = findViewById(R.id.warning_viw);
-        tvTimeOver = findViewById(R.id.tvOverTime);
-        tvAmountOfDue = findViewById(R.id.tvAmountOfDue);
 
         tvId = findViewById(R.id.id);
         tvName = findViewById(R.id.name);
@@ -326,10 +324,6 @@ public class ClientDetails extends AppCompatActivity {
 
                             mode = jsonObject1.getString("mode");
 
-                            int get_total_day = Integer.parseInt(jsonObject1.getString("over_day"));
-                            int month = get_total_day/30;
-                            int day = get_total_day%30;
-
                             id = jsonObject1.getString("id");
                             name = jsonObject1.getString("name");
                             client_name = jsonObject1.getString("name");
@@ -343,16 +337,11 @@ public class ClientDetails extends AppCompatActivity {
                             onu_mac = jsonObject1.getString("onu_mac");
 
                             speed = jsonObject1.getString("speed");
-                            int get_fee = Integer.parseInt(jsonObject1.getString("fee"));
-                            float perday_bill = get_fee/30;
-                            float amoountofDue = perday_bill*get_total_day;
                             bill_type = jsonObject1.getString("bill_type");
 
                             /*
                             Set text on Text View
                              */
-                            tvTimeOver.setText(month+" Month "+ day+" Day");
-                            tvAmountOfDue.setText(amoountofDue+" BDT");
 
                             tvId.setText(id);
                             tvName.setText(name);
