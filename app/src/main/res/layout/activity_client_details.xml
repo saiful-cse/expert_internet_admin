@@ -213,6 +213,14 @@
                             android:textSize="15sp"/>
                     </LinearLayout>
 
+                    <ImageView
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:id="@+id/user_direct_call"
+                        android:src="@drawable/ic_call_black_24dp"
+                        android:layout_gravity="center"
+                        />
+
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
@@ -718,27 +726,6 @@
                         android:inputType="numberDecimal"
                         android:textSize="15sp"
                         android:hint="Type here amount"/>
-
-                    <TextView
-                        android:layout_marginTop="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Details"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/colorPrimary"/>
-
-                    <EditText
-                        android:id="@+id/edDetails"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:maxLines="10"
-                        android:textSize="15sp"
-                        android:inputType="textCapSentences|textMultiLine"
-                        android:hint="Type here details"/>
 
 
                     <Button

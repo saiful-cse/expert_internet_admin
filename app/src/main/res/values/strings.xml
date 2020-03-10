@@ -68,6 +68,10 @@
     <string name="all_txn">txn/all_txn.php</string>
     <string name="total_credit_debit">txn/total_credit_debit.php</string>
     <string name="admin_txn">txn/admin_make_txn.php</string>
+    <string name="txn_details">txn/txn_details.php</string>
+    <string name="txn_delete">txn/txn_delete.php</string>
+    <string name="txn_update">txn/txn_update.php</string>
+
 
     <!-- laravel txn -->
     <string name="admin_txn_laravel">https://creativesaif.com/api/exp-api/api/transation_owner</string>

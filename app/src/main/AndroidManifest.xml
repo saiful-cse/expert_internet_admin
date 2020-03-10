@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ClientList.UsernameList"></activity>
+        <activity android:name=".TransactionList.TransactionEdit"></activity>
+        <activity android:name=".ClientList.UsernameList" />
         <activity
             android:name=".SplashScreen"
             android:theme="@style/AppTheme.NoActionBar">

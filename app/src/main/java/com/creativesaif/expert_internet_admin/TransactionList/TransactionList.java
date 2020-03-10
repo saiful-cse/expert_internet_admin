@@ -91,6 +91,14 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
             }
         });
 
+        FloatingActionButton fab3 = findViewById(R.id.txn_edit);
+        fab3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(TransactionList.this, TransactionEdit.class));
+            }
+        });
+
         FloatingActionButton fab2 = findViewById(R.id.fab);
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override

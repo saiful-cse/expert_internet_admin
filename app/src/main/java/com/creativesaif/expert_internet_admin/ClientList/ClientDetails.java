@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -53,8 +55,10 @@ public class ClientDetails extends AppCompatActivity {
 
     Button btnDetailsEdit;
     Client client;
-    private TextView tvWarning, tvTimeOver, tvAmountOfDue, tvId, tvName, tvPhone, tvAddress, tvEmail,tvIntConnType, tvUsername, tvPassword, tvOnuMac,
+    private TextView tvWarning, tvId, tvName, tvPhone, tvAddress, tvEmail,tvIntConnType, tvUsername, tvPassword, tvOnuMac,
     tvSpeed, tvFee, tvBillType, tvRegDate, tvActiveDate, tvInactiveDate;
+
+    ImageView user_call;
 
     CardView cardViewAlert;
 
@@ -79,9 +83,9 @@ public class ClientDetails extends AppCompatActivity {
     Make txn
      */
     private boolean isLoading = true;
-    private EditText editTextAmount, editTextDetails;
+    private EditText editTextAmount;
     Button buttonTxnSubmit;
-    String payment_type, amount, details, client_name;
+    String payment_type, amount, client_name;
     RadioGroup radioGroup;
 
     SwipeRefreshLayout swipeRefreshLayout;
@@ -104,12 +108,13 @@ public class ClientDetails extends AppCompatActivity {
         swipeRefreshLayout = findViewById(R.id.details_refresh);
 
         editTextAmount = findViewById(R.id.edAmount);
-        editTextDetails = findViewById(R.id.edDetails);
         buttonTxnSubmit = findViewById(R.id.txn_submit);
         radioGroup = findViewById(R.id.radioGroup);
         /*
         ID initialize
          */
+
+        user_call = findViewById(R.id.user_direct_call);
 
         linearLayout  = findViewById(R.id.progress_layout);
         linearLayoutMain = findViewById(R.id.mainLayout);
@@ -155,6 +160,14 @@ public class ClientDetails extends AppCompatActivity {
             swipeRefreshLayout.setRefreshing(false);
         }
 
+        user_call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent callIntent = new Intent(Intent.ACTION_VIEW);
+                callIntent.setData(Uri.parse("tel:+88"+phone));
+                startActivity(callIntent);
+            }
+        });
 
         //reload or refresh posts
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -225,7 +238,7 @@ public class ClientDetails extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 amount = editTextAmount.getText().toString().trim();
-                details = editTextDetails.getText().toString().trim();
+
 
                 if (!isLoading)
                 {
@@ -243,9 +256,7 @@ public class ClientDetails extends AppCompatActivity {
                 else if(amount.isEmpty())
                 {
                     Snackbar.make(findViewById(android.R.id.content),"Write an amount",Snackbar.LENGTH_LONG).show();
-                }else if(details.isEmpty())
-                {
-                    Snackbar.make(findViewById(android.R.id.content),"Write a details",Snackbar.LENGTH_LONG).show();
+
                 }else
                 {
                     int selectedId = radioGroup.getCheckedRadioButtonId();
@@ -326,7 +337,6 @@ public class ClientDetails extends AppCompatActivity {
 
                             id = jsonObject1.getString("id");
                             name = jsonObject1.getString("name");
-                            client_name = jsonObject1.getString("name");
                             phone = jsonObject1.getString("phone");
                             address = jsonObject1.getString("address");
                             email = jsonObject1.getString("email");
@@ -337,6 +347,7 @@ public class ClientDetails extends AppCompatActivity {
                             onu_mac = jsonObject1.getString("onu_mac");
 
                             speed = jsonObject1.getString("speed");
+                            fee = jsonObject1.getString("fee");
                             bill_type = jsonObject1.getString("bill_type");
 
                             /*
@@ -467,7 +478,6 @@ public class ClientDetails extends AppCompatActivity {
                     {
                         String message = jsonObject.getString("message");
                         editTextAmount.setText(null);
-                        editTextDetails.setText(null);
                        // Toast.makeText(ClientDetails.this,message,Toast.LENGTH_SHORT).show();
                         activity_refresh(message);
                     }
@@ -491,15 +501,15 @@ public class ClientDetails extends AppCompatActivity {
 
 
                 map.put("id", got_id);
-                map.put("name", client_name);
+                map.put("name", name);
                 map.put("type", payment_type);
                 map.put("amount", amount);
-                map.put("details", details);
+                map.put("details", name+" ("+id+") "+payment_type);
                 return map;
 
             }
         };
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 8, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         MySingleton.getInstance().addToRequestQueue(stringRequest);
     }
@@ -508,7 +518,7 @@ public class ClientDetails extends AppCompatActivity {
         AlertDialog.Builder aleart1 = new AlertDialog.Builder(this);
         aleart1.setCancelable(false);
         aleart1.setTitle("Please Confirm your transaction!!");
-        aleart1.setMessage("Your payment submit to \n"+"ID: "+got_id+"\n"+"Name: "+client_name+"\n"+"Type: "+payment_type+"\n"+"Amount: "+amount+"\n"+"Details: "+details);
+        aleart1.setMessage("Your payment submit to \n"+"ID: "+got_id+"\n"+"Name: "+name+"\n"+"Type: "+payment_type+"\n"+"Amount: "+amount);
         aleart1.setIcon(R.drawable.warning_icon);
 
         aleart1.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {

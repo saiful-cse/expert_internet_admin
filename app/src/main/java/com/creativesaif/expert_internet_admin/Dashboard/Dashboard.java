@@ -105,8 +105,11 @@ public class Dashboard extends AppCompatActivity {
 
                     textViewActive.setText(activeClient);
                     textViewInactive.setText(inactiveClient);
+
+                    /* disable total month credit and debit features
                     textViewMonthCredit.setText(monthCredit);
                     textViewMonthDebit.setText(monthDebit);
+                     */
                     textViewOverCredit.setText(overCredit);
                     textViewOverDebit.setText(overDebit);
 
