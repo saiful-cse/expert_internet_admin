@@ -40,7 +40,7 @@
 
     <!-- base url -->
     <!-- <string name="base_url">http://192.168.1.9/expert_internet/api/</string> -->
-    <string name="base_url">https://creativesaif.com/api/expert_internet2/</string>
+    <string name="base_url">https://creativesaif.com/api/exp-v3.1/</string>
 
     <!-- news script directory -->
     <!-- News CRUD -->

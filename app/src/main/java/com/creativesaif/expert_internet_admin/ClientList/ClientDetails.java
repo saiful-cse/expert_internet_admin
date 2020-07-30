@@ -55,7 +55,7 @@ public class ClientDetails extends AppCompatActivity {
 
     Button btnDetailsEdit;
     Client client;
-    private TextView tvWarning, tvId, tvName, tvPhone, tvAddress, tvEmail,tvIntConnType, tvUsername, tvPassword, tvOnuMac,
+    private TextView tvWarning, tvId, tvName, tvPhone, tvAddress, tvEmail, tvArea, tvIntConnType, tvUsername, tvPassword, tvOnuMac,
     tvSpeed, tvFee, tvBillType, tvRegDate, tvActiveDate, tvInactiveDate;
 
     ImageView user_call;
@@ -63,7 +63,6 @@ public class ClientDetails extends AppCompatActivity {
     CardView cardViewAlert;
 
     String got_id;
-    LinearLayout linearLayout, linearLayoutMain;
 
     /*
     Get text from server. store on string;
@@ -82,10 +81,9 @@ public class ClientDetails extends AppCompatActivity {
     /*
     Make txn
      */
-    private boolean isLoading = true;
     private EditText editTextAmount;
     Button buttonTxnSubmit;
-    String payment_type, amount, client_name;
+    String payment_type, amount;
     RadioGroup radioGroup;
 
     SwipeRefreshLayout swipeRefreshLayout;
@@ -116,8 +114,6 @@ public class ClientDetails extends AppCompatActivity {
 
         user_call = findViewById(R.id.user_direct_call);
 
-        linearLayout  = findViewById(R.id.progress_layout);
-        linearLayoutMain = findViewById(R.id.mainLayout);
 
         cardViewAlert = findViewById(R.id.cardViewAlert);
         tvWarning = findViewById(R.id.warning_viw);
@@ -127,6 +123,7 @@ public class ClientDetails extends AppCompatActivity {
         tvPhone = findViewById(R.id.phone);
         tvAddress = findViewById(R.id.address);
         tvEmail = findViewById(R.id.email);
+        tvArea = findViewById(R.id.area);
 
         tvIntConnType = findViewById(R.id.int_type);
         tvUsername = findViewById(R.id.username);
@@ -156,7 +153,6 @@ public class ClientDetails extends AppCompatActivity {
         }else{
 
             tvWarning.setVisibility(View.VISIBLE);
-            linearLayoutMain.setVisibility(View.GONE);
             swipeRefreshLayout.setRefreshing(false);
         }
 
@@ -178,8 +174,6 @@ public class ClientDetails extends AppCompatActivity {
                     Toast.makeText(ClientDetails.this,"Please!! Check internet connection.",Toast.LENGTH_SHORT).show();
                     swipeRefreshLayout.setRefreshing(false);
 
-                }else if(!isLoading){
-                    Toast.makeText(ClientDetails.this,"One request is being process, Try again later.",Toast.LENGTH_SHORT).show();
                 }
                 else{
                     details_load(got_id);
@@ -240,11 +234,7 @@ public class ClientDetails extends AppCompatActivity {
                 amount = editTextAmount.getText().toString().trim();
 
 
-                if (!isLoading)
-                {
-                    Snackbar.make(findViewById(android.R.id.content),"One request is being process, Try again later.",Snackbar.LENGTH_LONG).show();
-
-                }else if(!isNetworkConnected())
+                 if(!isNetworkConnected())
                 {
                     Snackbar.make(findViewById(android.R.id.content),"Please!! Check Internet Connection or Try again later.",Snackbar.LENGTH_LONG).show();
 
@@ -359,6 +349,7 @@ public class ClientDetails extends AppCompatActivity {
                             tvPhone.setText(phone);
                             tvAddress.setText(address);
                             tvEmail.setText(email);
+                            tvArea.setText(jsonObject1.getString("area_name"));
 
                             tvIntConnType.setText(int_type);
                             tvUsername.setText(username);
@@ -456,17 +447,13 @@ public class ClientDetails extends AppCompatActivity {
     public void make_txn()
     {
         progressDialog.showDialog();
-        isLoading = false;
-        //String url = getString(R.string.client_txn_laravel);
+
         String url = getString(R.string.base_url)+getString(R.string.client_txn);
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-                //Toast.makeText(MainActivity.this,response,Toast.LENGTH_SHORT).show();
-
-                isLoading = true;
                 progressDialog.hideDialog();
 
                 try{
@@ -490,7 +477,7 @@ public class ClientDetails extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                isLoading = true;
+
                 progressDialog.hideDialog();
                 Toast.makeText(ClientDetails.this,error.toString(),Toast.LENGTH_LONG).show();
             }
