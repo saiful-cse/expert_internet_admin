@@ -39,8 +39,8 @@
     <!--                server URL              -->
 
     <!-- base url -->
-    <!-- <string name="base_url">http://192.168.1.9/expert_internet/api/</string> -->
-    <string name="base_url">https://creativesaif.com/api/exp-v3.1/</string>
+    <string name="base_url">http://192.168.1.7/api/expert_internet_ltd_api/exp-v3.1/</string>
+    <!-- <string name="base_url">https://creativesaif.com/api/exp-v3.1/</string>  -->
 
     <!-- news script directory -->
     <!-- News CRUD -->
@@ -91,5 +91,9 @@
 
     <!-- Sms service -->
     <string name="getting_alert_client">sms/getting_alert_client.php</string>
+
+    <!-- Area -->
+    <string name="area_load">area/area.php</string>
+
 
 </resources>

@@ -67,8 +67,10 @@ public class ClientDetails extends AppCompatActivity {
     /*
     Get text from server. store on string;
      */
-    String mode, id, name, phone, address, email, int_type, username, password, onu_mac,
-    speed, fee, bill_type;
+    String mode, id, name, phone, address, email, area, int_type, username, password, onu_mac,
+    speed, fee, bill_type, activeDate;
+
+    ArrayList<String> areaList = new ArrayList<String>();
 
     /*
     Payment Details
@@ -210,6 +212,7 @@ public class ClientDetails extends AppCompatActivity {
                 i.putExtra("phone",phone);
                 i.putExtra("address",address);
                 i.putExtra("email",email);
+                i.putExtra("area",area);
 
                 i.putExtra("int_type",int_type);
                 i.putExtra("username",username);
@@ -254,7 +257,7 @@ public class ClientDetails extends AppCompatActivity {
                     payment_type = radioButton.getText().toString();
 
                     txn_confirm_diaglog();
-                    //Toast.makeText(ClientDetails.this,payment_type,Toast.LENGTH_LONG).show();
+
                 }
             }
         });
@@ -290,8 +293,6 @@ public class ClientDetails extends AppCompatActivity {
 
                 swipeRefreshLayout.setRefreshing(false);
                 progressDialog.hideDialog();
-
-                //Toast.makeText(ClientDetails.this,response,Toast.LENGTH_SHORT).show();
 
                 try{
 
@@ -330,6 +331,7 @@ public class ClientDetails extends AppCompatActivity {
                             phone = jsonObject1.getString("phone");
                             address = jsonObject1.getString("address");
                             email = jsonObject1.getString("email");
+                            area = jsonObject1.getString("area");
 
                             int_type = jsonObject1.getString("int_conn_type");
                             username = jsonObject1.getString("username");
@@ -349,7 +351,7 @@ public class ClientDetails extends AppCompatActivity {
                             tvPhone.setText(phone);
                             tvAddress.setText(address);
                             tvEmail.setText(email);
-                            tvArea.setText(jsonObject1.getString("area_name"));
+                            tvArea.setText(area);
 
                             tvIntConnType.setText(int_type);
                             tvUsername.setText(username);
@@ -385,7 +387,6 @@ public class ClientDetails extends AppCompatActivity {
         MySingleton.getInstance().addToRequestQueue(stringRequest);
 
     }
-
 
     private void load_payment_details(String got_id) {
 
@@ -426,6 +427,7 @@ public class ClientDetails extends AppCompatActivity {
                             transactionArrayList.add(transaction);
 
                             transactionAdapter.notifyDataSetChanged();
+
                         }
 
                     }
