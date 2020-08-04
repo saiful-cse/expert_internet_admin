@@ -18,7 +18,7 @@
         <activity android:name=".TransactionList.TransactionEdit"></activity>
         <activity android:name=".ClientList.UsernameList" />
         <activity
-            android:name=".SplashScreen"
+            android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,10 +26,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" /> -->
         <activity
             android:name=".NewsFeed.NewsDetails"
             android:label="@string/title_news_details"

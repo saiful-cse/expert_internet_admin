@@ -1,8 +1,11 @@
 package com.creativesaif.expert_internet_admin.Notice;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -18,9 +21,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.creativesaif.expert_internet_admin.ClientList.Client;
+import com.creativesaif.expert_internet_admin.MainActivity;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
+import com.creativesaif.expert_internet_admin.SplashScreen;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,11 +36,12 @@ import java.util.Map;
 
 public class NoticeCreate extends AppCompatActivity {
 
-    EditText editTextNotice;
+    EditText editTextAlertSms , editTextActiveClientMsg, editTextNotice;
     ProgressDialog progressDialog;
-    String notice;
-    Button notice_Post;
-    TextView textViewTotlaAlertClient, textViewSent, textViewNotSent;
+    String message, activeClientMessage, notice;
+    Button buttonAlertSmsSend, buttonActiveSmsSend, notice_Post;
+    TextView textViewTotlaAlertClient, textViewSent, textViewUnSent;
+    int countUnsentSms, totalActiveClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,11 +73,154 @@ public class NoticeCreate extends AppCompatActivity {
 
 
         // ----- sms service for alert client -----
+
         textViewTotlaAlertClient = findViewById(R.id.tvTotalClient);
         textViewSent = findViewById(R.id.tvSent);
-        textViewNotSent = findViewById(R.id.tvNotSent);
+        textViewUnSent = findViewById(R.id.tvUnSent);
 
-        getting_alert_client();
+        editTextAlertSms = findViewById(R.id.edAlertSms);
+        buttonAlertSmsSend = findViewById(R.id.btnAlertSmsSend);
+        buttonActiveSmsSend = findViewById(R.id.btnActiveSmsSend);
+
+        //Fetching alert client sms status
+        getSmsStatus();
+
+        buttonAlertSmsSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (countUnsentSms > 0 ){
+
+                    message = editTextAlertSms.getText().toString().trim();
+                    if(message.isEmpty()){
+                        Toast.makeText(NoticeCreate.this,"Write SMS",Toast.LENGTH_SHORT).show();
+
+                    }else if(!isNetworkConnected()){
+                        Toast.makeText(NoticeCreate.this,"Check Internet Connection.",Toast.LENGTH_SHORT).show();
+
+                    }else{
+                        alertSmsSend();
+                    }
+
+                }else{
+                    Toast.makeText(NoticeCreate.this,"Nothing unsent alert client.",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        editTextActiveClientMsg = findViewById(R.id.edActiveClientSMs);
+        buttonActiveSmsSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                activeClientMessage = editTextActiveClientMsg.getText().toString().trim();
+                if(activeClientMessage.isEmpty()){
+                    Toast.makeText(NoticeCreate.this,"Write SMS",Toast.LENGTH_SHORT).show();
+
+                }else if(!isNetworkConnected()){
+                    Toast.makeText(NoticeCreate.this,"Check Internet Connection.",Toast.LENGTH_SHORT).show();
+
+                }else{
+                    warning_dailog("Message will be send to "+totalActiveClient+" active client");
+                }
+
+            }
+        });
+
+    }
+
+    public void alertSmsSend()
+    {
+        progressDialog.showDialog();
+        String url = getString(R.string.base_url)+getString(R.string.alert_client_sms_service);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                progressDialog.hideDialog();
+
+                try{
+                    JSONObject jsonObject = new JSONObject(response);
+                    String message = jsonObject.getString("message");
+
+                    if (message.equals("200")) {
+
+                        Toast.makeText(NoticeCreate.this, "Message has been delivered.",Toast.LENGTH_LONG).show();
+                        finish();
+
+                    }else{
+                        Toast.makeText(NoticeCreate.this, message,Toast.LENGTH_LONG).show();
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.hideDialog();
+                Toast.makeText(NoticeCreate.this,error.toString(),Toast.LENGTH_LONG).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams()throws AuthFailureError {
+                Map<String,String> map = new HashMap<>();
+
+                map.put("message", message);
+                return map;
+
+            }
+        };
+        MySingleton.getInstance().addToRequestQueue(stringRequest);
+    }
+
+    public void activeClientSmsSend()
+    {
+        progressDialog.showDialog();
+        String url = getString(R.string.base_url)+getString(R.string.active_client_sms_service);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                progressDialog.hideDialog();
+
+                try{
+                    JSONObject jsonObject = new JSONObject(response);
+                    String message = jsonObject.getString("message");
+
+                    if (message.equals("200")) {
+
+                        Toast.makeText(NoticeCreate.this, "Message has been delivered.",Toast.LENGTH_LONG).show();
+                        finish();
+
+                    }else{
+                        Toast.makeText(NoticeCreate.this, message,Toast.LENGTH_LONG).show();
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.hideDialog();
+                Toast.makeText(NoticeCreate.this,error.toString(),Toast.LENGTH_LONG).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams()throws AuthFailureError {
+                Map<String,String> map = new HashMap<>();
+
+                map.put("message", activeClientMessage);
+                return map;
+
+            }
+        };
+        MySingleton.getInstance().addToRequestQueue(stringRequest);
     }
 
     //Internet connection check
@@ -132,49 +281,29 @@ public class NoticeCreate extends AppCompatActivity {
     }
 
 
-    private void getting_alert_client() {
+    private void getSmsStatus() {
 
         progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.getting_alert_client);
+        String url = getString(R.string.base_url)+getString(R.string.get_sms_status);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-                //Toast.makeText(getContext(),response,Toast.LENGTH_SHORT).show();
+                progressDialog.hideDialog();
 
                 try{
 
-                    progressDialog.hideDialog();
                     JSONObject jsonObject = new JSONObject(response);
 
-                    boolean m = jsonObject.has("message");
-                    if (m)
-                    {
-                        String message = jsonObject.getString("message");
-                        Toast.makeText(NoticeCreate.this,message,Toast.LENGTH_LONG).show();
+                    textViewTotlaAlertClient.setText(jsonObject.getString("total_alert"));
+                    textViewSent.setText(jsonObject.getString("sent"));
+                    countUnsentSms = Integer.parseInt(jsonObject.getString("unsent"));
+                    textViewUnSent.setText(jsonObject.getString("unsent"));
+                    totalActiveClient = Integer.parseInt(jsonObject.getString("total_active"));
 
-                    }else
-                    {
+                    //Toast.makeText(NoticeCreate.this,response,Toast.LENGTH_LONG).show();
 
-                        textViewTotlaAlertClient.setText(jsonObject.getString("total"));
-                        textViewSent.setText(jsonObject.getString("sent"));
-                        textViewNotSent.setText(jsonObject.getString("not_sent"));
-//                        JSONArray jsonArray = jsonObject.getJSONArray("alert_client");
-//
-//                        for (int i=0; i<=jsonArray.length(); i++)
-//                        {
-//                            Client client = new Client();
-//
-//                            JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-//
-//                            client.setId(jsonObject1.getString("id"));
-//                            client.setName(jsonObject1.getString("name"));
-//                            client.setPhone(jsonObject1.getString("phone"));
-//
-//                        }
-
-                    }
 
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -191,6 +320,30 @@ public class NoticeCreate extends AppCompatActivity {
         MySingleton.getInstance().addToRequestQueue(stringRequest);
     }
 
+
+    public void warning_dailog(String message){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setCancelable(false);
+        alert.setTitle("Warning!!");
+        alert.setMessage(message);
+        alert.setIcon(R.drawable.warning_icon);
+
+        alert.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                activeClientSmsSend();
+            }
+        });
+
+        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog dlg = alert.create();
+        dlg.show();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

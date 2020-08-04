@@ -39,10 +39,10 @@
     <!--                server URL              -->
 
     <!-- base url -->
-    <string name="base_url">http://192.168.1.7/api/expert_internet_ltd_api/exp-v3.1/</string>
-    <!-- <string name="base_url">https://creativesaif.com/api/exp-v3.1/</string>  -->
+    <!--  <string name="base_url">http://192.168.1.8/api/expert_internet_ltd_api/exp-v3.1/</string> -->
+    <string name="base_url">https://creativesaif.com/api/exp-v3.1/</string>
 
-    <!-- news script directory -->
+   <!-- news script directory -->
     <!-- News CRUD -->
     <string name="news_create">news/create.php</string>
     <string name="news_read">news/read.php</string>
@@ -90,7 +90,10 @@
     <string name="feedback_read">feedback/read.php</string>
 
     <!-- Sms service -->
-    <string name="getting_alert_client">sms/getting_alert_client.php</string>
+    <string name="get_sms_status">sms/get_sms_status.php</string>
+    <string name="alert_client_sms_service">sms/alert_client_sms_service.php</string>
+    <string name="active_client_sms_service">sms/active_client_sms_service.php</string>
+
 
     <!-- Area -->
     <string name="area_load">area/area.php</string>
