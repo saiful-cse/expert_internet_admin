@@ -38,6 +38,7 @@ import com.creativesaif.expert_internet_admin.NewsFeed.News;
 import com.creativesaif.expert_internet_admin.NewsFeed.NewsAdapter;
 import com.creativesaif.expert_internet_admin.NewsFeed.NewsAdd;
 import com.creativesaif.expert_internet_admin.NewsFeed.NewsDetails;
+import com.creativesaif.expert_internet_admin.Notice.NoticeCreate;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
 import com.creativesaif.expert_internet_admin.TransactionList.Transaction;
@@ -53,24 +54,21 @@ import java.util.Map;
 
 public class ClientDetails extends AppCompatActivity {
 
-    Button btnDetailsEdit;
+    Button btnDetailsEdit, btnSmsSend, btnSmsHistory;
     Client client;
-    private TextView tvWarning, tvId, tvName, tvPhone, tvAddress, tvEmail, tvArea, tvIntConnType, tvUsername, tvPassword, tvOnuMac,
+    private TextView tvId, tvName, tvPhone, tvAddress, tvEmail, tvArea, tvIntConnType, tvUsername, tvPassword, tvOnuMac,
     tvSpeed, tvFee, tvBillType, tvRegDate, tvActiveDate, tvInactiveDate;
 
     ImageView user_call;
-
-    CardView cardViewAlert;
-
     String got_id;
 
     /*
     Get text from server. store on string;
      */
     String mode, id, name, phone, address, email, area, int_type, username, password, onu_mac,
-    speed, fee, bill_type, activeDate;
+    speed, fee, bill_type;
 
-    ArrayList<String> areaList = new ArrayList<String>();
+    String informMessage;
 
     /*
     Payment Details
@@ -83,7 +81,7 @@ public class ClientDetails extends AppCompatActivity {
     /*
     Make txn
      */
-    private EditText editTextAmount;
+    private EditText editTextAmount, editTextInformSms;
     Button buttonTxnSubmit;
     String payment_type, amount;
     RadioGroup radioGroup;
@@ -115,10 +113,6 @@ public class ClientDetails extends AppCompatActivity {
          */
 
         user_call = findViewById(R.id.user_direct_call);
-
-
-        cardViewAlert = findViewById(R.id.cardViewAlert);
-        tvWarning = findViewById(R.id.warning_viw);
 
         tvId = findViewById(R.id.id);
         tvName = findViewById(R.id.name);
@@ -154,7 +148,6 @@ public class ClientDetails extends AppCompatActivity {
 
         }else{
 
-            tvWarning.setVisibility(View.VISIBLE);
             swipeRefreshLayout.setRefreshing(false);
         }
 
@@ -262,6 +255,37 @@ public class ClientDetails extends AppCompatActivity {
             }
         });
 
+        //Make inform
+        btnSmsSend = findViewById(R.id.btnInformSend);
+        editTextInformSms = findViewById(R.id.edInformSms);
+
+        btnSmsSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                informMessage = editTextInformSms.getText().toString().trim();
+
+                if(!isNetworkConnected()) {
+                    Snackbar.make(findViewById(android.R.id.content),"Please!! Check Internet Connection or Try again later.",Snackbar.LENGTH_LONG).show();
+
+                }else if(informMessage.isEmpty())
+                {
+                    Snackbar.make(findViewById(android.R.id.content),"Write a message.",Snackbar.LENGTH_LONG).show();
+
+                }else{
+                    inform_confirm_dialog();
+                }
+            }
+        });
+
+        //Sms history
+        btnSmsHistory = findViewById(R.id.btnSmsHistory);
+        btnSmsHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //
+            }
+        });
+
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -312,13 +336,6 @@ public class ClientDetails extends AppCompatActivity {
                         {
 
                             JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-
-                            String isAlert = jsonObject1.getString("alert");
-
-                            if (isAlert.equals("1"))
-                            {
-                                cardViewAlert.setVisibility(View.VISIBLE);
-                            }
 
                             /*
                             getting text from json array and store to string
@@ -488,12 +505,67 @@ public class ClientDetails extends AppCompatActivity {
             protected Map<String, String> getParams()throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
 
-
                 map.put("id", got_id);
                 map.put("name", name);
                 map.put("type", payment_type);
                 map.put("amount", amount);
                 map.put("details", name+" ("+id+") "+payment_type);
+                return map;
+
+            }
+        };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance().addToRequestQueue(stringRequest);
+    }
+
+
+    public void informSmsSend()
+    {
+        progressDialog.showDialog();
+
+        String url = getString(R.string.base_url)+getString(R.string.idwise_sms_service);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                progressDialog.hideDialog();
+
+                try{
+
+                    JSONObject jsonObject = new JSONObject(response);
+                    String message = jsonObject.getString("message");
+
+                    if (message.equals("200")) {
+
+                        Toast.makeText(ClientDetails.this, "Message has been delivered.",Toast.LENGTH_LONG).show();
+                        finish();
+
+                    }else{
+                        Toast.makeText(ClientDetails.this, message,Toast.LENGTH_LONG).show();
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.hideDialog();
+                Toast.makeText(ClientDetails.this,error.toString(),Toast.LENGTH_LONG).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams()throws AuthFailureError {
+                Map<String,String> map = new HashMap<>();
+
+                map.put("message", informMessage);
+                map.put("phone", phone);
+                map.put("client_id", id);
+
                 return map;
 
             }
@@ -514,6 +586,30 @@ public class ClientDetails extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 make_txn();
+            }
+        });
+
+        aleart1.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog dlg = aleart1.create();
+        dlg.show();
+    }
+
+    public void inform_confirm_dialog(){
+        AlertDialog.Builder aleart1 = new AlertDialog.Builder(this);
+        aleart1.setCancelable(false);
+        aleart1.setTitle("Please Confirm your message!!");
+        aleart1.setMessage("This message will be send to "+name);
+        aleart1.setIcon(R.drawable.warning_icon);
+
+        aleart1.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                informSmsSend();
             }
         });
 

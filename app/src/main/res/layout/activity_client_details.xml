@@ -799,6 +799,7 @@
 
 
                     <EditText
+                        android:id="@+id/edInformSms"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:maxLines="20"
@@ -807,6 +808,7 @@
                         android:hint="Type here sms"/>
 
                     <Button
+                        android:id="@+id/btnInformSend"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
                         android:layout_gravity="end"
@@ -818,6 +820,19 @@
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
+
+
+            <Button
+                android:id="@+id/btnSmsHistory"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:text="SMS History"
+                android:textColor="@color/colorPrimary"
+                android:textAllCaps="false"
+                android:background="@drawable/button_round"/>
 
             <Button
                 android:id="@+id/btnEdit"
@@ -836,15 +851,5 @@
     </ScrollView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
-
-
-    <TextView
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/warning_viw"
-        android:text="Please check Internet Connection!!"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

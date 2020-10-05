@@ -250,7 +250,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
     public void area_load()
     {
         progressDialog.showDialog();
-        String url = "http://192.168.1.7/api/expert_internet_ltd_api/exp-v3.1/area/area.php";
+        String url = getString(R.string.base_url)+getString(R.string.area_load);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override

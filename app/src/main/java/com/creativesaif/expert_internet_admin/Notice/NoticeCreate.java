@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -98,7 +99,8 @@ public class NoticeCreate extends AppCompatActivity {
                         Toast.makeText(NoticeCreate.this,"Check Internet Connection.",Toast.LENGTH_SHORT).show();
 
                     }else{
-                        alertSmsSend();
+                        //confirm dialog
+                        warning_alert_client_sms();
                     }
 
                 }else{
@@ -119,7 +121,8 @@ public class NoticeCreate extends AppCompatActivity {
                     Toast.makeText(NoticeCreate.this,"Check Internet Connection.",Toast.LENGTH_SHORT).show();
 
                 }else{
-                    warning_dailog("Message will be send to "+totalActiveClient+" active client");
+                    //confirm dialog
+                    warning_active_client_sms();
                 }
 
             }
@@ -172,6 +175,8 @@ public class NoticeCreate extends AppCompatActivity {
 
             }
         };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         MySingleton.getInstance().addToRequestQueue(stringRequest);
     }
 
@@ -220,6 +225,8 @@ public class NoticeCreate extends AppCompatActivity {
 
             }
         };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         MySingleton.getInstance().addToRequestQueue(stringRequest);
     }
 
@@ -315,17 +322,43 @@ public class NoticeCreate extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 progressDialog.hideDialog();
                 Toast.makeText(NoticeCreate.this,error.toString(),Toast.LENGTH_LONG).show();
+                finish();
             }
         });
         MySingleton.getInstance().addToRequestQueue(stringRequest);
     }
 
 
-    public void warning_dailog(String message){
+    public void warning_alert_client_sms(){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setCancelable(false);
         alert.setTitle("Warning!!");
-        alert.setMessage(message);
+        alert.setMessage("Message will be send to "+countUnsentSms+" alert clients");
+        alert.setIcon(R.drawable.warning_icon);
+
+        alert.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                alertSmsSend();
+            }
+        });
+
+        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog dlg = alert.create();
+        dlg.show();
+    }
+
+
+    public void warning_active_client_sms(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setCancelable(false);
+        alert.setTitle("Warning!!");
+        alert.setMessage("Message will be send to "+totalActiveClient+" active clients");
         alert.setIcon(R.drawable.warning_icon);
 
         alert.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
