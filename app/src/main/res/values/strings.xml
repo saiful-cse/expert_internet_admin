@@ -57,6 +57,7 @@
     <string name="active_client_read">client/active_client.php</string>
     <string name="inactive_client_read">client/inactive_client.php</string>
     <string name="alert_client_read">client/alert_client.php</string>
+    <string name="over3day_client_read">client/over3DayClient.php</string>
     <string name="client_details">client/client_details.php</string>
     <string name="update_details">client/update.php</string>
     <string name="usernamelist">client/getting_all_username.php</string>

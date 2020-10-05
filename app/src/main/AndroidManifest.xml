@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Sms.ClientSmsHistory"></activity>
+
+        <activity android:name=".Sms.ClientSmsHistory" />
         <activity android:name=".TransactionList.TransactionEdit" />
         <activity android:name=".ClientList.UsernameList" />
         <activity
