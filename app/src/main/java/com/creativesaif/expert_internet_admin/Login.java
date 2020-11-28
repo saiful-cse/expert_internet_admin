@@ -47,13 +47,18 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!isNetworkConnected()){
-                    Snackbar.make(findViewById(android.R.id.content),"Check internet Connection",Snackbar.LENGTH_LONG).show();
+
+                    Toast.makeText(Login.this,"Check internet Connection",Toast.LENGTH_LONG).show();
+
                 }
                 else if (editTextUserId.getText().toString().trim().isEmpty()){
-                    Snackbar.make(findViewById(android.R.id.content),"Enter user id",Snackbar.LENGTH_LONG).show();
+
+                    Toast.makeText(Login.this,"Enter user id",Toast.LENGTH_LONG).show();
 
                 }else if(editTextUserPin.getText().toString().trim().isEmpty()){
-                    Snackbar.make(findViewById(android.R.id.content),"Enter pin",Snackbar.LENGTH_LONG).show();
+
+                    Toast.makeText(Login.this,"Enter pin",Toast.LENGTH_LONG).show();
+
                 }else {
                     login();
                 }
@@ -104,7 +109,8 @@ public class Login extends AppCompatActivity {
 
                     }else{
 
-                        Snackbar.make(findViewById(android.R.id.content),message,Snackbar.LENGTH_LONG).show();
+                        Toast.makeText(Login.this,message,Toast.LENGTH_LONG).show();
+
                     }
 
 

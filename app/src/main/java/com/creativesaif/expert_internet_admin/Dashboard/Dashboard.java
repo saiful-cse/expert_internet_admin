@@ -1,13 +1,12 @@
 package com.creativesaif.expert_internet_admin.Dashboard;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,19 +14,14 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.creativesaif.expert_internet_admin.MainActivity;
 import com.creativesaif.expert_internet_admin.MySingleton;
-import com.creativesaif.expert_internet_admin.NewsFeed.News;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.json.JSONArray;
@@ -43,11 +37,12 @@ public class Dashboard extends AppCompatActivity {
     private boolean isLoading = true;
     ProgressDialog progressDialog;
 
-    ArrayList NoOfClient;
+    ArrayList noOfClient;
     ArrayList month;
+
     BarChart chart;
+
     BarDataSet bardataset;
-    BarData data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,13 +60,13 @@ public class Dashboard extends AppCompatActivity {
 
         chart = findViewById(R.id.barchart);
 
-      NoOfClient = new ArrayList();
-      month = new ArrayList();
-
+        noOfClient = new ArrayList();
+        month = new ArrayList();
 
         if (isLoading && isNetworkConnected()){
 
             data_load();
+
         }else{
 
             Snackbar.make(findViewById(android.R.id.content),"Please!! Check internet connection.",Snackbar.LENGTH_LONG).show();
@@ -134,32 +129,20 @@ public class Dashboard extends AppCompatActivity {
 
                     JSONArray jsonArray = jsonObject.getJSONArray("monthly_client_count");
 
-                    for (int i=0; i<=jsonArray.length(); i++){
+                    for (int i = 0; i < jsonArray.length(); i++){
 
                         JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                        int a = Integer.parseInt(jsonObject1.getString("total").trim());
-                        NoOfClient.add(new BarEntry(a, i));
+
+                        noOfClient.add(new BarEntry(Float.parseFloat(jsonObject1.getString("total")),i));
                         month.add(jsonObject1.getString("month"));
-                        Toast.makeText(Dashboard.this,month.toString(),Toast.LENGTH_LONG).show();
 
                     }
-//                    NoOfClient.add(new BarEntry(13, 0));
-//                    NoOfClient.add(new BarEntry(3, 1));
-//                    month.add("October");
-//                    month.add("September");
 
-                    Toast.makeText(Dashboard.this,month.toString(),Toast.LENGTH_SHORT).show();
-
-//                    NoOfClient.add(new BarEntry(13, 0));
-////                    NoOfClient.add(new BarEntry(3, 1));
-//
-
-                    bardataset = new BarDataSet(NoOfClient, "Number Of Client");
-                    chart.animateY(3000);
-                    data = new BarData(month, bardataset);
+                    bardataset = new BarDataSet(noOfClient, "No Of Client");
+                    chart.animateY(2000);
+                    BarData data = new BarData(month, bardataset);
                     bardataset.setColors(ColorTemplate.COLORFUL_COLORS);
                     chart.setData(data);
-
 
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -177,4 +160,6 @@ public class Dashboard extends AppCompatActivity {
         MySingleton.getInstance().addToRequestQueue(stringRequest);
 
     }
+
 }
+
