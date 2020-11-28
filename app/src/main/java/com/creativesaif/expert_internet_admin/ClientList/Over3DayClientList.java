@@ -139,6 +139,7 @@ public class Over3DayClientList extends Fragment {
                             client.setId(jsonObject1.getString("id"));
                             client.setName(jsonObject1.getString("name"));
                             client.setPhone(jsonObject1.getString("phone"));
+                            client.setArea(jsonObject1.getString("area"));
 
                             clientArrayList.add(client);
 
@@ -201,6 +202,7 @@ public class Over3DayClientList extends Fragment {
                             client.setId(jsonObject1.getString("id"));
                             client.setName(jsonObject1.getString("name"));
                             client.setPhone(jsonObject1.getString("phone"));
+                            client.setArea(jsonObject1.getString("area"));
 
                             clientArrayList.add(client);
 

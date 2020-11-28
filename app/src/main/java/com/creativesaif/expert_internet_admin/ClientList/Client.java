@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 public class Client implements Parcelable {
 
-    private String id, mode, name, phone, total_alert_client, username;
+    private String id, mode, name, area, phone, total_alert_client, username;
 
     public Client(){
 
@@ -33,6 +33,14 @@ public class Client implements Parcelable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
     }
 
     public String getPhone() {

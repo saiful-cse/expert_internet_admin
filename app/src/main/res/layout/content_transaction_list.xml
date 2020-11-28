@@ -106,6 +106,16 @@
                             <View style="@style/Divider" />
 
                             <TextView
+                                android:layout_width="60dp"
+                                android:layout_height="wrap_content"
+                                android:text="Method"
+                                android:textAlignment="center"
+                                android:textColor="#ffffff"
+                                android:textSize="15sp" />
+
+                            <View style="@style/Divider" />
+
+                            <TextView
                                 android:layout_width="150dp"
                                 android:layout_height="wrap_content"
                                 android:text="Details"

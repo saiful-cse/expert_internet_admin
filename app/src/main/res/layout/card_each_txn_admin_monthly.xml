@@ -46,6 +46,17 @@
             <View style="@style/Divider" />
 
             <TextView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:text="--"
+                android:id="@+id/tvmethod"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="15sp" />
+
+            <View style="@style/Divider" />
+
+            <TextView
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:text="--"

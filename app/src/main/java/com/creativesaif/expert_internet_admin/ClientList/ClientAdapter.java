@@ -41,9 +41,10 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.EachClient
 
         Client client = clientList.get(i);
 
-        eachClientView.textViewName.setText(client.getName());
+        eachClientView.textViewName.setText(client.getName()+", "+client.getArea());
         eachClientView.textViewId.setText(client.getId());
         eachClientView.textViewPhone.setText(client.getPhone());
+
     }
 
     @Override
