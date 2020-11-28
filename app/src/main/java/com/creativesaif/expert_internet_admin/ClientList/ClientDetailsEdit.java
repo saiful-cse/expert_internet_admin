@@ -1,10 +1,8 @@
 package com.creativesaif.expert_internet_admin.ClientList;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.support.design.widget.Snackbar;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -24,11 +22,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.creativesaif.expert_internet_admin.MainActivity;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
-import com.creativesaif.expert_internet_admin.SplashScreen;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,7 +32,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ClientDetailsEdit extends AppCompatActivity{

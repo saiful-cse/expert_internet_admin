@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="3dp"
+        android:showDividers="middle">
+
+        <TableRow android:background="@color/table_background">
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="--"
+                android:id="@+id/tvtxnDate"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="15sp" />
+
+            <View style="@style/Divider" />
+
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="--"
+                android:id="@+id/tvtxnId"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="15sp" />
+
+            <View style="@style/Divider" />
+
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="--"
+                android:id="@+id/tvuserid"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="15sp" />
+
+            <View style="@style/Divider" />
+
+            <TextView
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="--"
+                android:id="@+id/tvtxnDetails"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="15sp" />
+
+            <View style="@style/Divider" />
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="--"
+                android:id="@+id/tvtxnCredit"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="15sp" />
+
+            <View style="@style/Divider" />
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="--"
+                android:id="@+id/tvtxnDebit"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="15sp" />
+
+        </TableRow>
+
+    </TableLayout>
+
+</RelativeLayout>

@@ -14,6 +14,7 @@
     <string name="menu_notice">Notice</string>
     <string name="menu_feedback">Feedback</string>
     <string name="menu_txnlist">Transaction List</string>
+    <string name="menu_smsHistory">SMS History</string>
 
     <!-- activity title -->
     <string name="title_main_activity">Admin Panel</string>
@@ -35,12 +36,13 @@
 
     <string name="title_txn_list">Transaction List</string>
     <string name="title_txn_create">Transaction Create</string>
+    <string name="title_sms_history">SMS History</string>
 
     <!--                server URL              -->
 
     <!-- base url -->
-    <!--  <string name="base_url">http://192.168.1.8/api/expert_internet_ltd_api/exp-v3.1/</string> -->
-    <string name="base_url">https://creativesaif.com/api/exp-v3.1/</string>
+    <!-- <string name="base_url">http://192.168.1.13:8080/API/expert_internet_api/exp-v4.0/</string> -->
+    <string name="base_url">https://creativesaif.com/api/exp-v3.2/</string>
 
     <!-- news script directory -->
     <!-- News CRUD -->
@@ -95,10 +97,25 @@
     <string name="alert_client_sms_service">sms/alert_client_sms_service.php</string>
     <string name="active_client_sms_service">sms/active_client_sms_service.php</string>
     <string name="idwise_sms_service">sms/idwise_sms_service.php</string>
+    <string name="sms_history">sms/sms_history.php</string>
 
 
     <!-- Area -->
     <string name="area_load">area/area.php</string>
+    <string name="title_activity_login">LoginActivity</string>
+
+
+    <!-- Login -->
+    <string name="login">user/login.php</string>
+
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
 
 
 </resources>

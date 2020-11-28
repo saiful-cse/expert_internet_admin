@@ -2,7 +2,6 @@ package com.creativesaif.expert_internet_admin.Notice;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -21,14 +20,10 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.creativesaif.expert_internet_admin.ClientList.Client;
-import com.creativesaif.expert_internet_admin.MainActivity;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
-import com.creativesaif.expert_internet_admin.SplashScreen;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

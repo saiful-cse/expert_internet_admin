@@ -26,7 +26,7 @@ public class TransactionMonthlyAdapter extends RecyclerView.Adapter<TransactionM
     @Override
     public EachTransactionView onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         LayoutInflater layoutInflater = LayoutInflater.from(context);
-        View view = layoutInflater.inflate(R.layout.card_each_txn_monthly, null);
+        View view = layoutInflater.inflate(R.layout.card_each_txn_admin_monthly, null);
         return new EachTransactionView(view);
     }
 
@@ -37,6 +37,7 @@ public class TransactionMonthlyAdapter extends RecyclerView.Adapter<TransactionM
 
         eachTransactionView.tvDate.setText(transaction.getDate());
         eachTransactionView.tvTxnId.setText(transaction.getTxn_id());
+        eachTransactionView.tvuserid.setText(transaction.getUserid());
         eachTransactionView.tvDetails.setText(transaction.getDetails());
         eachTransactionView.tvCredit.setText(transaction.getCredit());
         eachTransactionView.tvDebit.setText(transaction.getDebit());
@@ -49,7 +50,7 @@ public class TransactionMonthlyAdapter extends RecyclerView.Adapter<TransactionM
 
     class EachTransactionView extends RecyclerView.ViewHolder {
 
-        TextView tvDate, tvTxnId, tvDetails, tvCredit, tvDebit;
+        TextView tvDate, tvTxnId, tvDetails, tvCredit, tvDebit, tvuserid;
 
         public EachTransactionView(@NonNull View itemView) {
             super(itemView);
@@ -59,6 +60,7 @@ public class TransactionMonthlyAdapter extends RecyclerView.Adapter<TransactionM
             tvDetails = itemView.findViewById(R.id.tvtxnDetails);
             tvCredit = itemView.findViewById(R.id.tvtxnCredit);
             tvDebit = itemView.findViewById(R.id.tvtxnDebit);
+            tvuserid = itemView.findViewById(R.id.tvuserid);
         }
     }
 }

@@ -2,11 +2,13 @@ package com.creativesaif.expert_internet_admin.TransactionList;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -47,7 +49,8 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
 
     Button buttonDatePicker1,buttonDatePicker2, buttonTxnView;
 
-    String first_date, last_date, total_credit, total_debit;
+    String first_date, last_date, summary;
+
     private int mYear, mMonth, mDay;
 
     @Override
@@ -86,8 +89,8 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Total Credit: "+total_credit+"\nTotal Debit: "+total_debit, Snackbar.LENGTH_LONG).show();
-
+                //Snackbar.make(view, "Total Credit: "+total_credit+"\nTotal Debit: "+total_debit, Snackbar.LENGTH_LONG).show();
+                summaryView();
             }
         });
 
@@ -223,6 +226,7 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
 
                             transaction.setDate(jsonObject1.getString("date"));
                             transaction.setTxn_id(jsonObject1.getString("txn_id"));
+                            transaction.setUserid(jsonObject1.getString("userid"));
                             transaction.setDetails(jsonObject1.getString("details"));
                             transaction.setCredit(jsonObject1.getString("credit"));
                             transaction.setDebit(jsonObject1.getString("debit"));
@@ -257,17 +261,8 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onResponse(String response) {
 
-                //Toast.makeText(Dashboard.this,response,Toast.LENGTH_SHORT).show();
-
-                try{
-                    JSONObject jsonObject = new JSONObject(response);
-                    total_credit = jsonObject.getString("total_credit");
-                    total_debit = jsonObject.getString("total_debit");
-
-
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
+                //Toast.makeText(TransactionList.this,response,Toast.LENGTH_LONG).show();
+                summary = response;
 
             }
         }, new Response.ErrorListener() {
@@ -288,6 +283,24 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    public void summaryView(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setCancelable(false);
+        alert.setTitle("Summary");
+        alert.setMessage(summary);
+        alert.setIcon(R.drawable.ic_dashboard_black_24dp);
+
+        alert.setNegativeButton("Got It", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog dlg = alert.create();
+        dlg.show();
     }
 
 

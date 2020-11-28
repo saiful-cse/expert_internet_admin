@@ -3,6 +3,7 @@ package com.creativesaif.expert_internet_admin;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -39,6 +40,7 @@ import com.creativesaif.expert_internet_admin.NewsFeed.News;
 import com.creativesaif.expert_internet_admin.NewsFeed.NewsAdapter;
 import com.creativesaif.expert_internet_admin.Notice.NoticeRead;
 import com.creativesaif.expert_internet_admin.NewsFeed.NewsAdd;
+import com.creativesaif.expert_internet_admin.Sms.SmsHistory;
 import com.creativesaif.expert_internet_admin.TransactionList.TransactionList;
 
 import org.json.JSONArray;
@@ -64,6 +66,7 @@ public class MainActivity extends AppCompatActivity
 
     //refresh posts
     SwipeRefreshLayout swipeRefreshLayout;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +110,8 @@ public class MainActivity extends AppCompatActivity
         linearLayout = findViewById(R.id.progress_layout);
 
         swipeRefreshLayout = findViewById(R.id.post_refresh);
+
+        sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
 
         //if internet is connected, then posts is load from server
         if (isNetworkConnected()){
@@ -177,7 +182,18 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            //super.onBackPressed();
+            new AlertDialog.Builder(this)
+                    .setMessage("Are you sure you want to exit?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            MainActivity.super.onBackPressed();
+                            sharedPreferences.edit().clear().apply();
+                        }
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
         }
     }
 
@@ -224,7 +240,11 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, FeedbackList.class));
 
         } else if (id == R.id.nav_txnlist) {
+
             startActivity(new Intent(MainActivity.this, TransactionList.class));
+        }else if (id == R.id.nav_smsHistory) {
+
+            startActivity(new Intent(MainActivity.this, SmsHistory.class));
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -379,5 +399,7 @@ public class MainActivity extends AppCompatActivity
 
         return cm.getActiveNetworkInfo() != null;
     }
+
+
 
 }

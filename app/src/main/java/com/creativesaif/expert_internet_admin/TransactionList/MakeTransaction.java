@@ -1,6 +1,7 @@
 package com.creativesaif.expert_internet_admin.TransactionList;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -33,11 +34,12 @@ import java.util.Map;
 public class MakeTransaction extends AppCompatActivity {
 
     ProgressDialog progressDialog;
-    RadioGroup radioGroup;
+    RadioGroup radioGroup, radioGroup2;
     EditText editTextAmount, editTextDetails;
 
-    String txn_type, amount, details;
+    String txn_type, txn_method, amount, details;
     Button buttonSubmmit;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +48,12 @@ public class MakeTransaction extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         radioGroup = findViewById(R.id.radioGroup);
+        radioGroup2 = findViewById(R.id.radioGroup2);
         editTextAmount = findViewById(R.id.txnamount);
         editTextDetails = findViewById(R.id.txndetails);
         progressDialog = new ProgressDialog(this);
         buttonSubmmit = findViewById(R.id.btnsubmit);
+        sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
 
         buttonSubmmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,8 +70,10 @@ public class MakeTransaction extends AppCompatActivity {
                 {
                     Snackbar.make(findViewById(android.R.id.content),"Select txn type",Snackbar.LENGTH_LONG).show();
 
-                }
-                else if(amount.isEmpty())
+                }else if(radioGroup2.getCheckedRadioButtonId() == -1){
+                    Snackbar.make(findViewById(android.R.id.content),"Select txn method",Snackbar.LENGTH_LONG).show();
+
+                } else if(amount.isEmpty())
                 {
                     Snackbar.make(findViewById(android.R.id.content),"Write an amount",Snackbar.LENGTH_LONG).show();
                 }else if(details.isEmpty())
@@ -75,12 +81,14 @@ public class MakeTransaction extends AppCompatActivity {
                     Snackbar.make(findViewById(android.R.id.content),"Write a details",Snackbar.LENGTH_LONG).show();
                 }else {
 
-                    int selectedId = radioGroup.getCheckedRadioButtonId();
-                    RadioButton radioButton = findViewById(selectedId);
-                    txn_type = radioButton.getText().toString();
+                    int selectedTxnType = radioGroup.getCheckedRadioButtonId();
+                    int selectedMethod = radioGroup2.getCheckedRadioButtonId();
+                    RadioButton radioButton = findViewById(selectedTxnType);
+                    RadioButton radioButton2 = findViewById(selectedMethod);
+                    txn_type = radioButton.getText().toString().trim();
+                    txn_method = radioButton2.getText().toString().trim();
 
                     //Snackbar.make(findViewById(android.R.id.content),txn_type,Snackbar.LENGTH_LONG).show();
-
 
                     make_txn();
                 }
@@ -102,7 +110,7 @@ public class MakeTransaction extends AppCompatActivity {
     public void make_txn()
     {
         progressDialog.showDialog();
-        //String url = getString(R.string.admin_txn_laravel);
+
         String url = getString(R.string.base_url)+getString(R.string.admin_txn);
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -117,14 +125,15 @@ public class MakeTransaction extends AppCompatActivity {
                 try{
 
                     JSONObject jsonObject = new JSONObject(response);
+                    String message = jsonObject.getString("message");
 
-                    boolean m = jsonObject.has("message");
-                    if (m)
+                    if (message.equals("201"))
                     {
-                        String message = jsonObject.getString("message");
-                        Toast.makeText(MakeTransaction.this,message,Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MakeTransaction.this,"Your transaction has been successfully.",Toast.LENGTH_LONG).show();
                         finish();
 
+                    }else{
+                        Toast.makeText(MakeTransaction.this,message,Toast.LENGTH_LONG).show();
                     }
 
                 }catch (JSONException e){
@@ -144,8 +153,10 @@ public class MakeTransaction extends AppCompatActivity {
                 Map<String,String> map = new HashMap<>();
 
                 map.put("type", txn_type);
+                map.put("method", txn_method);
                 map.put("amount", amount);
                 map.put("details", details);
+                map.put("userid", sharedPreferences.getString("userid", null));
                 return map;
 
             }

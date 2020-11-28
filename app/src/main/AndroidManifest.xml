@@ -16,11 +16,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".Sms.ClientSmsHistory" />
-        <activity android:name=".TransactionList.TransactionEdit" />
-        <activity android:name=".ClientList.UsernameList" />
+        <activity android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
         <activity
-            android:name=".MainActivity"
+            android:name=".Sms.SmsHistory"
+            android:label="@string/title_sms_history" />
+        <activity android:name=".TransactionList.TransactionEdit" />
+        <activity
+            android:name=".Login"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

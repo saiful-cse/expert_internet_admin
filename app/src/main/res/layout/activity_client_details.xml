@@ -737,6 +737,63 @@
                         android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:text="Select Payment Method"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorPrimary"/>
+
+                    <RadioGroup
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:weightSum="1"
+                        android:id="@+id/radioGroup2">
+
+                        <RadioButton
+                            android:id="@+id/rb_payment_cash"
+                            android:layout_weight="0.5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Cash"
+                            />
+
+                        <RadioButton
+                            android:id="@+id/rb_payment_bKash"
+                            android:layout_weight="0.5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="bKash"
+                            />
+                        <RadioButton
+                            android:id="@+id/rb_payment_rocket"
+                            android:layout_weight="0.5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Rocket"
+                            />
+                        <RadioButton
+                            android:id="@+id/rb_payment_nogod"
+                            android:layout_weight="0.5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nogod"
+                            />
+                        <RadioButton
+                            android:id="@+id/rb_payment_other"
+                            android:layout_weight="0.5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Other"
+                            />
+                    </RadioGroup>
+
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:text="Amount"
                         android:textSize="15sp"
                         android:textStyle="bold" />

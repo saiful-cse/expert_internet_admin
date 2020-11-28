@@ -20,20 +20,34 @@ import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.NewsFeed.News;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class Dashboard extends AppCompatActivity {
 
     TextView textViewActive, textViewInactive, textViewMonthCredit, textViewMonthDebit, textViewOverCredit, textViewOverDebit;
     String activeClient, inactiveClient, monthCredit, monthDebit, overCredit, overDebit;
-
     private boolean isLoading = true;
-
     ProgressDialog progressDialog;
 
+    ArrayList NoOfClient;
+    ArrayList month;
+    BarChart chart;
+    BarDataSet bardataset;
+    BarData data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +62,12 @@ public class Dashboard extends AppCompatActivity {
         textViewOverCredit = findViewById(R.id.dashboard_over_credit);
         textViewOverDebit = findViewById(R.id.dashboard_over_debit);
         progressDialog = new ProgressDialog(this);
+
+        chart = findViewById(R.id.barchart);
+
+      NoOfClient = new ArrayList();
+      month = new ArrayList();
+
 
         if (isLoading && isNetworkConnected()){
 
@@ -106,12 +126,39 @@ public class Dashboard extends AppCompatActivity {
                     textViewActive.setText(activeClient);
                     textViewInactive.setText(inactiveClient);
 
-                    /* disable total month credit and debit features
                     textViewMonthCredit.setText(monthCredit);
                     textViewMonthDebit.setText(monthDebit);
-                     */
+
                     textViewOverCredit.setText(overCredit);
                     textViewOverDebit.setText(overDebit);
+
+                    JSONArray jsonArray = jsonObject.getJSONArray("monthly_client_count");
+
+                    for (int i=0; i<=jsonArray.length(); i++){
+
+                        JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+                        int a = Integer.parseInt(jsonObject1.getString("total").trim());
+                        NoOfClient.add(new BarEntry(a, i));
+                        month.add(jsonObject1.getString("month"));
+                        Toast.makeText(Dashboard.this,month.toString(),Toast.LENGTH_LONG).show();
+
+                    }
+//                    NoOfClient.add(new BarEntry(13, 0));
+//                    NoOfClient.add(new BarEntry(3, 1));
+//                    month.add("October");
+//                    month.add("September");
+
+                    Toast.makeText(Dashboard.this,month.toString(),Toast.LENGTH_SHORT).show();
+
+//                    NoOfClient.add(new BarEntry(13, 0));
+////                    NoOfClient.add(new BarEntry(3, 1));
+//
+
+                    bardataset = new BarDataSet(NoOfClient, "Number Of Client");
+                    chart.animateY(3000);
+                    data = new BarData(month, bardataset);
+                    bardataset.setColors(ColorTemplate.COLORFUL_COLORS);
+                    chart.setData(data);
 
 
                 }catch (JSONException e){

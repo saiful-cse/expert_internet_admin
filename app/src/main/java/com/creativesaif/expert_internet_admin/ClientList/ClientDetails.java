@@ -3,6 +3,7 @@ package com.creativesaif.expert_internet_admin.ClientList;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.support.design.widget.Snackbar;
@@ -41,6 +42,7 @@ import com.creativesaif.expert_internet_admin.NewsFeed.NewsDetails;
 import com.creativesaif.expert_internet_admin.Notice.NoticeCreate;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
+import com.creativesaif.expert_internet_admin.TransactionList.MakeTransaction;
 import com.creativesaif.expert_internet_admin.TransactionList.Transaction;
 import com.creativesaif.expert_internet_admin.TransactionList.TransactionAdapter;
 
@@ -61,6 +63,8 @@ public class ClientDetails extends AppCompatActivity {
 
     ImageView user_call;
     String got_id;
+
+    SharedPreferences sharedPreferences;
 
     /*
     Get text from server. store on string;
@@ -83,8 +87,8 @@ public class ClientDetails extends AppCompatActivity {
      */
     private EditText editTextAmount, editTextInformSms;
     Button buttonTxnSubmit;
-    String payment_type, amount;
-    RadioGroup radioGroup;
+    String payment_type, payment_method, amount;
+    RadioGroup radioGroup, radioGroup2;
 
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -112,6 +116,8 @@ public class ClientDetails extends AppCompatActivity {
         ID initialize
          */
 
+        sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
+
         user_call = findViewById(R.id.user_direct_call);
 
         tvId = findViewById(R.id.id);
@@ -129,6 +135,7 @@ public class ClientDetails extends AppCompatActivity {
         tvSpeed = findViewById(R.id.speed);
         tvFee = findViewById(R.id.fee);
         tvBillType = findViewById(R.id.bill_type);
+        radioGroup2 = findViewById(R.id.radioGroup2);
         tvRegDate = findViewById(R.id.reg_date);
         tvActiveDate = findViewById(R.id.active_date);
         tvInactiveDate = findViewById(R.id.inactive_date);
@@ -238,16 +245,21 @@ public class ClientDetails extends AppCompatActivity {
                 {
                     Snackbar.make(findViewById(android.R.id.content),"Select payment type",Snackbar.LENGTH_LONG).show();
 
-                }
-                else if(amount.isEmpty())
+                } else if(radioGroup2.getCheckedRadioButtonId() == -1){
+                     Snackbar.make(findViewById(android.R.id.content),"Select payment method",Snackbar.LENGTH_LONG).show();
+
+                 } else if(amount.isEmpty())
                 {
                     Snackbar.make(findViewById(android.R.id.content),"Write an amount",Snackbar.LENGTH_LONG).show();
 
                 }else
                 {
                     int selectedId = radioGroup.getCheckedRadioButtonId();
+                    int selectedMethod = radioGroup2.getCheckedRadioButtonId();
                     RadioButton radioButton = findViewById(selectedId);
+                    RadioButton radioButton2 = findViewById(selectedMethod);
                     payment_type = radioButton.getText().toString();
+                    payment_method = radioButton2.getText().toString().trim();
 
                     txn_confirm_diaglog();
 
@@ -477,15 +489,17 @@ public class ClientDetails extends AppCompatActivity {
 
                 try{
 
-                    JSONObject jsonObject = new JSONObject(response);
 
-                    boolean m = jsonObject.has("message");
-                    if (m)
+                    JSONObject jsonObject = new JSONObject(response);
+                    String message = jsonObject.getString("message");
+
+                    if (message.equals("201"))
                     {
-                        String message = jsonObject.getString("message");
-                        editTextAmount.setText(null);
-                       // Toast.makeText(ClientDetails.this,message,Toast.LENGTH_SHORT).show();
-                        activity_refresh(message);
+                        Toast.makeText(ClientDetails.this,"Your payment has been successfully.",Toast.LENGTH_LONG).show();
+                        finish();
+
+                    }else{
+                        Toast.makeText(ClientDetails.this,message,Toast.LENGTH_LONG).show();
                     }
 
                 }catch (JSONException e){
@@ -508,8 +522,10 @@ public class ClientDetails extends AppCompatActivity {
                 map.put("id", got_id);
                 map.put("name", name);
                 map.put("type", payment_type);
+                map.put("method", payment_method);
+                map.put("userid", sharedPreferences.getString("userid", null));
                 map.put("amount", amount);
-                map.put("details", name+" ("+id+") "+payment_type);
+                map.put("details", name+", "+id+", "+payment_type);
                 return map;
 
             }

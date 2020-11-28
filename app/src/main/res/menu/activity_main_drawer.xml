@@ -30,6 +30,11 @@
             android:id="@+id/nav_txnlist"
             android:icon="@drawable/ic_txn_list_black_24dp"
             android:title="@string/menu_txnlist"/>
+
+        <item
+            android:id="@+id/nav_smsHistory"
+            android:icon="@drawable/ic_baseline_sms_24"
+            android:title="@string/menu_smsHistory"/>
     </group>
 
 </menu>
