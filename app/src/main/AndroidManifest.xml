@@ -15,10 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Sms.SmsHistory"
             android:label="@string/title_sms_history" />
@@ -33,6 +32,7 @@
             </intent-filter>
         </activity>
         <!--
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"

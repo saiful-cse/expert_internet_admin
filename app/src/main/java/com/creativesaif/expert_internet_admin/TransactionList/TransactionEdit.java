@@ -30,6 +30,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -109,6 +114,7 @@ public class TransactionEdit extends AppCompatActivity {
                 }else {
 
                     deleteDialog();
+
                 }
             }
         });
@@ -145,7 +151,30 @@ public class TransactionEdit extends AppCompatActivity {
                 }
                 else {
 
-                    txn_update();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    Calendar cal = Calendar.getInstance();
+                    //5 day decrease from current date
+                    cal.add(Calendar.DAY_OF_MONTH, -5);
+                    Date currentDate = cal.getTime();
+                    try {
+
+                        Date txnDate = sdf.parse(date);
+                        int result = currentDate.compareTo(txnDate);
+
+                        //if current date is before txndate
+                        if (result <= 0) {
+
+                            txn_update();
+
+                        } else {
+                            //System.out.println("no editable");
+                            Toast.makeText(getApplicationContext(), "Time expired, 5 day over.", Toast.LENGTH_LONG).show();
+                        }
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
         });
@@ -327,7 +356,30 @@ public class TransactionEdit extends AppCompatActivity {
         aleart1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                txn_delete(txnId);
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Calendar cal = Calendar.getInstance();
+                //5 day decrease from current date
+                cal.add(Calendar.DAY_OF_MONTH, -5);
+                Date currentDate = cal.getTime();
+                try {
+
+                    Date txnDate = sdf.parse(date);
+                    int result = currentDate.compareTo(txnDate);
+
+                    //if current date is before txndate
+                    if (result <= 0) {
+
+                        txn_delete(txnId);
+
+                    } else {
+                        //System.out.println("no editable");
+                        Toast.makeText(getApplicationContext(), "Time expired, 5 day over.", Toast.LENGTH_LONG).show();
+                    }
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         });
 

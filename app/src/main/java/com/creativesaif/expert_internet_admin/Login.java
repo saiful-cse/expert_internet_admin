@@ -3,6 +3,8 @@ package com.creativesaif.expert_internet_admin;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -32,16 +35,27 @@ public class Login extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     ImageView imageViewLogin;
     ProgressBar progressBar;
+    TextView viewversionname;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        PackageManager manager = this.getPackageManager();
 
         /*
         Id's initialize
          */
         init();
+
+        try{
+
+            PackageInfo info = manager.getPackageInfo(this.getPackageName(), PackageManager.GET_ACTIVITIES);
+            viewversionname.setText("Version: "+info.versionName+"\n"+"Web API version: exp-v3.3");
+
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
         imageViewLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +86,7 @@ public class Login extends AppCompatActivity {
         sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
         progressBar = findViewById(R.id.progressbar);
         imageViewLogin = findViewById(R.id.login);
+        viewversionname = findViewById(R.id.version);
     }
 
     //Internet connection check
