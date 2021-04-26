@@ -109,10 +109,11 @@ public class UsernameList extends Fragment {
 
                             JSONObject jsonObject1 = jsonArray.getJSONObject(i);
 
-                            client.setName(jsonObject1.getString("name"));
+                            client.setName(jsonObject1.getString("name")+" ("+jsonObject1.getString("mode")+")");
                             client.setId(jsonObject1.getString("id"));
+                            client.setPhone(jsonObject1.getString("phone"));
                             client.setArea(jsonObject1.getString("area"));
-                            client.setPhone("Username: "+jsonObject1.getString("username")+" ("+jsonObject1.getString("mode")+")");
+                            client.setUsername(jsonObject1.getString("username"));
 
                             clientArrayList.add(client);
 

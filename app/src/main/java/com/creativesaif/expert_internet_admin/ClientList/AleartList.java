@@ -158,6 +158,7 @@ public class AleartList extends Fragment {
                             client.setName(jsonObject1.getString("name"));
                             client.setPhone(jsonObject1.getString("phone"));
                             client.setArea(jsonObject1.getString("area"));
+                            client.setUsername(jsonObject1.getString("username"));
 
                             clientArrayList.add(client);
 
@@ -224,6 +225,7 @@ public class AleartList extends Fragment {
                             client.setName(jsonObject1.getString("name"));
                             client.setPhone(jsonObject1.getString("phone"));
                             client.setArea(jsonObject1.getString("area"));
+                            client.setUsername(jsonObject1.getString("username"));
 
                             clientArrayList.add(client);
 

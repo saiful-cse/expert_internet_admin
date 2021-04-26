@@ -40,6 +40,7 @@ import com.creativesaif.expert_internet_admin.NewsFeed.News;
 import com.creativesaif.expert_internet_admin.NewsFeed.NewsAdapter;
 import com.creativesaif.expert_internet_admin.Notice.NoticeRead;
 import com.creativesaif.expert_internet_admin.NewsFeed.NewsAdd;
+import com.creativesaif.expert_internet_admin.Search.SearchPage;
 import com.creativesaif.expert_internet_admin.Sms.SmsHistory;
 import com.creativesaif.expert_internet_admin.TransactionList.TransactionList;
 
@@ -231,6 +232,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_clientlist) {
 
             startActivity(new Intent(MainActivity.this, ClientList.class));
+
+        } else if (id == R.id.nav_search) {
+
+            startActivity(new Intent(MainActivity.this, SearchPage.class));
 
         } else if (id == R.id.nav_notice) {
             startActivity(new Intent(MainActivity.this, NoticeRead.class));

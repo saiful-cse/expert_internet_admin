@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">expert_internet_admin</string>
+    <string name="app_name">Exp Admin Panel</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -11,6 +11,7 @@
     <string name="menu_timeline">News Feed</string>
     <string name="menu_dashboard">Dashboard</string>
     <string name="menu_clientlist">Client List</string>
+    <string name="menu_search">Search</string>
     <string name="menu_notice">Notice</string>
     <string name="menu_feedback">Feedback</string>
     <string name="menu_txnlist">Transaction List</string>
@@ -64,6 +65,9 @@
     <string name="update_details">client/update.php</string>
     <string name="usernamelist">client/getting_all_username.php</string>
 
+
+    <!-- Search -->
+    <string name="search">search/search.php?q=</string>
 
     <!-- Client txn -->
     <string name="payment_details">txn/payment_details.php</string>
