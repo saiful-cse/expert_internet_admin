@@ -5,272 +5,142 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="10"
-    android:background="@color/activity_backround"
     tools:context=".Dashboard.Dashboard">
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/barchart"
         android:layout_width="match_parent"
         android:layout_height="300dp"/>
-    <GridLayout
-        android:id="@+id/mainGrid"
-        android:rowCount="3"
-        android:columnCount="2"
-        android:alignmentMode="alignMargins"
-        android:columnOrderPreserved="false"
-        android:layout_weight="8"
+
+    <LinearLayout
+        android:background="@color/activity_backround"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:padding="14dp">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <!-- row 1 -->
-        <!-- column 1 -->
-        <android.support.v7.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_marginBottom="16dp"
-            android:layout_rowWeight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            app:cardElevation="8dp"
-            app:cardCornerRadius="8dp">
+        <TextView
+            android:id="@+id/dashboard_active"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryDark"
+            />
 
-            <LinearLayout
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/dashboard_inactive"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryDark"
+            />
 
-                <TextView
-                    android:textAlignment="center"
-                    android:text="Active Client"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="15sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+    </LinearLayout>
 
-                <TextView
-                    android:id="@+id/dashboard_active"
-                    android:textAlignment="center"
-                    android:text="---"
-                    android:layout_gravity="center"
-                    android:textColor="#000"
-                    android:textSize="18sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+    <LinearLayout
+        android:background="@color/activity_backround"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-            </LinearLayout>
+        <TextView
+            android:id="@+id/dashboard_mon_credit"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryDark"
+            />
 
-        </android.support.v7.widget.CardView>
+        <TextView
+            android:id="@+id/dashboard_mon_debit"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryDark"
+            />
 
-        <!-- COLUMN 2  -->
+    </LinearLayout>
 
-        <android.support.v7.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_marginBottom="16dp"
-            android:layout_rowWeight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            app:cardElevation="8dp"
-            app:cardCornerRadius="8dp">
+    <LinearLayout
+        android:background="@color/activity_backround"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/dashboard_over_credit"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryDark"
+            />
 
-                <TextView
-                    android:textAlignment="center"
-                    android:text="Deactive Client"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="15sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/dashboard_over_debit"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryDark"
+            />
 
-                <TextView
-                    android:id="@+id/dashboard_inactive"
-                    android:textAlignment="center"
-                    android:text="---"
-                    android:layout_gravity="center"
-                    android:textColor="#000"
-                    android:textSize="18sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+    </LinearLayout>
 
-            </LinearLayout>
+    <TextView
+        android:id="@+id/dashboard_total_invest"
+        android:background="@color/activity_backround"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimaryDark"
+        />
 
-        </android.support.v7.widget.CardView>
+    <LinearLayout
+        android:background="@color/activity_backround"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <!-- ROW 2  -->
-        <!-- COLUMN 1  -->
+        <TextView
+            android:id="@+id/dashboard_misbapercent"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryDark"
+            />
 
-        <android.support.v7.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_marginBottom="16dp"
-            android:layout_rowWeight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            app:cardElevation="8dp"
-            app:cardCornerRadius="8dp">
+        <TextView
+            android:id="@+id/dashboard_saifulpercent"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryDark" />
 
-            <LinearLayout
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+    </LinearLayout>
 
-                <TextView
-                    android:textAlignment="center"
-                    android:text="This month total credit"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="15sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+    <LinearLayout
+        android:background="@color/activity_backround"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/dashboard_mon_credit"
-                    android:textAlignment="center"
-                    android:text="---"
-                    android:layout_gravity="center"
-                    android:textColor="#000"
-                    android:textSize="18sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+        <TextView
+            android:id="@+id/dashboard_misbaprofit"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryDark" />
 
-        </android.support.v7.widget.CardView>
+        <TextView
+            android:id="@+id/dashboard_saifulprofit"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryDark" />
 
-        <!-- COLUMN 2  -->
-
-        <android.support.v7.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_marginBottom="16dp"
-            android:layout_rowWeight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            app:cardElevation="8dp"
-            app:cardCornerRadius="8dp">
-
-            <LinearLayout
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:textAlignment="center"
-                    android:text="This month total debit"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="15sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:id="@+id/dashboard_mon_debit"
-                    android:textAlignment="center"
-                    android:text="---"
-                    android:layout_gravity="center"
-                    android:textColor="#000"
-                    android:textSize="18sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
-
-        <!-- ROW 3  -->
-        <!-- COLUMN 1  -->
-
-        <android.support.v7.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_marginBottom="16dp"
-            android:layout_rowWeight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            app:cardElevation="8dp"
-            app:cardCornerRadius="8dp">
-
-            <LinearLayout
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-
-                <TextView
-                    android:textAlignment="center"
-                    android:text="Overall credit"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="15sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:id="@+id/dashboard_over_credit"
-                    android:textAlignment="center"
-                    android:text="---"
-                    android:layout_gravity="center"
-                    android:textColor="#000"
-                    android:textSize="18sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
-
-        <!-- COLUMN 2  -->
-
-        <android.support.v7.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_columnWeight="1"
-            android:layout_marginBottom="16dp"
-            android:layout_rowWeight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            app:cardElevation="8dp"
-            app:cardCornerRadius="8dp">
-
-            <LinearLayout
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:textAlignment="center"
-                    android:text="Overall debit"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="15sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:id="@+id/dashboard_over_debit"
-                    android:textAlignment="center"
-                    android:text="---"
-                    android:layout_gravity="center"
-                    android:textColor="#000"
-                    android:textSize="18sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
-
-    </GridLayout>
+    </LinearLayout>
 
 </LinearLayout>
