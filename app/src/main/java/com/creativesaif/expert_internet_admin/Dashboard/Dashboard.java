@@ -28,11 +28,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class Dashboard extends AppCompatActivity {
 
-    TextView textViewActive, textViewInactive, textViewMonthCredit, textViewMonthDebit, textViewOverCredit, textViewOverDebit;
+    TextView textViewActive, textViewInactive, textViewMonthCredit, textViewMonthDebit,
+            textViewOverCredit, textViewOverDebit, textViewTotalInvest,
+            textViewSaifuPercent, textViewMisbaPercent, textViewSaifulProfit, textViewMisbaProfit;
     String activeClient, inactiveClient, monthCredit, monthDebit, overCredit, overDebit;
     private boolean isLoading = true;
     ProgressDialog progressDialog;
@@ -56,6 +59,11 @@ public class Dashboard extends AppCompatActivity {
         textViewMonthDebit = findViewById(R.id.dashboard_mon_debit);
         textViewOverCredit = findViewById(R.id.dashboard_over_credit);
         textViewOverDebit = findViewById(R.id.dashboard_over_debit);
+        textViewTotalInvest = findViewById(R.id.dashboard_total_invest);
+        textViewSaifuPercent = findViewById(R.id.dashboard_saifulpercent);
+        textViewMisbaPercent = findViewById(R.id.dashboard_misbapercent);
+        textViewSaifulProfit = findViewById(R.id.dashboard_saifulprofit);
+        textViewMisbaProfit = findViewById(R.id.dashboard_misbaprofit);
         progressDialog = new ProgressDialog(this);
 
         chart = findViewById(R.id.barchart);
@@ -118,17 +126,35 @@ public class Dashboard extends AppCompatActivity {
                     overCredit = jsonObject.getString("overall_credit");
                     overDebit = jsonObject.getString("overall_debit");
 
-                    textViewActive.setText(activeClient);
-                    textViewInactive.setText(inactiveClient);
+                    double saifulInvest = Double.parseDouble(jsonObject.getString("saifulinvest"));
+                    double misbaInvest = Double.parseDouble(jsonObject.getString("misbainvest"));
+                    double totalInvest = Double.parseDouble(jsonObject.getString("saifulinvest")) + Double.parseDouble(jsonObject.getString("misbainvest"));
+                    double saifulPercent = (saifulInvest/totalInvest)*100;
+                    double misbaPercent = (misbaInvest/totalInvest)*100;
 
-                    textViewMonthCredit.setText(monthCredit);
-                    textViewMonthDebit.setText(monthDebit);
+                    double monthlyProfit = Double.parseDouble(monthCredit) - Double.parseDouble(monthDebit);
+                    double saifulProfit = (saifulPercent/100)*monthlyProfit;
+                    double misbaProfit = (misbaPercent/100)*monthlyProfit;
 
-                    textViewOverCredit.setText(overCredit);
-                    textViewOverDebit.setText(overDebit);
+                    textViewActive.setText("Active Client\n"+activeClient);
+                    textViewInactive.setText("Inactive Client\n"+inactiveClient);
 
+                    textViewMonthCredit.setText("This Month Credit\n"+monthCredit);
+                    textViewMonthDebit.setText("This Month Debit\n"+monthDebit);
+
+                    textViewOverCredit.setText("Overall Credit\n"+overCredit);
+                    textViewOverDebit.setText("Overall Debit\n"+overDebit);
+
+                    textViewTotalInvest.setText("Total Invest\n"+String.format("%.2f", new BigDecimal(totalInvest)));
+
+                    textViewSaifuPercent.setText("Saiful Invest\n"+saifulInvest+" TK, "+String.format("%.2f", new BigDecimal(saifulPercent))+"%");
+                    textViewMisbaPercent.setText("Misba Invest\n"+misbaInvest+" TK, "+String.format("%.2f", new BigDecimal(misbaPercent))+"%");
+
+                    textViewSaifulProfit.setText("Saiful Profit\n"+String.format("%.2f", new BigDecimal(saifulProfit)) +" TK");
+                    textViewMisbaProfit.setText("Misba Profit\n"+String.format("%.2f", new BigDecimal(misbaProfit)) +" TK");
+
+                    //Chart data
                     JSONArray jsonArray = jsonObject.getJSONArray("monthly_client_count");
-
                     for (int i = 0; i < jsonArray.length(); i++){
 
                         JSONObject jsonObject1 = jsonArray.getJSONObject(i);
@@ -143,6 +169,7 @@ public class Dashboard extends AppCompatActivity {
                     BarData data = new BarData(month, bardataset);
                     bardataset.setColors(ColorTemplate.COLORFUL_COLORS);
                     chart.setData(data);
+
 
                 }catch (JSONException e){
                     e.printStackTrace();

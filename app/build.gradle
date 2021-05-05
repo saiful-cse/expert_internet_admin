@@ -6,8 +6,8 @@ android {
         applicationId "com.creativesaif.expert_internet_admin"
         minSdkVersion 22
         targetSdkVersion 28
-        versionCode 7
-        versionName "1.7.0"
+        versionCode 8
+        versionName "1.8.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
