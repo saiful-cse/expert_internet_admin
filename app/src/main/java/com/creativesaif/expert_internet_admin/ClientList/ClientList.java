@@ -24,7 +24,7 @@ public class ClientList extends AppCompatActivity {
         tabLayout = findViewById(R.id.tabLayout);
         adapter = new TabAdapter(getSupportFragmentManager());
         adapter.addFragment(new AleartList(), "Alert");
-        adapter.addFragment(new Over3DayClientList(), "3Day Over");
+        adapter.addFragment(new Over3DayClientList(), "5Day Over");
         adapter.addFragment(new ActiveList(), "Active");
         adapter.addFragment(new InactiveList(), "Inactive");
         adapter.addFragment(new UsernameList(), "Username");
