@@ -3,6 +3,7 @@ package com.creativesaif.expert_internet_admin.ClientList;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.support.design.widget.Snackbar;
@@ -25,9 +26,11 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
+import com.creativesaif.expert_internet_admin.TransactionList.MakeTransaction;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,7 +80,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
         progressDialog = new ProgressDialog(this);
         client_id = getIntent().getStringExtra("id");
 
-        preferences = this.getSharedPreferences("data", MODE_PRIVATE);
+        preferences = this.getSharedPreferences("users", MODE_PRIVATE);
 
         /*
         Id initialize
@@ -143,7 +146,11 @@ public class ClientDetailsEdit extends AppCompatActivity{
                         /*
                 Data validation
                  */
-                if (name.isEmpty()){
+                if (jwt == null){
+                    finish();
+                    startActivity(new Intent(ClientDetailsEdit.this, Login.class));
+
+                } else if (name.isEmpty()){
                     Snackbar.make(findViewById(android.R.id.content),"Write a client name",Snackbar.LENGTH_LONG).show();
 
                 }else if(phone.isEmpty() || phone.length() < 11){

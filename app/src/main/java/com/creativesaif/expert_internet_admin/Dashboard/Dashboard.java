@@ -151,10 +151,14 @@ public class Dashboard extends AppCompatActivity {
                     double misbaPercent = (misbaInvest/totalInvest)*100;
 
                     double monthlyProfit = Double.parseDouble(monthCredit) - Double.parseDouble(monthDebit);
-                    double saifulProfit = (saifulPercent/100)*monthlyProfit;
-                    double misbaProfit = (misbaPercent/100)*monthlyProfit;
+//                    double saifulProfit = (saifulPercent/100)*monthlyProfit;
+//                    double misbaProfit = (misbaPercent/100)*monthlyProfit;
+//
+                    double saifulProfit = monthlyProfit/2;
+                    double misbaProfit = monthlyProfit/2;
 
-                    textViewActive.setText("Active Client\n"+activeClient);
+
+                        textViewActive.setText("Active Client\n"+activeClient);
                     textViewInactive.setText("Inactive Client\n"+inactiveClient);
 
                     textViewMonthCredit.setText("This Month Credit\n"+monthCredit);
