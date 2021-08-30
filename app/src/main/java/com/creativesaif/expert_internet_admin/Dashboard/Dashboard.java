@@ -1,6 +1,8 @@
 package com.creativesaif.expert_internet_admin.Dashboard;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.support.design.widget.Snackbar;
@@ -10,10 +12,13 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.creativesaif.expert_internet_admin.ClientList.ClientDetails;
+import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
@@ -30,14 +35,15 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Dashboard extends AppCompatActivity {
 
     TextView textViewActive, textViewInactive, textViewMonthCredit, textViewMonthDebit,
             textViewOverCredit, textViewOverDebit, textViewTotalInvest,
             textViewSaifuPercent, textViewMisbaPercent, textViewSaifulProfit, textViewMisbaProfit;
-    String activeClient, inactiveClient, monthCredit, monthDebit, overCredit, overDebit;
-    private boolean isLoading = true;
+    String jwt, activeClient, inactiveClient, monthCredit, monthDebit, overCredit, overDebit;
     ProgressDialog progressDialog;
 
     ArrayList noOfClient;
@@ -46,6 +52,7 @@ public class Dashboard extends AppCompatActivity {
     BarChart chart;
 
     BarDataSet bardataset;
+    SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,17 +77,22 @@ public class Dashboard extends AppCompatActivity {
 
         noOfClient = new ArrayList();
         month = new ArrayList();
+        preferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
 
-        if (isLoading && isNetworkConnected()){
+        jwt = preferences.getString("jwt", null);
+
+        if (jwt == null){
+            finish();
+            startActivity(new Intent(Dashboard.this, Login.class));
+
+        }
+        else if (isNetworkConnected()){
 
             data_load();
 
         }else{
-
             Snackbar.make(findViewById(android.R.id.content),"Please!! Check internet connection.",Snackbar.LENGTH_LONG).show();
-
         }
-
 
     }
 
@@ -105,20 +117,26 @@ public class Dashboard extends AppCompatActivity {
     public void data_load()
     {
         progressDialog.showDialog();
-        isLoading = false;
         String url = getString(R.string.base_url)+getString(R.string.dashboard_data);
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
+                //Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
                 progressDialog.hideDialog();
-
-                //Toast.makeText(Dashboard.this,response,Toast.LENGTH_SHORT).show();
 
                 try{
 
                     JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("status");
+
+                    if (status.equals("401")){
+                        finish();
+                        startActivity(new Intent(Dashboard.this, Login.class));
+
+                    }else{
+
                     activeClient = jsonObject.getString("total_active_client");
                     inactiveClient = jsonObject.getString("total_inactive_client");
                     monthCredit = jsonObject.getString("current_month_total_credit");
@@ -170,6 +188,8 @@ public class Dashboard extends AppCompatActivity {
                     bardataset.setColors(ColorTemplate.COLORFUL_COLORS);
                     chart.setData(data);
 
+                    }
+
 
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -183,7 +203,16 @@ public class Dashboard extends AppCompatActivity {
                 Toast.makeText(Dashboard.this,error.toString(),Toast.LENGTH_LONG).show();
                 finish();
             }
-        });
+        }){
+            @Override
+            protected Map<String, String> getParams()throws AuthFailureError {
+                Map<String,String> map = new HashMap<>();
+
+                map.put("jwt", jwt);
+                return map;
+
+            }
+        };
         MySingleton.getInstance().addToRequestQueue(stringRequest);
 
     }

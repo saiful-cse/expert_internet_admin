@@ -2,6 +2,8 @@ package com.creativesaif.expert_internet_admin.TransactionList;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -22,6 +24,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.creativesaif.expert_internet_admin.ClientList.ClientDetails;
+import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
@@ -41,10 +44,10 @@ import java.util.Map;
 public class TransactionEdit extends AppCompatActivity {
 
     EditText edTxnId, edDate, edDetails, edCredit, edDebit;
-    String txnId, date, details, credit, debit;
+    String jwt, txnId, date, details, credit, debit;
     Button btnSearch, btnDelete, btnUpdate;
     TextView tvClientId, tvClientName, tvtype;
-
+    private SharedPreferences sharedPreferences;
     ProgressDialog progressDialog;
 
     CardView cardViewDetails;
@@ -59,6 +62,8 @@ public class TransactionEdit extends AppCompatActivity {
         //txn details invisible
         cardViewDetails = findViewById(R.id.details_card);
         cardViewDetails.setVisibility(View.GONE);
+
+        sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
 
         /*
         ID's initialize
@@ -85,6 +90,7 @@ public class TransactionEdit extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 txnId = edTxnId.getText().toString().trim();
+                String userid = sharedPreferences.getString("userid", null);
 
                 if(!isNetworkConnected())
                 {
@@ -93,10 +99,17 @@ public class TransactionEdit extends AppCompatActivity {
                 }else if(txnId.isEmpty())
                 {
                     Snackbar.make(findViewById(android.R.id.content),"Write a txn id",Snackbar.LENGTH_LONG).show();
+
                 }else {
+                    assert userid != null;
+                    if(userid.equals("9161")) {
 
-                    txn_load(txnId);
+                        txn_load(txnId);
 
+                    }else {
+                        Toast.makeText(getApplicationContext(), "You are not permitted to edit", Toast.LENGTH_LONG).show();
+
+                    }
                 }
 
             }
@@ -108,8 +121,13 @@ public class TransactionEdit extends AppCompatActivity {
             public void onClick(View view) {
 
                 date = edDate.getText().toString().trim();
+                jwt = sharedPreferences.getString("jwt", null);
 
-                if(!isNetworkConnected())
+                if (jwt == null){
+                    finish();
+                    startActivity(new Intent(TransactionEdit.this, Login.class));
+
+                }else if(!isNetworkConnected())
                 {
                     Snackbar.make(findViewById(android.R.id.content),"Please!! Check Internet Connection or Try again later.",Snackbar.LENGTH_LONG).show();
 
@@ -120,8 +138,8 @@ public class TransactionEdit extends AppCompatActivity {
                     //5 day decrease from current date
                     cal.add(Calendar.DAY_OF_MONTH, -5);
                     Date currentDate = cal.getTime();
-                    try {
 
+                    try {
                         Date txnDate = sdf.parse(date);
                         int result = currentDate.compareTo(txnDate);
 
@@ -129,8 +147,6 @@ public class TransactionEdit extends AppCompatActivity {
                         if (result <= 0) {
 
                             deleteDialog();
-
-
                         } else {
                             //System.out.println("no editable");
                             Toast.makeText(getApplicationContext(), "Time expired, 5 day over.", Toast.LENGTH_LONG).show();
@@ -154,13 +170,15 @@ public class TransactionEdit extends AppCompatActivity {
                 details = edDetails.getText().toString().trim();
                 credit = edCredit.getText().toString().trim();
                 debit = edDebit.getText().toString().trim();
+                jwt = sharedPreferences.getString("jwt", null);
 
-                if(!isNetworkConnected())
-                {
-                    Snackbar.make(findViewById(android.R.id.content),"Please!! Check Internet Connection or Try again later.",Snackbar.LENGTH_LONG).show();
+                if (jwt == null){
+                    finish();
+                    startActivity(new Intent(TransactionEdit.this, Login.class));
 
-                }else if(txnId.isEmpty()){
+                } else if(txnId.isEmpty()){
                     Snackbar.make(findViewById(android.R.id.content),"Txn ID cannot empty",Snackbar.LENGTH_LONG).show();
+
                 }else if(date.isEmpty()){
                     Snackbar.make(findViewById(android.R.id.content),"Date cannot empty",Snackbar.LENGTH_LONG).show();
 
@@ -172,6 +190,10 @@ public class TransactionEdit extends AppCompatActivity {
 
                 }else if(debit.isEmpty()){
                     Snackbar.make(findViewById(android.R.id.content),"Debit cannot empty",Snackbar.LENGTH_LONG).show();
+
+                }else if(!isNetworkConnected())
+                {
+                    Snackbar.make(findViewById(android.R.id.content),"Please!! Check Internet Connection or Try again later.",Snackbar.LENGTH_LONG).show();
 
                 }
                 else {
@@ -215,11 +237,7 @@ public class TransactionEdit extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
 
-
                 progressDialog.hideDialog();
-
-                //Toast.makeText(ClientDetails.this,response,Toast.LENGTH_SHORT).show();
-
                 try{
 
                     JSONObject jsonObject = new JSONObject(response);
@@ -273,12 +291,12 @@ public class TransactionEdit extends AppCompatActivity {
     }
 
 
-    public void txn_delete(String txnId)
+    public void txn_delete(final String txnId)
     {
         progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.txn_delete)+"?txn_id="+txnId;
+        String url = getString(R.string.base_url)+getString(R.string.txn_delete);
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
@@ -287,14 +305,19 @@ public class TransactionEdit extends AppCompatActivity {
                 try{
 
                     JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("status");
+                    String message = jsonObject.getString("message");
 
-                    boolean m = jsonObject.has("message");
-                    if (m)
-                    {
-                        String message = jsonObject.getString("message");
-                        Toast.makeText(TransactionEdit.this,message,Toast.LENGTH_LONG).show();
+                    if (status.equals("200")){
+                        Toast.makeText(TransactionEdit.this, message,Toast.LENGTH_LONG).show();
                         finish();
 
+                    }else if(status.equals("401")){
+
+                        warningShow(message);
+
+                    }else{
+                        Toast.makeText(TransactionEdit.this, message,Toast.LENGTH_LONG).show();
                     }
 
                 }catch (JSONException e){
@@ -310,7 +333,17 @@ public class TransactionEdit extends AppCompatActivity {
                 Toast.makeText(TransactionEdit.this,error.toString(),Toast.LENGTH_LONG).show();
                 finish();
             }
-        });
+        }){
+            @Override
+            protected Map<String, String> getParams()throws AuthFailureError {
+                Map<String,String> map = new HashMap<>();
+
+                map.put("jwt", jwt);
+                map.put("txn_id", txnId);
+                return map;
+
+            }
+        };
         MySingleton.getInstance().addToRequestQueue(stringRequest);
 
     }
@@ -330,14 +363,19 @@ public class TransactionEdit extends AppCompatActivity {
                 try{
 
                     JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("status");
+                    String message = jsonObject.getString("message");
 
-                    boolean m = jsonObject.has("message");
-                    if (m)
-                    {
-                        String message = jsonObject.getString("message");
-                        Toast.makeText(TransactionEdit.this,message,Toast.LENGTH_SHORT).show();
+                    if (status.equals("200")){
+                        Toast.makeText(TransactionEdit.this, message,Toast.LENGTH_LONG).show();
                         finish();
 
+                    }else if(status.equals("401")){
+
+                        warningShow(message);
+
+                    }else{
+                        Toast.makeText(TransactionEdit.this, message,Toast.LENGTH_LONG).show();
                     }
 
                 }catch (JSONException e){
@@ -356,6 +394,7 @@ public class TransactionEdit extends AppCompatActivity {
             protected Map<String, String> getParams()throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
 
+                map.put("jwt", jwt);
                 map.put("txn_id", txnId);
                 map.put("date", date);
                 map.put("details", details);
@@ -411,5 +450,31 @@ public class TransactionEdit extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void warningShow(String message){
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
+        alert.setCancelable(false);
+        alert.setTitle("Warning!!");
+        alert.setMessage(message);
+        alert.setIcon(R.drawable.warning_icon);
+
+        alert.setPositiveButton("Login", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                finish();
+                startActivity(new Intent(TransactionEdit.this, Login.class));
+
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        android.app.AlertDialog dlg = alert.create();
+        dlg.show();
     }
 }

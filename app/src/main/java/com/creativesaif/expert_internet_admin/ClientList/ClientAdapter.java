@@ -39,11 +39,20 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.EachClient
     @Override
     public void onBindViewHolder(@NonNull EachClientView eachClientView, int i) {
 
-        Client client = clientList.get(i);
+        final Client client = clientList.get(i);
 
         eachClientView.textViewName.setText(client.getName());
         eachClientView.textViewId.setText("#"+client.getId()+", "+client.getArea());
         eachClientView.textViewPhone.setText("Mobile: "+client.getPhone()+", PPPoE: "+client.getUsername());
+
+        eachClientView.textViewName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(context, ClientDetails.class);
+                i.putExtra("id", client.getId());
+                context.startActivity(i);
+            }
+        });
 
     }
 
@@ -66,17 +75,6 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.EachClient
             textViewId = itemView.findViewById(R.id.client_id);
             textViewPhone = itemView.findViewById(R.id.client_phone);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-
-                    Client client = clientListView.get(position);
-                    Intent i = new Intent(context, ClientDetails.class);
-                    i.putExtra("client", client);
-                    context.startActivity(i);
-                }
-            });
         }
     }
 }

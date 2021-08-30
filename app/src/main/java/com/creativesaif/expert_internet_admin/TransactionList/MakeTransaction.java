@@ -1,6 +1,8 @@
 package com.creativesaif.expert_internet_admin.TransactionList;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.support.design.widget.Snackbar;
@@ -21,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.creativesaif.expert_internet_admin.ClientList.ClientDetails;
+import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
@@ -40,6 +43,7 @@ public class MakeTransaction extends AppCompatActivity {
     String txn_type, txn_method, amount, details;
     Button buttonSubmmit;
     SharedPreferences sharedPreferences;
+    private String jwt, userid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +65,15 @@ public class MakeTransaction extends AppCompatActivity {
 
                 amount = editTextAmount.getText().toString().trim();
                 details = editTextDetails.getText().toString().trim();
+                jwt = sharedPreferences.getString("jwt", null);
+                userid = sharedPreferences.getString("userid", null);
 
-                if(!isNetworkConnected())
-                {
-                    Snackbar.make(findViewById(android.R.id.content),"Please!! Check Internet Connection or Try again later.",Snackbar.LENGTH_LONG).show();
+                if (jwt == null){
+                    finish();
+                    startActivity(new Intent(MakeTransaction.this, Login.class));
 
-                }else if(radioGroup.getCheckedRadioButtonId() == -1)
+                }
+                else if(radioGroup.getCheckedRadioButtonId() == -1)
                 {
                     Snackbar.make(findViewById(android.R.id.content),"Select txn type",Snackbar.LENGTH_LONG).show();
 
@@ -79,6 +86,11 @@ public class MakeTransaction extends AppCompatActivity {
                 }else if(details.isEmpty())
                 {
                     Snackbar.make(findViewById(android.R.id.content),"Write a details",Snackbar.LENGTH_LONG).show();
+
+                }else if(!isNetworkConnected())
+                {
+                    Snackbar.make(findViewById(android.R.id.content),"Please!! Check Internet Connection or Try again later.",Snackbar.LENGTH_LONG).show();
+
                 }else {
 
                     int selectedTxnType = radioGroup.getCheckedRadioButtonId();
@@ -88,11 +100,8 @@ public class MakeTransaction extends AppCompatActivity {
                     txn_type = radioButton.getText().toString().trim();
                     txn_method = radioButton2.getText().toString().trim();
 
-                    //Snackbar.make(findViewById(android.R.id.content),txn_type,Snackbar.LENGTH_LONG).show();
-
                     make_txn();
                 }
-
 
             }
         });
@@ -125,15 +134,19 @@ public class MakeTransaction extends AppCompatActivity {
                 try{
 
                     JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("status");
                     String message = jsonObject.getString("message");
 
-                    if (message.equals("201"))
-                    {
-                        Toast.makeText(MakeTransaction.this,"Your transaction has been successfully.",Toast.LENGTH_LONG).show();
+                    if (status.equals("200")){
+                        Toast.makeText(MakeTransaction.this, message,Toast.LENGTH_LONG).show();
                         finish();
 
+                    }else if(status.equals("401")){
+
+                        warningShow(message);
+
                     }else{
-                        Toast.makeText(MakeTransaction.this,message,Toast.LENGTH_LONG).show();
+                        Toast.makeText(MakeTransaction.this, message,Toast.LENGTH_LONG).show();
                     }
 
                 }catch (JSONException e){
@@ -152,11 +165,12 @@ public class MakeTransaction extends AppCompatActivity {
             protected Map<String, String> getParams()throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
 
+                map.put("jwt", jwt);
                 map.put("type", txn_type);
                 map.put("method", txn_method);
                 map.put("amount", amount);
                 map.put("details", details);
-                map.put("userid", sharedPreferences.getString("userid", null));
+                map.put("userid", userid);
                 return map;
 
             }
@@ -176,4 +190,32 @@ public class MakeTransaction extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public void warningShow(String message){
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
+        alert.setCancelable(false);
+        alert.setTitle("Warning!!");
+        alert.setMessage(message);
+        alert.setIcon(R.drawable.warning_icon);
+
+        alert.setPositiveButton("Login", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                finish();
+                startActivity(new Intent(MakeTransaction.this, Login.class));
+
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        android.app.AlertDialog dlg = alert.create();
+        dlg.show();
+    }
+
+
 }

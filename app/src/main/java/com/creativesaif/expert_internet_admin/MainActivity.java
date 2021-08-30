@@ -225,9 +225,19 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        String userid = sharedPreferences.getString("userid", null);
+
 
         if (id == R.id.nav_dashboard) {
-            startActivity(new Intent(MainActivity.this, Dashboard.class));
+
+            assert userid != null;
+            if(userid.equals("9161") || userid.equals("8991")) {
+
+                startActivity(new Intent(MainActivity.this, Dashboard.class));
+
+            }else {
+                Toast.makeText(getApplicationContext(), "You are not permitted to view", Toast.LENGTH_LONG).show();
+            }
 
         } else if (id == R.id.nav_clientlist) {
 
@@ -270,8 +280,6 @@ public class MainActivity extends AppCompatActivity
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
-                //Toast.makeText(MainActivity.this,response,Toast.LENGTH_SHORT).show();
 
                 isLoading = true;
                 swipeRefreshLayout.setRefreshing(false);

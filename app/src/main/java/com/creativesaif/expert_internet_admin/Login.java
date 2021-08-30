@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -33,7 +34,7 @@ public class Login extends AppCompatActivity {
 
     EditText editTextUserId, editTextUserPin;
     SharedPreferences sharedPreferences;
-    ImageView imageViewLogin;
+    Button btnLogin;
     ProgressBar progressBar;
     TextView viewversionname;
 
@@ -51,29 +52,30 @@ public class Login extends AppCompatActivity {
         try{
 
             PackageInfo info = manager.getPackageInfo(this.getPackageName(), PackageManager.GET_ACTIVITIES);
-            viewversionname.setText("Version: "+info.versionName+"\n"+"Web API version: exp-v3.3");
+            viewversionname.setText("Version: "+info.versionName+"\n"+"Web API version: exp-v4.1");
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
 
-        imageViewLogin.setOnClickListener(new View.OnClickListener() {
+        btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!isNetworkConnected()){
+                if (editTextUserId.getText().toString().trim().isEmpty()){
 
-                    Toast.makeText(Login.this,"Check internet Connection",Toast.LENGTH_LONG).show();
-
-                }
-                else if (editTextUserId.getText().toString().trim().isEmpty()){
-
-                    Toast.makeText(Login.this,"Enter user id",Toast.LENGTH_LONG).show();
+                    Toast.makeText(Login.this,"Enter user ID",Toast.LENGTH_LONG).show();
 
                 }else if(editTextUserPin.getText().toString().trim().isEmpty()){
 
                     Toast.makeText(Login.this,"Enter pin",Toast.LENGTH_LONG).show();
 
-                }else {
+                }else if(!isNetworkConnected()){
+
+                    Toast.makeText(Login.this,"Check internet Connection",Toast.LENGTH_LONG).show();
+
+                }
+                else {
+
                     login();
                 }
             }
@@ -85,7 +87,7 @@ public class Login extends AppCompatActivity {
         editTextUserPin = findViewById(R.id.edUserPin);
         sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
         progressBar = findViewById(R.id.progressbar);
-        imageViewLogin = findViewById(R.id.login);
+        btnLogin = findViewById(R.id.login);
         viewversionname = findViewById(R.id.version);
     }
 
@@ -105,18 +107,21 @@ public class Login extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
 
-                //Toast.makeText(MainActivity.this,response,Toast.LENGTH_SHORT).show();
-
                 progressBar.setVisibility(View.GONE);
 
                 try {
                     JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("status");
                     String message = jsonObject.getString("message");
 
-                    if (message.equals("200")) {
 
-                        //session, store id
+                    if (status.equals("200")) {
+
+                        String jwt = jsonObject.getString("jwt");
+
+                        //store jwt and userid
                         sharedPreferences.edit().putString("userid", editTextUserId.getText().toString().trim()).apply();
+                        sharedPreferences.edit().putString("jwt", jwt).apply();
 
                         Intent intent = new Intent(Login.this, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.support.design.widget.Snackbar;
@@ -33,6 +34,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.creativesaif.expert_internet_admin.Dashboard.Dashboard;
+import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.MainActivity;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.NewsFeed.News;
@@ -57,22 +59,19 @@ import java.util.Map;
 public class ClientDetails extends AppCompatActivity {
 
     Button btnDetailsEdit, btnSmsSend, btnSmsHistory;
-    Client client;
-    private TextView tvId, tvName, tvPhone, tvAddress, tvEmail, tvArea, tvIntConnType, tvUsername, tvPassword, tvOnuMac,
-    tvSpeed, tvFee, tvBillType, tvRegDate, tvActiveDate, tvInactiveDate;
+
+    private TextView tvId, tvMode, tvName, tvPhone, tvAddress, tvEmail, tvArea,
+            tvUsername, tvPassword,
+            tvSpeed, tvFee, tvPaymentMethod, tvRegDate, tvActiveDate, tvInactiveDate;
 
     ImageView user_call;
-    String got_id;
+    private String jwt, client_id, name, phone, user_id;
 
-    SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences;
 
-    /*
-    Get text from server. store on string;
-     */
-    String mode, id, name, phone, address, email, area, int_type, username, password, onu_mac,
-    speed, fee, bill_type;
+    private String informMessage;
 
-    String informMessage;
+    private CardView cardViewAlert;
 
     /*
     Payment Details
@@ -106,7 +105,6 @@ public class ClientDetails extends AppCompatActivity {
         /*
         Txn ID initialize
          */
-
         swipeRefreshLayout = findViewById(R.id.details_refresh);
 
         editTextAmount = findViewById(R.id.edAmount);
@@ -115,26 +113,27 @@ public class ClientDetails extends AppCompatActivity {
         /*
         ID initialize
          */
+        cardViewAlert = findViewById(R.id.cardViewAlert);
 
         sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
 
         user_call = findViewById(R.id.user_direct_call);
 
         tvId = findViewById(R.id.id);
+        tvMode = findViewById(R.id.mode);
         tvName = findViewById(R.id.name);
         tvPhone = findViewById(R.id.phone);
         tvAddress = findViewById(R.id.address);
         tvEmail = findViewById(R.id.email);
         tvArea = findViewById(R.id.area);
 
-        tvIntConnType = findViewById(R.id.int_type);
         tvUsername = findViewById(R.id.username);
         tvPassword = findViewById(R.id.password);
-        tvOnuMac = findViewById(R.id.onu_mac);
 
         tvSpeed = findViewById(R.id.speed);
         tvFee = findViewById(R.id.fee);
-        tvBillType = findViewById(R.id.bill_type);
+        tvPaymentMethod = findViewById(R.id.payment_method);
+
         radioGroup2 = findViewById(R.id.radioGroup2);
         tvRegDate = findViewById(R.id.reg_date);
         tvActiveDate = findViewById(R.id.active_date);
@@ -145,13 +144,12 @@ public class ClientDetails extends AppCompatActivity {
          /*
         Instance create for client
          */
-        client = getIntent().getExtras().getParcelable("client");
-        got_id = client.getId();
+        client_id = getIntent().getStringExtra("id");
 
         if (isNetworkConnected())
         {
-            details_load(got_id );
-            load_payment_details(got_id);
+            details_load(client_id );
+            load_payment_details(client_id);
 
         }else{
 
@@ -178,8 +176,8 @@ public class ClientDetails extends AppCompatActivity {
 
                 }
                 else{
-                    details_load(got_id);
-                    load_payment_details(got_id);
+                    details_load(client_id);
+                    load_payment_details(client_id);
                     swipeRefreshLayout.setRefreshing(false);
                 }
             }
@@ -205,24 +203,9 @@ public class ClientDetails extends AppCompatActivity {
         btnDetailsEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent i = new Intent(ClientDetails.this,ClientDetailsEdit.class);
-                i.putExtra("mode",mode);
-                i.putExtra("id",id);
-                i.putExtra("name",name);
-                i.putExtra("phone",phone);
-                i.putExtra("address",address);
-                i.putExtra("email",email);
-                i.putExtra("area",area);
-
-                i.putExtra("int_type",int_type);
-                i.putExtra("username",username);
-                i.putExtra("password",password);
-                i.putExtra("onu_mac",onu_mac);
-
-                i.putExtra("speed",speed);
-                i.putExtra("fee",fee);
-                i.putExtra("bill_type",bill_type);
-
+                i.putExtra("id", client_id);
                 startActivity(i);
             }
         });
@@ -235,13 +218,14 @@ public class ClientDetails extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 amount = editTextAmount.getText().toString().trim();
+                jwt = sharedPreferences.getString("jwt", null);
+                user_id = sharedPreferences.getString("userid", null);
 
+                if (jwt == null || user_id == null){
+                    finish();
+                    startActivity(new Intent(ClientDetails.this, Login.class));
 
-                 if(!isNetworkConnected())
-                {
-                    Snackbar.make(findViewById(android.R.id.content),"Please!! Check Internet Connection or Try again later.",Snackbar.LENGTH_LONG).show();
-
-                }else if(radioGroup.getCheckedRadioButtonId() == -1)
+                } else if(radioGroup.getCheckedRadioButtonId() == -1)
                 {
                     Snackbar.make(findViewById(android.R.id.content),"Select payment type",Snackbar.LENGTH_LONG).show();
 
@@ -252,8 +236,11 @@ public class ClientDetails extends AppCompatActivity {
                 {
                     Snackbar.make(findViewById(android.R.id.content),"Write an amount",Snackbar.LENGTH_LONG).show();
 
-                }else
-                {
+                }else if(!isNetworkConnected()){
+                    Snackbar.make(findViewById(android.R.id.content),"Please!! Check Internet Connection or Try again later.",Snackbar.LENGTH_LONG).show();
+
+                } else {
+
                     int selectedId = radioGroup.getCheckedRadioButtonId();
                     int selectedMethod = radioGroup2.getCheckedRadioButtonId();
                     RadioButton radioButton = findViewById(selectedId);
@@ -275,15 +262,20 @@ public class ClientDetails extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 informMessage = editTextInformSms.getText().toString().trim();
+                jwt = sharedPreferences.getString("jwt", null);
 
-                if(!isNetworkConnected()) {
-                    Snackbar.make(findViewById(android.R.id.content),"Please!! Check Internet Connection or Try again later.",Snackbar.LENGTH_LONG).show();
+                if (jwt == null){
+                    finish();
+                    startActivity(new Intent(ClientDetails.this, Login.class));
 
-                }else if(informMessage.isEmpty())
+                } else if(informMessage.isEmpty())
                 {
                     Snackbar.make(findViewById(android.R.id.content),"Write a message.",Snackbar.LENGTH_LONG).show();
 
-                }else{
+                }else if(!isNetworkConnected()) {
+                    Snackbar.make(findViewById(android.R.id.content),"Please!! Check Internet Connection or Try again later.",Snackbar.LENGTH_LONG).show();
+
+                } else{
                     inform_confirm_dialog();
                 }
             }
@@ -349,47 +341,38 @@ public class ClientDetails extends AppCompatActivity {
 
                             JSONObject jsonObject1 = jsonArray.getJSONObject(i);
 
-                            /*
-                            getting text from json array and store to string
-                             */
-
-                            mode = jsonObject1.getString("mode");
-
-                            id = jsonObject1.getString("id");
-                            name = jsonObject1.getString("name");
+                            //Set data on string variable
                             phone = jsonObject1.getString("phone");
-                            address = jsonObject1.getString("address");
-                            email = jsonObject1.getString("email");
-                            area = jsonObject1.getString("area");
-
-                            int_type = jsonObject1.getString("int_conn_type");
-                            username = jsonObject1.getString("username");
-                            password = jsonObject1.getString("password");
-                            onu_mac = jsonObject1.getString("onu_mac");
-
-                            speed = jsonObject1.getString("speed");
-                            fee = jsonObject1.getString("fee");
-                            bill_type = jsonObject1.getString("bill_type");
+                            name = jsonObject1.getString("name");
 
                             /*
                             Set text on Text View
                              */
+                            tvId.setText(jsonObject1.getString("id"));
 
-                            tvId.setText(id);
+                            if (jsonObject1.getString("mode").equals("Active")){
+                                tvMode.setText(jsonObject1.getString("mode"));
+                                tvMode.setTextColor(Color.GREEN);
+
+                            }else{
+                                tvMode.setText(jsonObject1.getString("mode"));
+                                tvMode.setTextColor(Color.RED);
+                            }
+
+
                             tvName.setText(name);
                             tvPhone.setText(phone);
-                            tvAddress.setText(address);
-                            tvEmail.setText(email);
-                            tvArea.setText(area);
+                            tvAddress.setText(jsonObject1.getString("address"));
+                            tvEmail.setText(jsonObject1.getString("email"));
+                            tvArea.setText(jsonObject1.getString("area"));
 
-                            tvIntConnType.setText(int_type);
-                            tvUsername.setText(username);
-                            tvPassword.setText(password);
-                            tvOnuMac.setText(onu_mac);
+                            tvUsername.setText(jsonObject1.getString("username"));
+                            tvPassword.setText(jsonObject1.getString("password"));
 
-                            tvSpeed.setText(speed);
+                            tvSpeed.setText(jsonObject1.getString("speed"));
                             tvFee.setText(jsonObject1.getString("fee"));
-                            tvBillType.setText(bill_type);
+                            tvPaymentMethod.setText(jsonObject1.getString("payment_method"));
+
                             tvRegDate.setText(jsonObject1.getString("reg_date"));
                             tvActiveDate.setText(jsonObject1.getString("active_date"));
                             tvInactiveDate.setText(jsonObject1.getString("inactive_date"));
@@ -424,8 +407,6 @@ public class ClientDetails extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
-                //Toast.makeText(ClientDetails.this,response,Toast.LENGTH_SHORT).show();
 
                 try{
 
@@ -489,17 +470,20 @@ public class ClientDetails extends AppCompatActivity {
 
                 try{
 
-
                     JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("status");
                     String message = jsonObject.getString("message");
 
-                    if (message.equals("201"))
-                    {
-                        Toast.makeText(ClientDetails.this,"Your payment has been successfully.",Toast.LENGTH_LONG).show();
+                    if (status.equals("200")){
+                        Toast.makeText(ClientDetails.this, message,Toast.LENGTH_LONG).show();
                         finish();
 
+                    }else if(status.equals("401")){
+
+                        warningShow(message);
+
                     }else{
-                        Toast.makeText(ClientDetails.this,message,Toast.LENGTH_LONG).show();
+                        Toast.makeText(ClientDetails.this, message,Toast.LENGTH_LONG).show();
                     }
 
                 }catch (JSONException e){
@@ -519,13 +503,14 @@ public class ClientDetails extends AppCompatActivity {
             protected Map<String, String> getParams()throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
 
-                map.put("id", got_id);
+                map.put("jwt", jwt);
+                map.put("id", client_id);
                 map.put("name", name);
                 map.put("type", payment_type);
                 map.put("method", payment_method);
-                map.put("userid", sharedPreferences.getString("userid", null));
+                map.put("userid", user_id);
                 map.put("amount", amount);
-                map.put("details", name+", "+id+", "+payment_type);
+                map.put("details", name+", "+client_id+", "+payment_type);
                 return map;
 
             }
@@ -551,12 +536,16 @@ public class ClientDetails extends AppCompatActivity {
                 try{
 
                     JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("status");
                     String message = jsonObject.getString("message");
 
-                    if (message.equals("200")) {
-
-                        Toast.makeText(ClientDetails.this, "Message has been delivered.",Toast.LENGTH_LONG).show();
+                    if (status.equals("200")){
+                        Toast.makeText(ClientDetails.this, message,Toast.LENGTH_LONG).show();
                         finish();
+
+                    }else if(status.equals("401")){
+
+                        warningShow(message);
 
                     }else{
                         Toast.makeText(ClientDetails.this, message,Toast.LENGTH_LONG).show();
@@ -578,9 +567,10 @@ public class ClientDetails extends AppCompatActivity {
             protected Map<String, String> getParams()throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
 
+                map.put("jwt", jwt);
                 map.put("message", informMessage);
                 map.put("phone", phone);
-                map.put("client_id", id);
+                map.put("client_id", client_id);
 
                 return map;
 
@@ -595,7 +585,7 @@ public class ClientDetails extends AppCompatActivity {
         AlertDialog.Builder aleart1 = new AlertDialog.Builder(this);
         aleart1.setCancelable(false);
         aleart1.setTitle("Please Confirm your transaction!!");
-        aleart1.setMessage("Your payment submit to \n"+"ID: "+got_id+"\n"+"Name: "+name+"\n"+"Type: "+payment_type+"\n"+"Amount: "+amount);
+        aleart1.setMessage("Your payment submit to \n"+"ID: "+client_id+"\n"+"Name: "+name+"\n"+"Type: "+payment_type+"\n"+"Amount: "+amount);
         aleart1.setIcon(R.drawable.warning_icon);
 
         aleart1.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
@@ -639,20 +629,29 @@ public class ClientDetails extends AppCompatActivity {
         dlg.show();
     }
 
-    public void activity_refresh(String message){
-        AlertDialog.Builder aleart1 = new AlertDialog.Builder(this);
-        aleart1.setCancelable(false);
-        aleart1.setMessage(message);
-        aleart1.setIcon(R.drawable.done);
+    public void warningShow(String message){
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
+        alert.setCancelable(false);
+        alert.setTitle("Warning!!");
+        alert.setMessage(message);
+        alert.setIcon(R.drawable.warning_icon);
 
-        aleart1.setPositiveButton("Refresh", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton("Login", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                details_load(got_id);
-                load_payment_details(got_id);
+                finish();
+                startActivity(new Intent(ClientDetails.this, Login.class));
+
             }
         });
-        AlertDialog dlg = aleart1.create();
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        android.app.AlertDialog dlg = alert.create();
         dlg.show();
     }
 

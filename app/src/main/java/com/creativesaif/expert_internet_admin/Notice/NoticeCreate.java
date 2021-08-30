@@ -2,6 +2,8 @@ package com.creativesaif.expert_internet_admin.Notice;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -25,7 +27,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.creativesaif.expert_internet_admin.ClientList.ClientDetails;
 import com.creativesaif.expert_internet_admin.ClientList.ClientDetailsEdit;
+import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
@@ -41,13 +45,11 @@ import java.util.Map;
 
 public class NoticeCreate extends AppCompatActivity {
 
-    EditText editTextAlertSms , editTextActiveClientMsg, editTextNotice;
+    EditText editTextActiveClientMsg, editTextNotice;
     ProgressDialog progressDialog;
-    String message, activeClientMessage, notice;
+    String jwt, activeClientMessage, notice;
     Button buttonAlertSmsSend, buttonActiveSmsSend, notice_Post;
-    TextView textViewTotlaAlertClient, textViewSent, textViewUnSent;
-    int countUnsentSms, totalActiveClient;
-
+    private SharedPreferences preferences;
 
     /*
     Area load from server
@@ -65,6 +67,8 @@ public class NoticeCreate extends AppCompatActivity {
 
 
         // ---------- notice ------------
+        preferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
+
         editTextNotice = findViewById(R.id.edNotice);
         progressDialog = new ProgressDialog(this);
         notice_Post = findViewById(R.id.btnNoticePost);
@@ -88,36 +92,25 @@ public class NoticeCreate extends AppCompatActivity {
 
         // ----- sms service for alert client -----
 
-        textViewTotlaAlertClient = findViewById(R.id.tvTotalClient);
-        textViewSent = findViewById(R.id.tvSent);
-        textViewUnSent = findViewById(R.id.tvUnSent);
-
-        editTextAlertSms = findViewById(R.id.edAlertSms);
         buttonAlertSmsSend = findViewById(R.id.btnAlertSmsSend);
         buttonActiveSmsSend = findViewById(R.id.btnActiveSmsSend);
-
-        //Fetching alert client sms status
-        getSmsStatus();
 
         buttonAlertSmsSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (countUnsentSms > 0 ){
+                jwt = preferences.getString("jwt", null);
 
-                    message = editTextAlertSms.getText().toString().trim();
-                    if(message.isEmpty()){
-                        Toast.makeText(NoticeCreate.this,"Write SMS",Toast.LENGTH_SHORT).show();
+                if (jwt == null ){
+                    finish();
+                    startActivity(new Intent(NoticeCreate.this, Login.class));
 
-                    }else if(!isNetworkConnected()){
-                        Toast.makeText(NoticeCreate.this,"Check Internet Connection.",Toast.LENGTH_SHORT).show();
-
-                    }else{
-                        //confirm dialog
-                        warning_alert_client_sms();
-                    }
+                }
+                else if(!isNetworkConnected()){
+                    Toast.makeText(NoticeCreate.this,"Check Internet Connection.",Toast.LENGTH_SHORT).show();
 
                 }else{
-                    Toast.makeText(NoticeCreate.this,"Nothing unsent alert client.",Toast.LENGTH_SHORT).show();
+                    //confirm dialog
+                    warning_alert_client_sms();
                 }
             }
         });
@@ -127,7 +120,13 @@ public class NoticeCreate extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 activeClientMessage = editTextActiveClientMsg.getText().toString().trim();
-                if(activeClientMessage.isEmpty()){
+                jwt = preferences.getString("jwt", null);
+
+                if (jwt == null ){
+                    finish();
+                    startActivity(new Intent(NoticeCreate.this, Login.class));
+
+                } else if(activeClientMessage.isEmpty()){
                     Toast.makeText(NoticeCreate.this,"Write SMS",Toast.LENGTH_SHORT).show();
 
                 }else if(!isNetworkConnected()){
@@ -157,12 +156,16 @@ public class NoticeCreate extends AppCompatActivity {
 
                 try{
                     JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("status");
                     String message = jsonObject.getString("message");
 
-                    if (message.equals("200")) {
-
-                        Toast.makeText(NoticeCreate.this, "Message has been delivered.",Toast.LENGTH_LONG).show();
+                    if (status.equals("200")){
+                        Toast.makeText(NoticeCreate.this, message,Toast.LENGTH_LONG).show();
                         finish();
+
+                    }else if(status.equals("401")){
+
+                        warningShow(message);
 
                     }else{
                         Toast.makeText(NoticeCreate.this, message,Toast.LENGTH_LONG).show();
@@ -184,7 +187,7 @@ public class NoticeCreate extends AppCompatActivity {
             protected Map<String, String> getParams()throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
 
-                map.put("message", message);
+                map.put("jwt", jwt);
                 return map;
 
             }
@@ -207,12 +210,16 @@ public class NoticeCreate extends AppCompatActivity {
 
                 try{
                     JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("status");
                     String message = jsonObject.getString("message");
 
-                    if (message.equals("200")) {
-
-                        Toast.makeText(NoticeCreate.this, "Message has been delivered.",Toast.LENGTH_LONG).show();
+                    if (status.equals("200")){
+                        Toast.makeText(NoticeCreate.this, message,Toast.LENGTH_LONG).show();
                         finish();
+
+                    }else if(status.equals("401")){
+
+                        warningShow(message);
 
                     }else{
                         Toast.makeText(NoticeCreate.this, message,Toast.LENGTH_LONG).show();
@@ -234,6 +241,7 @@ public class NoticeCreate extends AppCompatActivity {
             protected Map<String, String> getParams()throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
 
+                map.put("jwt", jwt);
                 map.put("message", activeClientMessage);
                 return map;
 
@@ -295,59 +303,16 @@ public class NoticeCreate extends AppCompatActivity {
 
                 map.put("notice", notice);
                 return map;
-
             }
         };
         MySingleton.getInstance().addToRequestQueue(stringRequest);
     }
 
-
-    private void getSmsStatus() {
-
-        progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.get_sms_status);
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                progressDialog.hideDialog();
-
-                try{
-
-                    JSONObject jsonObject = new JSONObject(response);
-
-                    textViewTotlaAlertClient.setText(jsonObject.getString("total_alert"));
-                    textViewSent.setText(jsonObject.getString("sent"));
-                    countUnsentSms = Integer.parseInt(jsonObject.getString("unsent"));
-                    textViewUnSent.setText(jsonObject.getString("unsent"));
-                    totalActiveClient = Integer.parseInt(jsonObject.getString("total_active"));
-
-                    //Toast.makeText(NoticeCreate.this,response,Toast.LENGTH_LONG).show();
-
-
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.hideDialog();
-                Toast.makeText(NoticeCreate.this,error.toString(),Toast.LENGTH_LONG).show();
-                finish();
-            }
-        });
-        MySingleton.getInstance().addToRequestQueue(stringRequest);
-    }
-
-
     public void warning_alert_client_sms(){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setCancelable(false);
-        alert.setTitle("Warning!!");
-        alert.setMessage("Message will be send to "+countUnsentSms+" alert clients");
+        alert.setCancelable(true);
+        alert.setTitle("সতর্কতা!!");
+        alert.setMessage("যে সব ক্লায়েন্টদের কানেকশনের মেয়াদ ১ মাস হয়ে গেছে তাদের ফোনে এস এম এস যাবে।");
         alert.setIcon(R.drawable.warning_icon);
 
         alert.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
@@ -370,9 +335,9 @@ public class NoticeCreate extends AppCompatActivity {
 
     public void warning_active_client_sms(){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setCancelable(false);
-        alert.setTitle("Warning!!");
-        alert.setMessage("Message will be send to "+totalActiveClient+" active clients");
+        alert.setCancelable(true);
+        alert.setTitle("সতর্কতা!!");
+        alert.setMessage("সকল একটিভ ক্লায়েন্টদের ফোনে আপনার লিখা মেসেজ যাবে। আপনার মেসেজ সঠিক আছে কিনা চেক করে দেখুন অন্যথায় ভুল মেসেজে ক্লায়েন্ট বিভ্রান্তে পড়তে পারে।");
         alert.setIcon(R.drawable.warning_icon);
 
         alert.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
@@ -388,6 +353,7 @@ public class NoticeCreate extends AppCompatActivity {
                 dialogInterface.cancel();
             }
         });
+
         AlertDialog dlg = alert.create();
         dlg.show();
     }
@@ -400,5 +366,31 @@ public class NoticeCreate extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void warningShow(String message){
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
+        alert.setCancelable(false);
+        alert.setTitle("Warning!!");
+        alert.setMessage(message);
+        alert.setIcon(R.drawable.warning_icon);
+
+        alert.setPositiveButton("Login", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                finish();
+                startActivity(new Intent(NoticeCreate.this, Login.class));
+
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        android.app.AlertDialog dlg = alert.create();
+        dlg.show();
     }
 }

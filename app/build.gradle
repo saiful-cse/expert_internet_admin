@@ -3,11 +3,11 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.creativesaif.expert_internet_admin"
-        minSdkVersion 22
+        applicationId "com.creativesaif.expert_internet_admin_test"
+        minSdkVersion 23
         targetSdkVersion 28
-        versionCode 8
-        versionName "1.8.0"
+        versionCode 9
+        versionName "1.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
