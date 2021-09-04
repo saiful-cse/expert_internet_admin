@@ -151,6 +151,8 @@ public class InactiveList extends Fragment {
                             client.setPhone(jsonObject1.getString("phone"));
                             client.setArea(jsonObject1.getString("area"));
                             client.setUsername(jsonObject1.getString("username"));
+                            client.setPayment_method(jsonObject1.getString("payment_method"));
+
 
                             clientArrayList.add(client);
 
@@ -218,6 +220,8 @@ public class InactiveList extends Fragment {
                             client.setPhone(jsonObject1.getString("phone"));
                             client.setArea(jsonObject1.getString("area"));
                             client.setUsername(jsonObject1.getString("username"));
+                            client.setPayment_method(jsonObject1.getString("payment_method"));
+
 
                             clientArrayList.add(client);
 

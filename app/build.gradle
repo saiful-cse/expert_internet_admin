@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.creativesaif.expert_internet_admin_test"
+        applicationId "com.creativesaif.expert_internet_admin"
         minSdkVersion 23
         targetSdkVersion 28
         versionCode 9

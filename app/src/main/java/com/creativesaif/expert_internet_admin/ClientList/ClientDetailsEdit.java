@@ -150,6 +150,9 @@ public class ClientDetailsEdit extends AppCompatActivity{
                     finish();
                     startActivity(new Intent(ClientDetailsEdit.this, Login.class));
 
+                }else if(radioGroupPaymentMethod.getCheckedRadioButtonId() == -1){
+                    Snackbar.make(findViewById(android.R.id.content),"Select payment method.",Snackbar.LENGTH_LONG).show();
+
                 } else if (name.isEmpty()){
                     Snackbar.make(findViewById(android.R.id.content),"Write a client name",Snackbar.LENGTH_LONG).show();
 
@@ -263,7 +266,8 @@ public class ClientDetailsEdit extends AppCompatActivity{
                             {
                                 radioGroupPaymentMethod.check(R.id.mode_cash);
 
-                            }else{
+                            }else if(jsonObject1.getString("payment_method").equals("Mobile")){
+
                                 radioGroupPaymentMethod.check(R.id.mode_mobile);
                             }
 
@@ -429,7 +433,9 @@ public class ClientDetailsEdit extends AppCompatActivity{
         alert.setPositiveButton("Login", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                //
+                finish();
+                startActivity(new Intent(ClientDetailsEdit.this, Login.class));
+
             }
         });
 

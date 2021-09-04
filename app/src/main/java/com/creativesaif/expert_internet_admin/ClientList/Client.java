@@ -3,9 +3,9 @@ package com.creativesaif.expert_internet_admin.ClientList;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Client implements Parcelable {
+public class Client {
 
-    private String id, mode, name, area, phone, total_alert_client, username;
+    private String id, mode, name, area, phone, total_alert_client, username, payment_method;
 
     public Client(){
 
@@ -67,43 +67,12 @@ public class Client implements Parcelable {
         this.username = username;
     }
 
-    public static Creator<Client> getCREATOR() {
-        return CREATOR;
+    public String getPayment_method() {
+        return payment_method;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public void setPayment_method(String payment_method) {
+        this.payment_method = payment_method;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.id);
-        dest.writeString(this.mode);
-        dest.writeString(this.name);
-        dest.writeString(this.phone);
-        dest.writeString(this.total_alert_client);
-        dest.writeString(this.username);
-    }
-
-    protected Client(Parcel in) {
-        this.id = in.readString();
-        this.mode = in.readString();
-        this.name = in.readString();
-        this.phone = in.readString();
-        this.total_alert_client = in.readString();
-        this.username = in.readString();
-    }
-
-    public static final Parcelable.Creator<Client> CREATOR = new Parcelable.Creator<Client>() {
-        @Override
-        public Client createFromParcel(Parcel source) {
-            return new Client(source);
-        }
-
-        @Override
-        public Client[] newArray(int size) {
-            return new Client[size];
-        }
-    };
 }

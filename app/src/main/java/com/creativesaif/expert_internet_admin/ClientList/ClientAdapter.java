@@ -42,7 +42,7 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.EachClient
         final Client client = clientList.get(i);
 
         eachClientView.textViewName.setText(client.getName());
-        eachClientView.textViewId.setText("#"+client.getId()+", "+client.getArea());
+        eachClientView.textViewId.setText("#"+client.getId()+", "+client.getArea()+", Payment: "+client.getPayment_method());
         eachClientView.textViewPhone.setText("Mobile: "+client.getPhone()+", PPPoE: "+client.getUsername());
 
         eachClientView.textViewName.setOnClickListener(new View.OnClickListener() {
