@@ -120,7 +120,7 @@ public class Login extends AppCompatActivity {
                         String jwt = jsonObject.getString("jwt");
 
                         //store jwt and userid
-                        sharedPreferences.edit().putString("userid", editTextUserId.getText().toString().trim()).apply();
+                        sharedPreferences.edit().putString("admin_id", editTextUserId.getText().toString().trim()).apply();
                         sharedPreferences.edit().putString("jwt", jwt).apply();
 
                         Intent intent = new Intent(Login.this, MainActivity.class);
@@ -150,7 +150,7 @@ public class Login extends AppCompatActivity {
             protected Map<String, String> getParams()throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
 
-                map.put("userid", editTextUserId.getText().toString().trim());
+                map.put("admin_id", editTextUserId.getText().toString().trim());
                 map.put("pin", editTextUserPin.getText().toString().trim());
                 return map;
 

@@ -43,8 +43,8 @@ import java.util.Map;
 
 public class TransactionEdit extends AppCompatActivity {
 
-    EditText edTxnId, edDate, edDetails, edCredit, edDebit;
-    String jwt, txnId, date, details, credit, debit;
+    EditText edTxnId, edDate, edAdmnid, edDetails, edCredit, edDebit;
+    String jwt, txnId, date, adminid, details, credit, debit;
     Button btnSearch, btnDelete, btnUpdate;
     TextView tvClientId, tvClientName, tvtype;
     private SharedPreferences sharedPreferences;
@@ -71,6 +71,7 @@ public class TransactionEdit extends AppCompatActivity {
         //edit text
         edTxnId = findViewById(R.id.input_txn_id);
         edDate = findViewById(R.id.edDate);
+        edAdmnid = findViewById(R.id.edAdminId);
         edDetails = findViewById(R.id.editDetails);
         edCredit = findViewById(R.id.editAmountofCredit);
         edDebit = findViewById(R.id.editAmountofDebit);
@@ -90,7 +91,7 @@ public class TransactionEdit extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 txnId = edTxnId.getText().toString().trim();
-                String userid = sharedPreferences.getString("userid", null);
+                String admin_id = sharedPreferences.getString("admin_id", null);
 
                 if(!isNetworkConnected())
                 {
@@ -101,8 +102,8 @@ public class TransactionEdit extends AppCompatActivity {
                     Snackbar.make(findViewById(android.R.id.content),"Write a txn id",Snackbar.LENGTH_LONG).show();
 
                 }else {
-                    assert userid != null;
-                    if(userid.equals("9161")) {
+                    assert admin_id != null;
+                    if(admin_id.equals("9161")) {
 
                         txn_load(txnId);
 
@@ -167,7 +168,9 @@ public class TransactionEdit extends AppCompatActivity {
 
                 txnId = edTxnId.getText().toString().trim();
                 date = edDate.getText().toString().trim();
+
                 details = edDetails.getText().toString().trim();
+                adminid = edAdmnid.getText().toString().trim();
                 credit = edCredit.getText().toString().trim();
                 debit = edDebit.getText().toString().trim();
                 jwt = sharedPreferences.getString("jwt", null);
@@ -181,6 +184,9 @@ public class TransactionEdit extends AppCompatActivity {
 
                 }else if(date.isEmpty()){
                     Snackbar.make(findViewById(android.R.id.content),"Date cannot empty",Snackbar.LENGTH_LONG).show();
+
+                }else if(adminid.isEmpty()){
+                    Snackbar.make(findViewById(android.R.id.content),"Admin ID cannot empty",Snackbar.LENGTH_LONG).show();
 
                 }else if(details.isEmpty()){
                     Snackbar.make(findViewById(android.R.id.content),"Details cannot empty",Snackbar.LENGTH_LONG).show();
@@ -264,6 +270,7 @@ public class TransactionEdit extends AppCompatActivity {
                             tvtype.setText(jsonObject1.getString("type"));
 
                             edDate.setText(jsonObject1.getString("date"));
+                            edAdmnid.setText(jsonObject1.getString("admin_id"));
                             edDetails.setText(jsonObject1.getString("details"));
                             edCredit.setText(jsonObject1.getString("credit"));
                             edDebit.setText(jsonObject1.getString("debit"));
@@ -397,11 +404,11 @@ public class TransactionEdit extends AppCompatActivity {
                 map.put("jwt", jwt);
                 map.put("txn_id", txnId);
                 map.put("date", date);
+                map.put("admin_id", adminid);
                 map.put("details", details);
                 map.put("credit", credit);
                 map.put("debit", debit);
                 return map;
-
             }
         };
 

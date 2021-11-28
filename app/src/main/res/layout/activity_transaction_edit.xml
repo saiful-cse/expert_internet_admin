@@ -135,6 +135,20 @@
                         android:id="@+id/edDate" />
 
                     <TextView
+                        android:layout_marginTop="10dp"
+                        android:text="Admin ID"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        />
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="datetime"
+                        android:textSize="17sp"
+                        android:id="@+id/edAdminId" />
+
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="15sp"

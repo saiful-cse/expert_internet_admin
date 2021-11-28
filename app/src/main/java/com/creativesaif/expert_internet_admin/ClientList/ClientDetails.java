@@ -1,5 +1,6 @@
 package com.creativesaif.expert_internet_admin.ClientList;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,10 +36,18 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.creativesaif.expert_internet_admin.Adapter.PackageAdapter;
 import com.creativesaif.expert_internet_admin.Dashboard.Dashboard;
 import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.MainActivity;
+import com.creativesaif.expert_internet_admin.Model.Client;
+import com.creativesaif.expert_internet_admin.Model.ClientWrapper;
+import com.creativesaif.expert_internet_admin.Model.DetailsWrapper;
+import com.creativesaif.expert_internet_admin.Model.Package;
+import com.creativesaif.expert_internet_admin.Model.Trns;
 import com.creativesaif.expert_internet_admin.MySingleton;
+import com.creativesaif.expert_internet_admin.Network.ApiInterface;
+import com.creativesaif.expert_internet_admin.Network.RetrofitApiClient;
 import com.creativesaif.expert_internet_admin.NewsFeed.News;
 import com.creativesaif.expert_internet_admin.NewsFeed.NewsAdapter;
 import com.creativesaif.expert_internet_admin.NewsFeed.NewsAdd;
@@ -45,6 +56,7 @@ import com.creativesaif.expert_internet_admin.Notice.NoticeCreate;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
 import com.creativesaif.expert_internet_admin.TransactionList.MakeTransaction;
+import com.creativesaif.expert_internet_admin.TransactionList.PaymentHistory;
 import com.creativesaif.expert_internet_admin.TransactionList.Transaction;
 import com.creativesaif.expert_internet_admin.TransactionList.TransactionAdapter;
 
@@ -54,42 +66,48 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class ClientDetails extends AppCompatActivity {
 
-    Button btnDetailsEdit, btnSmsSend, btnSmsHistory;
+    private Button btnDetailsEdit, buttonTxnSubmit, btnSmsSend, btnSmsHistory, btnPaymentHistory;
 
-    private TextView tvId, tvMode, tvName, tvPhone, tvAddress, tvEmail, tvArea,
-            tvUsername, tvPassword,
-            tvSpeed, tvFee, tvPaymentMethod, tvRegDate, tvActiveDate, tvInactiveDate;
+    private TextView tvname, tvphone, tvarea,
+            tvppname, tvpppass, tvppstatus, tvppactivity, tvroutermac, tvlastlogut, tvuptime, tvdonwload, tvupload,
+            tvmode, tvpaymentmethod, tvpackgeid, tvregdate, tvexpiredate;
 
-    ImageView user_call;
-    private String jwt, client_id, name, phone, user_id;
-
+    private ImageView user_call;
+    private String jwt, name, id, pppName, admin_id, phone, informMessage;
     private SharedPreferences sharedPreferences;
+    private ApiInterface apiInterface;
+    private Client client;
+    private Trns trns;
 
-    private String informMessage;
+    private RecyclerView recyclerView;
+    private PackageAdapter packageAdapter;
+    private ArrayList<Package> packageArrayList;
 
-    private CardView cardViewAlert;
+    private Switch pppswitch ;
+
 
     /*
     Payment Details
      */
 // initialize adapter and data structure here
-    private TransactionAdapter transactionAdapter;
-    private ArrayList<Transaction> transactionArrayList;
-    RecyclerView recyclerView;
+
 
     /*
     Make txn
      */
-    private EditText editTextAmount, editTextInformSms;
-    Button buttonTxnSubmit;
-    String payment_type, payment_method, amount;
-    RadioGroup radioGroup, radioGroup2;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
-    SwipeRefreshLayout swipeRefreshLayout;
+    private EditText editTextAmount, editTextInformSms;
+    private String payment_type, payment_method, amount;
+    private RadioGroup radioGroup, radioGroup2;
 
     /*
    Progress dialog
@@ -102,59 +120,107 @@ public class ClientDetails extends AppCompatActivity {
         setContentView(R.layout.activity_client_details);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        pppName = getIntent().getStringExtra("ppp_name");
+        sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
+        jwt = sharedPreferences.getString("jwt", null);
+
+
         /*
         Txn ID initialize
          */
         swipeRefreshLayout = findViewById(R.id.details_refresh);
 
+        radioGroup = findViewById(R.id.radioGroup);
+        radioGroup2 = findViewById(R.id.radioGroup2);
         editTextAmount = findViewById(R.id.edAmount);
         buttonTxnSubmit = findViewById(R.id.txn_submit);
-        radioGroup = findViewById(R.id.radioGroup);
+
+        btnPaymentHistory = findViewById(R.id.btnPaymentHistory);
         /*
         ID initialize
          */
-        cardViewAlert = findViewById(R.id.cardViewAlert);
 
-        sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
 
         user_call = findViewById(R.id.user_direct_call);
 
-        tvId = findViewById(R.id.id);
-        tvMode = findViewById(R.id.mode);
-        tvName = findViewById(R.id.name);
-        tvPhone = findViewById(R.id.phone);
-        tvAddress = findViewById(R.id.address);
-        tvEmail = findViewById(R.id.email);
-        tvArea = findViewById(R.id.area);
+        //-----Package List ---------
+        packageArrayList = new ArrayList<>();
+        packageAdapter = new PackageAdapter(this, packageArrayList);
 
-        tvUsername = findViewById(R.id.username);
-        tvPassword = findViewById(R.id.password);
+        recyclerView = findViewById(R.id.recyclerViewPkgView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
 
-        tvSpeed = findViewById(R.id.speed);
-        tvFee = findViewById(R.id.fee);
-        tvPaymentMethod = findViewById(R.id.payment_method);
+        //now set adapter to recyclerView
+        recyclerView.setAdapter(packageAdapter);
 
-        radioGroup2 = findViewById(R.id.radioGroup2);
-        tvRegDate = findViewById(R.id.reg_date);
-        tvActiveDate = findViewById(R.id.active_date);
-        tvInactiveDate = findViewById(R.id.inactive_date);
+
+        //----------------------
+        // Details ID initialize
+        //-----------------------
+
+        //-------Profile--------
+        tvname = findViewById(R.id.tvname);
+        tvphone = findViewById(R.id.tvphone);
+        tvarea = findViewById(R.id.tvarea);
+
+        //--------PPPoE Connection-------
+        tvppname = findViewById(R.id.tvppp_name);
+        tvpppass = findViewById(R.id.tvppp_pass);
+        tvppstatus = findViewById(R.id.tvppp_status);
+        tvppactivity = findViewById(R.id.tvppp_activity);
+        tvroutermac = findViewById(R.id.tvrouter_mac);
+        tvlastlogut = findViewById(R.id.tvlogout_time);
+        tvuptime = findViewById(R.id.tvuptime);
+        tvdonwload = findViewById(R.id.tvdownload);
+        tvupload = findViewById(R.id.tvupload);
+
+        //------Service details--------
+        tvpaymentmethod = findViewById(R.id.tvpaymentmethod);
+        tvpackgeid = findViewById(R.id.tvpackgeid);
+        tvregdate = findViewById(R.id.tvregdate);
+        tvexpiredate = findViewById(R.id.tvexpiredate);
+        tvmode = findViewById(R.id.tvmode);
+
+        // -----------End-----------------------
 
         progressDialog = new ProgressDialog(this);
 
-         /*
-        Instance create for client
-         */
-        client_id = getIntent().getStringExtra("id");
+        apiInterface = RetrofitApiClient.getClient().create(ApiInterface.class);
+        client = new Client();
+        trns = new Trns();
 
-        if (isNetworkConnected())
-        {
-            details_load(client_id );
-            load_payment_details(client_id);
+        if (!isNetworkConnected()) {
+            Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
+            swipeRefreshLayout.setRefreshing(false);
 
         }else{
-
-            swipeRefreshLayout.setRefreshing(false);
+            client.setJwt(jwt);
+            client.setPppName(pppName);
+            load_details(client);
         }
+
+        pppswitch = findViewById(R.id.pppswitch); // initiate Switch
+        pppswitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (pppswitch.isChecked()){
+                    client.setJwt(jwt);
+                    client.setAction("enable");
+                    client.setId(id);
+                    client.setPppName(pppName);
+                    getPPPAction(client);
+
+                }else{
+                    client.setJwt(jwt);
+                    client.setAction("disable");
+                    client.setId(id);
+                    client.setPppName(pppName);
+                    getPPPAction(client);
+                }
+            }
+        });
+
 
         user_call.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,59 +235,26 @@ public class ClientDetails extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (!isNetworkConnected()){
-
-                    Toast.makeText(ClientDetails.this,"Please!! Check internet connection.",Toast.LENGTH_SHORT).show();
+                if(!isNetworkConnected()){
+                    Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
                     swipeRefreshLayout.setRefreshing(false);
-
                 }
                 else{
-                    details_load(client_id);
-                    load_payment_details(client_id);
-                    swipeRefreshLayout.setRefreshing(false);
+                    client.setJwt(jwt);
+                    client.setPppName(pppName);
+                    load_details(client);
                 }
             }
         });
 
-
-        /*
-        id initialize here
-         */
-        //assign all objects to avoid nullPointerException
-        transactionArrayList = new ArrayList<>();
-        transactionAdapter = new TransactionAdapter(this,transactionArrayList);
-
-        recyclerView = findViewById(R.id.recyclerViewTnxRow);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
-
-        //now set adapter to recyclerView
-        recyclerView.setAdapter(transactionAdapter);
-
-
-        btnDetailsEdit = findViewById(R.id.btnEdit);
-        btnDetailsEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent i = new Intent(ClientDetails.this,ClientDetailsEdit.class);
-                i.putExtra("id", client_id);
-                startActivity(i);
-            }
-        });
-
-
-        /*
-        Transaction submit
-         */
+        buttonTxnSubmit = findViewById(R.id.txn_submit);
         buttonTxnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 amount = editTextAmount.getText().toString().trim();
-                jwt = sharedPreferences.getString("jwt", null);
-                user_id = sharedPreferences.getString("userid", null);
+                admin_id = sharedPreferences.getString("admin_id", null);
 
-                if (jwt == null || user_id == null){
+                if (jwt == null){
                     finish();
                     startActivity(new Intent(ClientDetails.this, Login.class));
 
@@ -230,16 +263,16 @@ public class ClientDetails extends AppCompatActivity {
                     Snackbar.make(findViewById(android.R.id.content),"Select payment type",Snackbar.LENGTH_LONG).show();
 
                 } else if(radioGroup2.getCheckedRadioButtonId() == -1){
-                     Snackbar.make(findViewById(android.R.id.content),"Select payment method",Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(findViewById(android.R.id.content),"Select payment method",Snackbar.LENGTH_LONG).show();
 
-                 } else if(amount.isEmpty())
+                } else if(amount.isEmpty())
                 {
                     Snackbar.make(findViewById(android.R.id.content),"Write an amount",Snackbar.LENGTH_LONG).show();
 
                 }else if(!isNetworkConnected()){
                     Snackbar.make(findViewById(android.R.id.content),"Please!! Check Internet Connection or Try again later.",Snackbar.LENGTH_LONG).show();
 
-                } else {
+                }else{
 
                     int selectedId = radioGroup.getCheckedRadioButtonId();
                     int selectedMethod = radioGroup2.getCheckedRadioButtonId();
@@ -249,7 +282,6 @@ public class ClientDetails extends AppCompatActivity {
                     payment_method = radioButton2.getText().toString().trim();
 
                     txn_confirm_diaglog();
-
                 }
             }
         });
@@ -262,7 +294,6 @@ public class ClientDetails extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 informMessage = editTextInformSms.getText().toString().trim();
-                jwt = sharedPreferences.getString("jwt", null);
 
                 if (jwt == null){
                     finish();
@@ -281,15 +312,30 @@ public class ClientDetails extends AppCompatActivity {
             }
         });
 
-        //Sms history
-        btnSmsHistory = findViewById(R.id.btnSmsHistory);
-        btnSmsHistory.setOnClickListener(new View.OnClickListener() {
+        /*
+        id initialize here
+         */
+        //assign all objects to avoid nullPointerException
+
+        btnDetailsEdit = findViewById(R.id.btnEdit);
+        btnDetailsEdit.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                //
+            public void onClick(View v) {
+
+                Intent i = new Intent(ClientDetails.this,ClientDetailsEdit.class);
+                i.putExtra("id", id);
+                startActivity(i);
             }
         });
 
+        btnPaymentHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(ClientDetails.this, PaymentHistory.class);
+                i.putExtra("id", id);
+                startActivity(i);
+            }
+        });
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -304,220 +350,123 @@ public class ClientDetails extends AppCompatActivity {
     //Internet connection check
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
         return cm.getActiveNetworkInfo() != null;
     }
 
+    public void load_details(Client mClient) {
 
-    public void details_load(String got_id)
-    {
-        swipeRefreshLayout.setRefreshing(true);
         progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.client_details)+"?id="+got_id;
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        Call<DetailsWrapper> call = apiInterface.getClientDetails(mClient);
+        call.enqueue(new Callback<DetailsWrapper>() {
+            @SuppressLint("ResourceType")
             @Override
-            public void onResponse(String response) {
+            public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
 
                 swipeRefreshLayout.setRefreshing(false);
                 progressDialog.hideDialog();
 
-                try{
+                DetailsWrapper detailsWrapper = response.body();
+                assert detailsWrapper != null;
 
-                    JSONObject jsonObject = new JSONObject(response);
+                if (detailsWrapper.getStatus() == 401) {
+                    //Go to phone verification step
+                    loginWarningShow(detailsWrapper.getMessage());
 
-                    boolean m = jsonObject.has("message");
-                    if (m)
-                    {
-                        String message = jsonObject.getString("message");
-                        Toast.makeText(ClientDetails.this,message,Toast.LENGTH_LONG).show();
+                }else if (detailsWrapper.getStatus() == 200) {
+                    packageAdapter.setPackageList(detailsWrapper.getPackages());
 
-                    }else
-                    {
-                        JSONArray jsonArray = jsonObject.getJSONArray("client_details");
+                    id = detailsWrapper.getId();
+                    phone = detailsWrapper.getPhone();
+                    name = detailsWrapper.getName();
+                    tvname.setText(detailsWrapper.getName());
+                    tvphone.setText(detailsWrapper.getPhone());
+                    tvarea.setText(detailsWrapper.getArea());
 
-                        for (int i=0; i<=jsonArray.length(); i++)
-                        {
-
-                            JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-
-                            //Set data on string variable
-                            phone = jsonObject1.getString("phone");
-                            name = jsonObject1.getString("name");
-
-                            /*
-                            Set text on Text View
-                             */
-                            tvId.setText(jsonObject1.getString("id"));
-
-                            if (jsonObject1.getString("mode").equals("Active")){
-                                tvMode.setText(jsonObject1.getString("mode"));
-                                tvMode.setTextColor(Color.GREEN);
-
-                            }else{
-                                tvMode.setText(jsonObject1.getString("mode"));
-                                tvMode.setTextColor(Color.RED);
-                            }
-
-
-                            tvName.setText(name);
-                            tvPhone.setText(phone);
-                            tvAddress.setText(jsonObject1.getString("address"));
-                            tvEmail.setText(jsonObject1.getString("email"));
-                            tvArea.setText(jsonObject1.getString("area"));
-
-                            tvUsername.setText(jsonObject1.getString("username"));
-                            tvPassword.setText(jsonObject1.getString("password"));
-
-                            tvSpeed.setText(jsonObject1.getString("speed"));
-                            tvFee.setText(jsonObject1.getString("fee"));
-                            tvPaymentMethod.setText(jsonObject1.getString("payment_method"));
-
-                            tvRegDate.setText(jsonObject1.getString("reg_date"));
-                            tvActiveDate.setText(jsonObject1.getString("active_date"));
-                            tvInactiveDate.setText(jsonObject1.getString("inactive_date"));
-
-                        }
-
-                    }
-
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                swipeRefreshLayout.setRefreshing(false);
-                progressDialog.hideDialog();
-                Toast.makeText(ClientDetails.this,error.toString(),Toast.LENGTH_LONG).show();
-                finish();
-            }
-        });
-        MySingleton.getInstance().addToRequestQueue(stringRequest);
-
-    }
-
-    private void load_payment_details(String got_id) {
-
-        String url = getString(R.string.base_url)+getString(R.string.payment_details)+"?id="+got_id;
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                try{
-
-                    transactionArrayList.clear();
-                    JSONObject jsonObject = new JSONObject(response);
-
-                    boolean m = jsonObject.has("message");
-                    if (m)
-                    {
-                        String message = jsonObject.getString("message");
-                        Toast.makeText(ClientDetails.this,message,Toast.LENGTH_LONG).show();
-
-                    }else
-                    {
-                        JSONArray jsonArray = jsonObject.getJSONArray("txn_details");
-
-                        for (int i=0; i<=jsonArray.length(); i++)
-                        {
-                            Transaction transaction = new Transaction();
-
-                            JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-
-                            transaction.setDate(jsonObject1.getString("date"));
-                            transaction.setTxn_id(jsonObject1.getString("txn_id"));
-                            transaction.setCredit(jsonObject1.getString("amount"));
-                            transaction.setDetails(jsonObject1.getString("details"));
-
-                            transactionArrayList.add(transaction);
-
-                            transactionAdapter.notifyDataSetChanged();
-
-                        }
-
-                    }
-
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //Toast.makeText(ClientDetails.this,error.toString(),Toast.LENGTH_LONG).show();
-            }
-        });
-        MySingleton.getInstance().addToRequestQueue(stringRequest);
-    }
-
-    public void make_txn()
-    {
-        progressDialog.showDialog();
-
-        String url = getString(R.string.base_url)+getString(R.string.client_txn);
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                progressDialog.hideDialog();
-
-                try{
-
-                    JSONObject jsonObject = new JSONObject(response);
-                    String status = jsonObject.getString("status");
-                    String message = jsonObject.getString("message");
-
-                    if (status.equals("200")){
-                        Toast.makeText(ClientDetails.this, message,Toast.LENGTH_LONG).show();
-                        finish();
-
-                    }else if(status.equals("401")){
-
-                        warningShow(message);
-
+                    pppName = detailsWrapper.getPppName();
+                    tvppname.setText(detailsWrapper.getPppName());
+                    tvpppass.setText(detailsWrapper.getPppPass());
+                    if (detailsWrapper.getPppStatus().equals("Enabled")){
+                        pppswitch.setChecked(true);
+                        tvppstatus.setText(detailsWrapper.getPppStatus());
+                        tvppstatus.setTextColor(Color.GREEN);
                     }else{
-                        Toast.makeText(ClientDetails.this, message,Toast.LENGTH_LONG).show();
+                        pppswitch.setChecked(false);
+                        tvppstatus.setText(detailsWrapper.getPppStatus());
+                        tvppstatus.setTextColor(Color.RED);
+                    }
+                    if(detailsWrapper.getPppActivity().equals("Online")){
+                        tvppactivity.setText(detailsWrapper.getPppActivity());
+                        tvppactivity.setTextColor(Color.GREEN);
+                    }else{
+                        tvppactivity.setText(detailsWrapper.getPppActivity());
+                        tvppactivity.setTextColor(Color.RED);
                     }
 
-                }catch (JSONException e){
-                    e.printStackTrace();
+                    tvppactivity.setText(detailsWrapper.getPppActivity());
+                    tvroutermac.setText(detailsWrapper.getRouterMac());
+                    tvlastlogut.setText(detailsWrapper.getLastLogedOut());
+                    tvuptime.setText(detailsWrapper.getUptime());
+                    tvdonwload.setText(detailsWrapper.getDownload());
+                    tvupload.setText(detailsWrapper.getUpload());
+
+                    tvpaymentmethod.setText(detailsWrapper.getPaymentMethod());
+                    tvpackgeid.setText(detailsWrapper.getPkgId());
+                    tvregdate.setText(detailsWrapper.getRegDate());
+                    tvexpiredate.setText(detailsWrapper.getExpireDate());
+                    tvmode.setText(detailsWrapper.getMode());
+
+                }else{
+                    warningShow(detailsWrapper.getMessage());
+                    //Toast.makeText(getApplicationContext(), detailsWrapper.getStatus()+"\n"+detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DetailsWrapper> call, Throwable t) {
+                swipeRefreshLayout.setRefreshing(false);
+                progressDialog.hideDialog();
+                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+
+            }
+        });
+    }
+
+    public void getPPPAction(Client mClient) {
+
+        progressDialog.showDialog();
+        Call<DetailsWrapper> call = apiInterface.getPPPAction(mClient);
+        call.enqueue(new Callback<DetailsWrapper>() {
+            @SuppressLint("ResourceType")
+            @Override
+            public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
+
+                progressDialog.hideDialog();
+
+                DetailsWrapper detailsWrapper = response.body();
+                assert detailsWrapper != null;
+
+                if (detailsWrapper.getStatus() == 401) {
+                    //Go to phone verification step
+                    loginWarningShow(detailsWrapper.getMessage());
+
+                }if (detailsWrapper.getStatus() == 200) {
+                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                    //Details refresh
+                    load_details(client);
+
+                }else{
+                    warningShow(detailsWrapper.getMessage());
+                    //Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
                 }
 
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
 
+            @Override
+            public void onFailure(Call<DetailsWrapper> call, Throwable t) {
                 progressDialog.hideDialog();
-                Toast.makeText(ClientDetails.this,error.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
             }
-        }){
-            @Override
-            protected Map<String, String> getParams()throws AuthFailureError {
-                Map<String,String> map = new HashMap<>();
-
-                map.put("jwt", jwt);
-                map.put("id", client_id);
-                map.put("name", name);
-                map.put("type", payment_type);
-                map.put("method", payment_method);
-                map.put("userid", user_id);
-                map.put("amount", amount);
-                map.put("details", name+", "+client_id+", "+payment_type);
-                return map;
-
-            }
-        };
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        MySingleton.getInstance().addToRequestQueue(stringRequest);
+        });
     }
 
 
@@ -545,10 +494,11 @@ public class ClientDetails extends AppCompatActivity {
 
                     }else if(status.equals("401")){
 
-                        warningShow(message);
+                        loginWarningShow(message);
 
                     }else{
-                        Toast.makeText(ClientDetails.this, message,Toast.LENGTH_LONG).show();
+                        warningShow(message);
+                        //Toast.makeText(ClientDetails.this, message,Toast.LENGTH_LONG).show();
                     }
 
                 }catch (JSONException e){
@@ -570,7 +520,7 @@ public class ClientDetails extends AppCompatActivity {
                 map.put("jwt", jwt);
                 map.put("message", informMessage);
                 map.put("phone", phone);
-                map.put("client_id", client_id);
+                map.put("client_id", id);
 
                 return map;
 
@@ -581,17 +531,30 @@ public class ClientDetails extends AppCompatActivity {
         MySingleton.getInstance().addToRequestQueue(stringRequest);
     }
 
+
     public void txn_confirm_diaglog(){
         AlertDialog.Builder aleart1 = new AlertDialog.Builder(this);
         aleart1.setCancelable(false);
         aleart1.setTitle("Please Confirm your transaction!!");
-        aleart1.setMessage("Your payment submit to \n"+"ID: "+client_id+"\n"+"Name: "+name+"\n"+"Type: "+payment_type+"\n"+"Amount: "+amount);
+        aleart1.setMessage("Your payment submit to \n"+"Name: "+name+"\n"+"Type: "+payment_type+"\n"+"Amount: "+amount);
         aleart1.setIcon(R.drawable.warning_icon);
 
         aleart1.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                make_txn();
+
+                trns.setJwt(jwt);
+                trns.setClientId(id);
+                trns.setName(name);
+                trns.setAdminId(admin_id);
+                trns.setTxnType(payment_type);
+                trns.setMethod(payment_method);
+                trns.setDetails(""+name+", "+payment_type+", "+payment_method+"");
+                trns.setAmount(amount);
+
+                //Toast.makeText(getApplicationContext(), client_id+"\n"+admin_id+"\n"+payment_type+"\n"+payment_method+"\n"+amount,Toast.LENGTH_LONG).show();
+
+                admin_make_payment(trns);
             }
         });
 
@@ -603,6 +566,41 @@ public class ClientDetails extends AppCompatActivity {
         });
         AlertDialog dlg = aleart1.create();
         dlg.show();
+    }
+
+    public void admin_make_payment(Trns mTrns)
+    {
+        progressDialog.showDialog();
+        Call<Trns> call = apiInterface.adminMakePayment(mTrns);
+        call.enqueue(new Callback<Trns>() {
+            @SuppressLint("ResourceType")
+            @Override
+            public void onResponse(Call<Trns> call, retrofit2.Response<Trns> response) {
+
+                progressDialog.hideDialog();
+                Trns trns = response.body();
+                assert trns != null;
+
+                if (trns.getStatus() == 200){
+                    Toast.makeText(ClientDetails.this, trns.getMessage(),Toast.LENGTH_LONG).show();
+                    finish();
+
+                }else if(trns.getStatus() == 401){
+
+                    loginWarningShow(trns.getMessage());
+
+                }else{
+                    warningShow(trns.getMessage());
+                    //Toast.makeText(ClientDetails.this, trns.getMessage(),Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Trns> call, Throwable t) {
+                progressDialog.hideDialog();
+                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void inform_confirm_dialog(){
@@ -628,8 +626,8 @@ public class ClientDetails extends AppCompatActivity {
         AlertDialog dlg = aleart1.create();
         dlg.show();
     }
-
-    public void warningShow(String message){
+//
+    public void loginWarningShow(String message){
         android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
         alert.setCancelable(false);
         alert.setTitle("Warning!!");
@@ -641,9 +639,25 @@ public class ClientDetails extends AppCompatActivity {
             public void onClick(DialogInterface dialogInterface, int i) {
                 finish();
                 startActivity(new Intent(ClientDetails.this, Login.class));
-
             }
         });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        android.app.AlertDialog dlg = alert.create();
+        dlg.show();
+    }
+
+    public void warningShow(String message){
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
+        alert.setCancelable(false);
+        alert.setTitle("Warning!!");
+        alert.setMessage(message);
+        alert.setIcon(R.drawable.ic_baseline_warning_24);
 
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override

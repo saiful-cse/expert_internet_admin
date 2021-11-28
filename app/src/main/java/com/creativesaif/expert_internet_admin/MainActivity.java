@@ -24,7 +24,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,22 +31,21 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.creativesaif.expert_internet_admin.ClientList.ClientDetails;
 import com.creativesaif.expert_internet_admin.ClientList.ClientList;
+import com.creativesaif.expert_internet_admin.ClientList.ClientReg;
+import com.creativesaif.expert_internet_admin.ClientList.ClientRegUpdate;
 import com.creativesaif.expert_internet_admin.Dashboard.Dashboard;
 import com.creativesaif.expert_internet_admin.Feedback.FeedbackList;
 import com.creativesaif.expert_internet_admin.NewsFeed.News;
 import com.creativesaif.expert_internet_admin.NewsFeed.NewsAdapter;
 import com.creativesaif.expert_internet_admin.Notice.NoticeRead;
 import com.creativesaif.expert_internet_admin.NewsFeed.NewsAdd;
-import com.creativesaif.expert_internet_admin.Search.SearchPage;
 import com.creativesaif.expert_internet_admin.Sms.SmsHistory;
 import com.creativesaif.expert_internet_admin.TransactionList.TransactionList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -225,13 +223,13 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        String userid = sharedPreferences.getString("userid", null);
+        String admin_id = sharedPreferences.getString("admin_id", null);
 
 
         if (id == R.id.nav_dashboard) {
 
-            assert userid != null;
-            if(userid.equals("9161") || userid.equals("8991")) {
+            assert admin_id != null;
+            if(admin_id.equals("9161") || admin_id.equals("8991")) {
 
                 startActivity(new Intent(MainActivity.this, Dashboard.class));
 
@@ -239,13 +237,17 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(getApplicationContext(), "You are not permitted to view", Toast.LENGTH_LONG).show();
             }
 
+        }else if (id == R.id.nav_client_reg) {
+
+            startActivity(new Intent(MainActivity.this, ClientReg.class));
+
         } else if (id == R.id.nav_clientlist) {
 
             startActivity(new Intent(MainActivity.this, ClientList.class));
 
         } else if (id == R.id.nav_search) {
 
-            startActivity(new Intent(MainActivity.this, SearchPage.class));
+            //startActivity(new Intent(MainActivity.this, SearchPage.class));
 
         } else if (id == R.id.nav_notice) {
             startActivity(new Intent(MainActivity.this, NoticeRead.class));

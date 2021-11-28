@@ -2,21 +2,15 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="90dp"
+        android:layout_height="wrap_content"
         app:cardCornerRadius="4dp"
         app:cardElevation="4dp"
         android:layout_marginBottom="10dp">
-
-        <View
-            android:layout_width="3dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:background="@color/colorAccent" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,28 +20,35 @@
             android:layout_margin="10dp">
 
             <TextView
-                android:id="@+id/client_name"
+                android:id="@+id/cardtv1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Saif Ullah"
-                android:textSize="17sp"
                 android:textStyle="bold"
+                android:textSize="17sp"
                 android:textColor="@color/colorPrimary"
                 android:textAlignment="textStart"/>
-
             <TextView
-                android:id="@+id/client_id"
+                android:id="@+id/cardtv2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="#ID: 1"
+                android:text="+8801835559161"
                 android:textSize="15sp"
                 android:textAlignment="textStart"/>
 
             <TextView
-                android:id="@+id/client_phone"
+                android:id="@+id/cardtv3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="+8801835559161"
+                android:text="ss-expnet-1"
+                android:textSize="15sp"
+                android:textAlignment="textStart"/>
+
+            <TextView
+                android:id="@+id/cardtv4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="KHARULIA"
                 android:textSize="15sp"
                 android:textAlignment="textStart"/>
 

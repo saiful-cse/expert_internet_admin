@@ -226,7 +226,7 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
 
                             transaction.setDate(jsonObject1.getString("date"));
                             transaction.setTxn_id(jsonObject1.getString("txn_id"));
-                            transaction.setUserid(jsonObject1.getString("userid"));
+                            transaction.setUserid(jsonObject1.getString("admin_id"));
                             transaction.setMethod(jsonObject1.getString("method"));
                             transaction.setDetails(jsonObject1.getString("details"));
                             transaction.setCredit(jsonObject1.getString("credit"));

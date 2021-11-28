@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -28,7 +27,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.Model.Client;
 import com.creativesaif.expert_internet_admin.Model.DetailsWrapper;
-import com.creativesaif.expert_internet_admin.Model.Package;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.Network.ApiInterface;
 import com.creativesaif.expert_internet_admin.Network.RetrofitApiClient;
@@ -37,7 +35,6 @@ import com.creativesaif.expert_internet_admin.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,30 +42,22 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class ClientDetailsEdit extends AppCompatActivity{
+public class ClientReg extends AppCompatActivity {
 
     //Declaring EditText
-    private EditText edclientname, edclientphone, edpppusername, edpppassword;
-
-    //Declaring RadioButton
-    private RadioGroup radioGroupPaymentMethod;
+    private EditText edclientname, edclientphone;
 
     //Declaring String
-    private String jwt, id, name, phone, existArea, selectedArea,
-            exPpname, pppname, pppassword, selectedPackage;
-
-    //Declaring Button
-    private Button buttonUpdate;
+    private String jwt,name, phone, selectedArea;
 
     //Declaring progress dialog
     private ProgressDialog progressDialog;
 
     //Declaring spinner
-    private Spinner areaSpinner, packageSpinner;
+    private Spinner areaSpinner;
 
     //Declaring Array List
     private ArrayList<String> areaList;
-    private SharedPreferences preferences;
 
     private ApiInterface apiInterface;
     private Client client;
@@ -76,52 +65,37 @@ public class ClientDetailsEdit extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_client_details_edit);
+        setContentView(R.layout.activity_client_reg);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         progressDialog = new ProgressDialog(this);
-        id = getIntent().getStringExtra("id");
-        preferences = this.getSharedPreferences("users", MODE_PRIVATE);
+        SharedPreferences preferences = this.getSharedPreferences("users", MODE_PRIVATE);
         jwt = preferences.getString("jwt", null);
 
         apiInterface = RetrofitApiClient.getClient().create(ApiInterface.class);
         client = new Client();
 
+        if (isNetworkConnected()){
+            area_load();
+        }else{
+            Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
+            finish();
+        }
         /*
         Id initialize
          */
         areaSpinner = findViewById(R.id.areaListSpinner);
-        packageSpinner = findViewById(R.id.spinnerpkgs);
         areaList = new ArrayList<>();
-
-        radioGroupPaymentMethod = findViewById(R.id.radioGroupPaymentMethod);
         edclientname = findViewById(R.id.edclientname);
         edclientphone = findViewById(R.id.edclientphone);
-        edpppusername = findViewById(R.id.edpppusername);
-        edpppassword = findViewById(R.id.edppppassword);
-        buttonUpdate = findViewById(R.id.update_button);
+        //Declaring Button
+        Button submitbtn = findViewById(R.id.submit_button);
 
-        if (id == null ){
-            loginWarningShow("Session expired!!");
-
-        }else if (!isNetworkConnected()) {
-            Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
-
-        }else{
-            client.setJwt(jwt);
-            client.setId(id);
-            load_details(client);
-        }
-
-        //Submit data to server
-        buttonUpdate.setOnClickListener(new View.OnClickListener() {
+        submitbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 name = edclientname.getText().toString().trim();
                 phone = edclientphone.getText().toString().trim();
-                pppname = edpppusername.getText().toString().trim();
-                pppassword = edpppassword.getText().toString().trim();
 
                 if (name.isEmpty()){
                     Toast.makeText(getApplicationContext(), "Enter client name", Toast.LENGTH_SHORT).show();
@@ -129,39 +103,20 @@ public class ClientDetailsEdit extends AppCompatActivity{
                 }else if(phone.isEmpty() || phone.length() < 11){
                     Toast.makeText(getApplicationContext(), "Enter correct phone number", Toast.LENGTH_SHORT).show();
 
-                }else if(pppname.isEmpty() || pppname.equals("---")){
-                    Toast.makeText(getApplicationContext(), "Enter PPP name", Toast.LENGTH_SHORT).show();
-
-                }else if(pppassword.isEmpty()){
-                    Toast.makeText(getApplicationContext(), "Enter PPP password", Toast.LENGTH_SHORT).show();
+                }else if(selectedArea.equals("---")){
+                    Toast.makeText(getApplicationContext(), "Select area name", Toast.LENGTH_SHORT).show();
 
                 } else if (!isNetworkConnected()){
                     Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
 
-                }else if(id == null || jwt == null){
-                    Toast.makeText(getApplicationContext(), "Session expired!!", Toast.LENGTH_LONG).show();
-                    finish();
-                    Intent intent = new Intent(ClientDetailsEdit.this, Login.class);
-                    startActivity(intent);
-
                 }else {
 
-                    int selectedPaymentMethod = radioGroupPaymentMethod.getCheckedRadioButtonId();
-                    RadioButton radioButtonPaymentMethod = findViewById(selectedPaymentMethod);
-                    String payment_method = radioButtonPaymentMethod.getText().toString().trim();
-
                     client.setJwt(jwt);
-                    client.setId(id);
-                    client.setPaymentMethod(payment_method);
                     client.setName(name);
                     client.setPhone(phone);
                     client.setArea(selectedArea);
-                    client.setExPppname(exPpname);
-                    client.setPppName(pppname);
-                    client.setPppPass(pppassword);
-                    client.setPkgId(selectedPackage);
 
-                    updateDetails(client);
+                    clientRegistration(client);
                 }
             }
         });
@@ -180,83 +135,6 @@ public class ClientDetailsEdit extends AppCompatActivity{
 
         });
 
-        //Spinner item choice and click event
-        packageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // On selecting a spinner item
-                selectedPackage = parentView.getItemAtPosition(position).toString();
-
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
-
-        });
-
-    }
-
-
-    public void load_details(Client mClient) {
-        progressDialog.showDialog();
-        Call<DetailsWrapper> call = apiInterface.getClientDetailsId(mClient);
-        call.enqueue(new Callback<DetailsWrapper>() {
-            @SuppressLint("ResourceType")
-            @Override
-            public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
-
-                progressDialog.hideDialog();
-
-                DetailsWrapper detailsWrapper = response.body();
-                assert detailsWrapper != null;
-
-                if (detailsWrapper.getStatus() == 401) {
-                    //Go to phone verification step
-                    loginWarningShow(detailsWrapper.getMessage());
-                }
-
-                if (detailsWrapper.getStatus() == 200) {
-                    edclientname.setText(detailsWrapper.getName());
-                    edclientphone.setText(detailsWrapper.getPhone());
-                    existArea = detailsWrapper.getArea();
-                    if (detailsWrapper.getPaymentMethod().equals("Cash")) {
-                        radioGroupPaymentMethod.check(R.id.payment_cash);
-
-                    } else if (detailsWrapper.getPaymentMethod().equals("Mobile")) {
-                        radioGroupPaymentMethod.check(R.id.payment_mobile);
-                    }
-
-                    exPpname = detailsWrapper.getPppName();
-                    edpppusername.setText(detailsWrapper.getPppName());
-                    edpppassword.setText(detailsWrapper.getPppPass());
-
-                    //Load packages
-                    List<String> packageList = new ArrayList<>();
-
-                    for (int i = 0; i < detailsWrapper.getPackages().size(); i++){
-                        packageList.add(detailsWrapper.getPackages().get(i).getPkgId());
-                    }
-
-                    ArrayAdapter<String> packageArrayAdapter = new ArrayAdapter<>(ClientDetailsEdit.this,
-                         android.R.layout.simple_spinner_dropdown_item, packageList);
-                    packageSpinner.setAdapter(packageArrayAdapter);
-                    int spinnerPosition = packageArrayAdapter.getPosition(detailsWrapper.getPkgId());
-                    packageSpinner.setSelection(spinnerPosition);
-
-                }else{
-                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
-                }
-
-                area_load();
-            }
-
-            @Override
-            public void onFailure(Call<DetailsWrapper> call, Throwable t) {
-                progressDialog.hideDialog();
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     //Internet connection check
@@ -294,12 +172,9 @@ public class ClientDetailsEdit extends AppCompatActivity{
                         areaList.add(jsonArray.getString(i));
                     }
 
-                    ArrayAdapter<String> AreaArrayAdapter = new ArrayAdapter<>(ClientDetailsEdit.this,
+                    ArrayAdapter<String> AreaArrayAdapter = new ArrayAdapter<>(ClientReg.this,
                             android.R.layout.simple_spinner_dropdown_item, areaList);
                     areaSpinner.setAdapter(AreaArrayAdapter);
-                    int spinnerPosition2 = AreaArrayAdapter.getPosition(existArea);
-                    areaSpinner.setSelection(spinnerPosition2);
-
 
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -308,7 +183,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(ClientDetailsEdit.this,error.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(ClientReg.this,error.toString(),Toast.LENGTH_LONG).show();
                 finish();
             }
         });
@@ -316,10 +191,10 @@ public class ClientDetailsEdit extends AppCompatActivity{
 
     }
 
-    public void updateDetails(Client client) {
+    public void clientRegistration(Client client) {
 
         progressDialog.showDialog();
-        Call<DetailsWrapper> call = apiInterface.updateDetails(client);
+        Call<DetailsWrapper> call = apiInterface.clientRegistration(client);
         call.enqueue(new Callback<DetailsWrapper>() {
             @SuppressLint("ResourceType")
             @Override
@@ -337,7 +212,43 @@ public class ClientDetailsEdit extends AppCompatActivity{
                 } else if (detailsWrapper.getStatus() == 200) {
                     Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
                     finish();
-                    startActivity(new Intent(ClientDetailsEdit.this, ClientList.class));
+
+                }else{
+                    warningShow(detailsWrapper.getMessage());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<DetailsWrapper> call, Throwable t) {
+                progressDialog.hideDialog();
+                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+
+            }
+        });
+    }
+
+    public void updateRegistration(Client client) {
+
+        progressDialog.showDialog();
+        Call<DetailsWrapper> call = apiInterface.updateRegistration(client);
+        call.enqueue(new Callback<DetailsWrapper>() {
+            @SuppressLint("ResourceType")
+            @Override
+            public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
+
+                progressDialog.hideDialog();
+
+                DetailsWrapper detailsWrapper = response.body();
+                assert detailsWrapper != null;
+
+                if (detailsWrapper.getStatus() == 401) {
+                    //Go to phone verification step
+                    loginWarningShow(detailsWrapper.getMessage());
+
+                } else if (detailsWrapper.getStatus() == 200) {
+                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                    finish();
 
                 }else{
                     warningShow(detailsWrapper.getMessage());
@@ -365,7 +276,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 finish();
-                startActivity(new Intent(ClientDetailsEdit.this, Login.class));
+                startActivity(new Intent(ClientReg.this, Login.class));
             }
         });
 
@@ -395,5 +306,4 @@ public class ClientDetailsEdit extends AppCompatActivity{
         AlertDialog dlg = alert.create();
         dlg.show();
     }
-
 }

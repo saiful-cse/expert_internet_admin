@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:padding="10dp"
     android:background="@color/activity_backround"
-    tools:context=".ClientList.ClientDetailsEdit">
+    tools:context=".ClientList.ClientRegUpdate">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -36,35 +36,35 @@
                         android:text="Payment Method"
                         android:textSize="20sp"
                         android:textColor="@color/colorPrimary"/>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorPrimary"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorPrimary"/>
 
 
-                <RadioGroup
-                    android:id="@+id/radioGroupPaymentMethod"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:weightSum="1">
-
-                    <RadioButton
-                        android:id="@+id/payment_cash"
-                        android:layout_weight="0.5"
-                        android:layout_width="wrap_content"
+                    <RadioGroup
+                        android:id="@+id/radioGroupPaymentMethod"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Cash"
-                        />
+                        android:weightSum="1">
 
-                    <RadioButton
-                        android:id="@+id/payment_mobile"
-                        android:layout_weight="0.5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Mobile"
-                        />
-                </RadioGroup>
+                        <RadioButton
+                            android:id="@+id/payment_cash"
+                            android:layout_weight="0.5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Cash"
+                            />
+
+                        <RadioButton
+                            android:id="@+id/payment_mobile"
+                            android:layout_weight="0.5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Mobile"
+                            />
+                    </RadioGroup>
 
                 </LinearLayout>
             </android.support.v7.widget.CardView>
@@ -279,6 +279,7 @@
                 </LinearLayout>
             </android.support.v7.widget.CardView>
             <!-- service detils end -->
+
 
             <Button
                 android:id="@+id/update_button"

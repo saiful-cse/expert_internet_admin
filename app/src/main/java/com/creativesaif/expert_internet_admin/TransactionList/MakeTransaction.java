@@ -43,7 +43,7 @@ public class MakeTransaction extends AppCompatActivity {
     String txn_type, txn_method, amount, details;
     Button buttonSubmmit;
     SharedPreferences sharedPreferences;
-    private String jwt, userid;
+    private String jwt, admin_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +66,7 @@ public class MakeTransaction extends AppCompatActivity {
                 amount = editTextAmount.getText().toString().trim();
                 details = editTextDetails.getText().toString().trim();
                 jwt = sharedPreferences.getString("jwt", null);
-                userid = sharedPreferences.getString("userid", null);
+                admin_id = sharedPreferences.getString("admin_id", null);
 
                 if (jwt == null){
                     finish();
@@ -166,11 +166,11 @@ public class MakeTransaction extends AppCompatActivity {
                 Map<String,String> map = new HashMap<>();
 
                 map.put("jwt", jwt);
-                map.put("type", txn_type);
+                map.put("txn_type", txn_type);
                 map.put("method", txn_method);
                 map.put("amount", amount);
                 map.put("details", details);
-                map.put("userid", userid);
+                map.put("admin_id", admin_id);
                 return map;
 
             }

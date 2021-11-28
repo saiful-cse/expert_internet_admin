@@ -42,8 +42,8 @@
     <!--                server URL              -->
 
     <!-- base url -->
-<!--    <string name="base_url">http://192.168.1.10:8012/API/expert_internet_api/exp-v4.1/</string>-->
-    <string name="base_url">https://creativesaif.com/api/exp-v4.1/</string>
+    <string name="base_url">http://192.168.1.3:8012/API/expert_internet_api/exp-v4.1/</string>
+    <!--    <string name="base_url">https://creativesaif.com/api/exp-v4.1/</string>-->
 
     <!-- news script directory -->
     <!-- News CRUD -->
@@ -53,18 +53,6 @@
     <string name="news_delete">news/delete.php</string>
     <string name="news_image_path">news/images/</string>
     <string name="ads_details">Post Details</string>
-
-    <!-- Client script directory -->
-    <!-- Client CRUD -->
-    <string name="check_alert_client">client/check_alert_client.php</string>
-    <string name="active_client_read">client/active_client.php</string>
-    <string name="inactive_client_read">client/inactive_client.php</string>
-    <string name="alert_client_read">client/alert_client.php</string>
-    <string name="over3day_client_read">client/over3DayClient.php</string>
-    <string name="client_details">client/client_details.php</string>
-    <string name="update_details">client/update.php</string>
-    <string name="usernamelist">client/getting_all_username.php</string>
-
 
     <!-- Search -->
     <string name="search">search/search.php?q=</string>
@@ -78,11 +66,6 @@
     <string name="txn_details">txn/txn_details.php</string>
     <string name="txn_delete">txn/txn_delete.php</string>
     <string name="txn_update">txn/txn_update.php</string>
-
-
-    <!-- laravel txn -->
-    <string name="admin_txn_laravel">https://creativesaif.com/api/exp-api/api/transation_owner</string>
-    <string name="client_txn_laravel">https://creativesaif.com/api/exp-api/api/transation_client</string>
 
     <!-- Dashboard -->
     <string name="dashboard_data">dashboard/read.php</string>
@@ -110,7 +93,7 @@
 
 
     <!-- Login -->
-    <string name="login">user/login.php</string>
+    <string name="login">admin/login.php</string>
 
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>

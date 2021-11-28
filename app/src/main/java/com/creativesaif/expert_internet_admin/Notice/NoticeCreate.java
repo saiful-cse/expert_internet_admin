@@ -1,5 +1,6 @@
 package com.creativesaif.expert_internet_admin.Notice;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,7 +31,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.creativesaif.expert_internet_admin.ClientList.ClientDetails;
 import com.creativesaif.expert_internet_admin.ClientList.ClientDetailsEdit;
 import com.creativesaif.expert_internet_admin.Login;
+import com.creativesaif.expert_internet_admin.Model.Client;
+import com.creativesaif.expert_internet_admin.Model.DetailsWrapper;
 import com.creativesaif.expert_internet_admin.MySingleton;
+import com.creativesaif.expert_internet_admin.Network.ApiInterface;
+import com.creativesaif.expert_internet_admin.Network.RetrofitApiClient;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
 
@@ -43,13 +48,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+
 public class NoticeCreate extends AppCompatActivity {
 
-    EditText editTextActiveClientMsg, editTextNotice;
-    ProgressDialog progressDialog;
-    String jwt, activeClientMessage, notice;
-    Button buttonAlertSmsSend, buttonActiveSmsSend, notice_Post;
+    private EditText editTextActiveClientMsg, editTextNotice;
+    private ProgressDialog progressDialog;
+    private String jwt, activeClientMessage, notice;
     private SharedPreferences preferences;
+
+    private ApiInterface apiInterface;
+    private Client client;
 
     /*
     Area load from server
@@ -68,10 +78,13 @@ public class NoticeCreate extends AppCompatActivity {
 
         // ---------- notice ------------
         preferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
+        apiInterface = RetrofitApiClient.getClient().create(ApiInterface.class);
+        client = new Client();
+        jwt = preferences.getString("jwt", null);
 
         editTextNotice = findViewById(R.id.edNotice);
         progressDialog = new ProgressDialog(this);
-        notice_Post = findViewById(R.id.btnNoticePost);
+        Button notice_Post = findViewById(R.id.btnNoticePost);
 
         notice_Post.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,14 +104,28 @@ public class NoticeCreate extends AppCompatActivity {
 
 
         // ----- sms service for alert client -----
+        Button buttonAlertSmsSend = findViewById(R.id.btnAlertSmsSend);
+        Button buttonActiveSmsSend = findViewById(R.id.btnActiveSmsSend);
 
-        buttonAlertSmsSend = findViewById(R.id.btnAlertSmsSend);
-        buttonActiveSmsSend = findViewById(R.id.btnActiveSmsSend);
+        Button btnBillExpireWarning = findViewById(R.id.btnbillwarning);
+        btnBillExpireWarning.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                warningBillExpire();
+            }
+        });
+
+        Button btnExpiredClientDisconnect = findViewById(R.id.btnexpireddiscont);
+        btnExpiredClientDisconnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                warningExpiredClientDisconnect();
+            }
+        });
 
         buttonAlertSmsSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                jwt = preferences.getString("jwt", null);
 
                 if (jwt == null ){
                     finish();
@@ -139,9 +166,80 @@ public class NoticeCreate extends AppCompatActivity {
 
             }
         });
-
-
     }
+
+    public void billExpireWarningSend(Client mClient) {
+        progressDialog.showDialog();
+        Call<DetailsWrapper> call = apiInterface.bilExpireWarningSend(mClient);
+        call.enqueue(new Callback<DetailsWrapper>() {
+            @SuppressLint("ResourceType")
+            @Override
+            public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
+
+                progressDialog.hideDialog();
+
+                DetailsWrapper detailsWrapper = response.body();
+                assert detailsWrapper != null;
+
+                if (detailsWrapper.getStatus() == 401) {
+                    //Go to phone verification step
+                    loginWarningShow(detailsWrapper.getMessage());
+
+                }if (detailsWrapper.getStatus() == 200) {
+                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                    finish();
+
+                }else{
+                    warningShow(detailsWrapper.getMessage());
+                    //Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<DetailsWrapper> call, Throwable t) {
+                progressDialog.hideDialog();
+                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void expiredClientDisconnect(Client mClient) {
+        progressDialog.showDialog();
+        Call<DetailsWrapper> call = apiInterface.expiredClientDisconnect(mClient);
+        call.enqueue(new Callback<DetailsWrapper>() {
+            @SuppressLint("ResourceType")
+            @Override
+            public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
+
+                progressDialog.hideDialog();
+
+                DetailsWrapper detailsWrapper = response.body();
+                assert detailsWrapper != null;
+
+                if (detailsWrapper.getStatus() == 401) {
+                    //Go to phone verification step
+                    loginWarningShow(detailsWrapper.getMessage());
+
+                }if (detailsWrapper.getStatus() == 200) {
+                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                    finish();
+
+                }else{
+                    warningShow(detailsWrapper.getMessage());
+                    //Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<DetailsWrapper> call, Throwable t) {
+                progressDialog.hideDialog();
+                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
 
     public void alertSmsSend()
     {
@@ -308,12 +406,62 @@ public class NoticeCreate extends AppCompatActivity {
         MySingleton.getInstance().addToRequestQueue(stringRequest);
     }
 
+    public void warningExpiredClientDisconnect(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setCancelable(true);
+        alert.setTitle("সতর্কতা!!");
+        alert.setMessage("যে সব ক্লায়েন্টদের বিলের মেয়াদ শেষ হয়ে গেছে তাদের ফোনে SMS যাবে এবং সাথে মাইক্রোটিক সার্ভার থেকে ডিস্কানেক্ট হবে।");
+        alert.setIcon(R.drawable.ic_baseline_warning_24);
+
+        alert.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                client.setJwt(jwt);
+                expiredClientDisconnect(client);
+            }
+        });
+
+        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog dlg = alert.create();
+        dlg.show();
+    }
+
+    public void warningBillExpire(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setCancelable(true);
+        alert.setTitle("সতর্কতা!!");
+        alert.setMessage("যে সব ক্লায়েন্টদের বিলের মেয়াদ শেষ হতে ৩ দিন বাকি আছে তাদের ফোনে SMS যাবে।");
+        alert.setIcon(R.drawable.ic_baseline_warning_24);
+
+        alert.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                client.setJwt(jwt);
+                billExpireWarningSend(client);
+            }
+        });
+
+        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog dlg = alert.create();
+        dlg.show();
+    }
+
     public void warning_alert_client_sms(){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setCancelable(true);
         alert.setTitle("সতর্কতা!!");
         alert.setMessage("যে সব ক্লায়েন্টদের কানেকশনের মেয়াদ ১ মাস হয়ে গেছে তাদের ফোনে এস এম এস যাবে।");
-        alert.setIcon(R.drawable.warning_icon);
+        alert.setIcon(R.drawable.ic_baseline_warning_24);
 
         alert.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
             @Override
@@ -338,7 +486,7 @@ public class NoticeCreate extends AppCompatActivity {
         alert.setCancelable(true);
         alert.setTitle("সতর্কতা!!");
         alert.setMessage("সকল একটিভ ক্লায়েন্টদের ফোনে আপনার লিখা মেসেজ যাবে। আপনার মেসেজ সঠিক আছে কিনা চেক করে দেখুন অন্যথায় ভুল মেসেজে ক্লায়েন্ট বিভ্রান্তে পড়তে পারে।");
-        alert.setIcon(R.drawable.warning_icon);
+        alert.setIcon(R.drawable.ic_baseline_warning_24);
 
         alert.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
             @Override
@@ -368,21 +516,38 @@ public class NoticeCreate extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void warningShow(String message){
+    public void loginWarningShow(String message){
         android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
         alert.setCancelable(false);
         alert.setTitle("Warning!!");
         alert.setMessage(message);
-        alert.setIcon(R.drawable.warning_icon);
+        alert.setIcon(R.drawable.ic_baseline_warning_24);
 
         alert.setPositiveButton("Login", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 finish();
                 startActivity(new Intent(NoticeCreate.this, Login.class));
-
             }
         });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        android.app.AlertDialog dlg = alert.create();
+        dlg.show();
+    }
+
+
+    public void warningShow(String message){
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
+        alert.setCancelable(false);
+        alert.setTitle("Warning!!");
+        alert.setMessage(message);
+        alert.setIcon(R.drawable.ic_baseline_warning_24);
 
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override

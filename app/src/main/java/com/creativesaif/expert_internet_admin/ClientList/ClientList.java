@@ -23,11 +23,12 @@ public class ClientList extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPager);
         tabLayout = findViewById(R.id.tabLayout);
         adapter = new TabAdapter(getSupportFragmentManager());
-        adapter.addFragment(new AleartList(), "Alert");
-        adapter.addFragment(new Over3DayClientList(), "5Day Over");
-        adapter.addFragment(new ActiveList(), "Active");
-        adapter.addFragment(new InactiveList(), "Inactive");
-        adapter.addFragment(new UsernameList(), "Username");
+        adapter.addFragment(new UnRegisteredClient(), "URG");
+        adapter.addFragment(new RegisteredClient(), "REG");
+        adapter.addFragment(new ExpiredClient(), "EXP");
+        adapter.addFragment(new DisabledClient(), "DSB");
+        adapter.addFragment(new EnabledClient(), "ENB");
+        adapter.addFragment(new OnlineClient(), "ONL");
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
     }

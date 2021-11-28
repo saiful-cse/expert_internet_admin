@@ -96,9 +96,9 @@
                             <View style="@style/Divider" />
 
                             <TextView
-                                android:layout_width="50dp"
+                                android:layout_width="60dp"
                                 android:layout_height="wrap_content"
-                                android:text="UserID"
+                                android:text="AdminID"
                                 android:textAlignment="center"
                                 android:textColor="#ffffff"
                                 android:textSize="15sp" />

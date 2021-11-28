@@ -137,8 +137,8 @@ public class Dashboard extends AppCompatActivity {
 
                     }else{
 
-                    activeClient = jsonObject.getString("total_active_client");
-                    inactiveClient = jsonObject.getString("total_inactive_client");
+                    activeClient = jsonObject.getString("total_enabled_client");
+                    inactiveClient = jsonObject.getString("total_disabled_client");
                     monthCredit = jsonObject.getString("current_month_total_credit");
                     monthDebit = jsonObject.getString("current_month_total_debit");
                     overCredit = jsonObject.getString("overall_credit");
@@ -158,8 +158,8 @@ public class Dashboard extends AppCompatActivity {
                     double misbaProfit = monthlyProfit/2;
 
 
-                        textViewActive.setText("Active Client\n"+activeClient);
-                    textViewInactive.setText("Inactive Client\n"+inactiveClient);
+                        textViewActive.setText("Enabled Client\n"+activeClient);
+                    textViewInactive.setText("Disabled Client\n"+inactiveClient);
 
                     textViewMonthCredit.setText("This Month Credit\n"+monthCredit);
                     textViewMonthDebit.setText("This Month Debit\n"+monthDebit);
@@ -170,10 +170,10 @@ public class Dashboard extends AppCompatActivity {
                     textViewTotalInvest.setText("Total Invest\n"+String.format("%.2f", new BigDecimal(totalInvest)));
 
                     textViewSaifuPercent.setText("Saiful Invest\n"+saifulInvest+" TK, "+String.format("%.2f", new BigDecimal(saifulPercent))+"%");
-                    textViewMisbaPercent.setText("Misba Invest\n"+misbaInvest+" TK, "+String.format("%.2f", new BigDecimal(misbaPercent))+"%");
+                    textViewMisbaPercent.setText("Shamim Invest\n"+misbaInvest+" TK, "+String.format("%.2f", new BigDecimal(misbaPercent))+"%");
 
                     textViewSaifulProfit.setText("Saiful Profit\n"+String.format("%.2f", new BigDecimal(saifulProfit)) +" TK");
-                    textViewMisbaProfit.setText("Misba Profit\n"+String.format("%.2f", new BigDecimal(misbaProfit)) +" TK");
+                    textViewMisbaProfit.setText("Shamim Profit\n"+String.format("%.2f", new BigDecimal(misbaProfit)) +" TK");
 
                     //Chart data
                     JSONArray jsonArray = jsonObject.getJSONArray("monthly_client_count");
