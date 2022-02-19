@@ -48,10 +48,7 @@ import com.creativesaif.expert_internet_admin.Model.Trns;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.Network.ApiInterface;
 import com.creativesaif.expert_internet_admin.Network.RetrofitApiClient;
-import com.creativesaif.expert_internet_admin.NewsFeed.News;
-import com.creativesaif.expert_internet_admin.NewsFeed.NewsAdapter;
-import com.creativesaif.expert_internet_admin.NewsFeed.NewsAdd;
-import com.creativesaif.expert_internet_admin.NewsFeed.NewsDetails;
+
 import com.creativesaif.expert_internet_admin.Notice.NoticeCreate;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
@@ -74,25 +71,19 @@ import retrofit2.Callback;
 
 public class ClientDetails extends AppCompatActivity {
 
-    private Button btnDetailsEdit, buttonTxnSubmit, btnSmsSend, btnSmsHistory, btnPaymentHistory;
+    private Button btnSmsHistory;
 
     private TextView tvname, tvphone, tvarea,
-            tvppname, tvpppass, tvppstatus, tvppactivity, tvroutermac, tvlastlogut, tvuptime, tvdonwload, tvupload,
+            tvppname, tvpppass,
             tvmode, tvpaymentmethod, tvpackgeid, tvregdate, tvexpiredate;
 
-    private ImageView user_call;
     private String jwt, name, id, pppName, admin_id, phone, informMessage;
     private SharedPreferences sharedPreferences;
     private ApiInterface apiInterface;
     private Client client;
     private Trns trns;
 
-    private RecyclerView recyclerView;
     private PackageAdapter packageAdapter;
-    private ArrayList<Package> packageArrayList;
-
-    private Switch pppswitch ;
-
 
     /*
     Payment Details
@@ -124,7 +115,6 @@ public class ClientDetails extends AppCompatActivity {
         sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
         jwt = sharedPreferences.getString("jwt", null);
 
-
         /*
         Txn ID initialize
          */
@@ -133,21 +123,16 @@ public class ClientDetails extends AppCompatActivity {
         radioGroup = findViewById(R.id.radioGroup);
         radioGroup2 = findViewById(R.id.radioGroup2);
         editTextAmount = findViewById(R.id.edAmount);
-        buttonTxnSubmit = findViewById(R.id.txn_submit);
+        Button buttonTxnSubmit = findViewById(R.id.txn_submit);
 
-        btnPaymentHistory = findViewById(R.id.btnPaymentHistory);
-        /*
-        ID initialize
-         */
-
-
-        user_call = findViewById(R.id.user_direct_call);
+        Button btnPaymentHistory = findViewById(R.id.btnPaymentHistory);
+        ImageView user_call = findViewById(R.id.user_direct_call);
 
         //-----Package List ---------
-        packageArrayList = new ArrayList<>();
+        ArrayList<Package> packageArrayList = new ArrayList<>();
         packageAdapter = new PackageAdapter(this, packageArrayList);
 
-        recyclerView = findViewById(R.id.recyclerViewPkgView);
+        RecyclerView recyclerView = findViewById(R.id.recyclerViewPkgView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
@@ -167,13 +152,7 @@ public class ClientDetails extends AppCompatActivity {
         //--------PPPoE Connection-------
         tvppname = findViewById(R.id.tvppp_name);
         tvpppass = findViewById(R.id.tvppp_pass);
-        tvppstatus = findViewById(R.id.tvppp_status);
-        tvppactivity = findViewById(R.id.tvppp_activity);
-        tvroutermac = findViewById(R.id.tvrouter_mac);
-        tvlastlogut = findViewById(R.id.tvlogout_time);
-        tvuptime = findViewById(R.id.tvuptime);
-        tvdonwload = findViewById(R.id.tvdownload);
-        tvupload = findViewById(R.id.tvupload);
+
 
         //------Service details--------
         tvpaymentmethod = findViewById(R.id.tvpaymentmethod);
@@ -200,34 +179,20 @@ public class ClientDetails extends AppCompatActivity {
             load_details(client);
         }
 
-        pppswitch = findViewById(R.id.pppswitch); // initiate Switch
-        pppswitch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (pppswitch.isChecked()){
-                    client.setJwt(jwt);
-                    client.setAction("enable");
-                    client.setId(id);
-                    client.setPppName(pppName);
-                    getPPPAction(client);
-
-                }else{
-                    client.setJwt(jwt);
-                    client.setAction("disable");
-                    client.setId(id);
-                    client.setPppName(pppName);
-                    getPPPAction(client);
-                }
-            }
-        });
-
-
         user_call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent callIntent = new Intent(Intent.ACTION_VIEW);
                 callIntent.setData(Uri.parse("tel:+88"+phone));
                 startActivity(callIntent);
+            }
+        });
+
+        Button btnExpiredClientDisconnect = findViewById(R.id.btnexpireddiscont);
+        btnExpiredClientDisconnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                warningExpiredClientDisconnect();
             }
         });
 
@@ -287,7 +252,7 @@ public class ClientDetails extends AppCompatActivity {
         });
 
         //Make inform
-        btnSmsSend = findViewById(R.id.btnInformSend);
+        Button btnSmsSend = findViewById(R.id.btnInformSend);
         editTextInformSms = findViewById(R.id.edInformSms);
 
         btnSmsSend.setOnClickListener(new View.OnClickListener() {
@@ -317,7 +282,7 @@ public class ClientDetails extends AppCompatActivity {
          */
         //assign all objects to avoid nullPointerException
 
-        btnDetailsEdit = findViewById(R.id.btnEdit);
+        Button btnDetailsEdit = findViewById(R.id.btnEdit);
         btnDetailsEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -353,6 +318,43 @@ public class ClientDetails extends AppCompatActivity {
         return cm.getActiveNetworkInfo() != null;
     }
 
+
+    public void billExpireWarningSend(Client mClient) {
+        progressDialog.showDialog();
+        Call<DetailsWrapper> call = apiInterface.bilExpireWarningSend(mClient);
+        call.enqueue(new Callback<DetailsWrapper>() {
+            @SuppressLint("ResourceType")
+            @Override
+            public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
+
+                progressDialog.hideDialog();
+
+                DetailsWrapper detailsWrapper = response.body();
+                assert detailsWrapper != null;
+
+                if (detailsWrapper.getStatus() == 401) {
+                    //Go to phone verification step
+                    loginWarningShow(detailsWrapper.getMessage());
+
+                }if (detailsWrapper.getStatus() == 200) {
+                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                    finish();
+
+                }else{
+                    warningShow(detailsWrapper.getMessage());
+                    //Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<DetailsWrapper> call, Throwable t) {
+                progressDialog.hideDialog();
+                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     public void load_details(Client mClient) {
 
         progressDialog.showDialog();
@@ -385,29 +387,6 @@ public class ClientDetails extends AppCompatActivity {
                     pppName = detailsWrapper.getPppName();
                     tvppname.setText(detailsWrapper.getPppName());
                     tvpppass.setText(detailsWrapper.getPppPass());
-                    if (detailsWrapper.getPppStatus().equals("Enabled")){
-                        pppswitch.setChecked(true);
-                        tvppstatus.setText(detailsWrapper.getPppStatus());
-                        tvppstatus.setTextColor(Color.GREEN);
-                    }else{
-                        pppswitch.setChecked(false);
-                        tvppstatus.setText(detailsWrapper.getPppStatus());
-                        tvppstatus.setTextColor(Color.RED);
-                    }
-                    if(detailsWrapper.getPppActivity().equals("Online")){
-                        tvppactivity.setText(detailsWrapper.getPppActivity());
-                        tvppactivity.setTextColor(Color.GREEN);
-                    }else{
-                        tvppactivity.setText(detailsWrapper.getPppActivity());
-                        tvppactivity.setTextColor(Color.RED);
-                    }
-
-                    tvppactivity.setText(detailsWrapper.getPppActivity());
-                    tvroutermac.setText(detailsWrapper.getRouterMac());
-                    tvlastlogut.setText(detailsWrapper.getLastLogedOut());
-                    tvuptime.setText(detailsWrapper.getUptime());
-                    tvdonwload.setText(detailsWrapper.getDownload());
-                    tvupload.setText(detailsWrapper.getUpload());
 
                     tvpaymentmethod.setText(detailsWrapper.getPaymentMethod());
                     tvpackgeid.setText(detailsWrapper.getPkgId());
@@ -430,45 +409,6 @@ public class ClientDetails extends AppCompatActivity {
             }
         });
     }
-
-    public void getPPPAction(Client mClient) {
-
-        progressDialog.showDialog();
-        Call<DetailsWrapper> call = apiInterface.getPPPAction(mClient);
-        call.enqueue(new Callback<DetailsWrapper>() {
-            @SuppressLint("ResourceType")
-            @Override
-            public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
-
-                progressDialog.hideDialog();
-
-                DetailsWrapper detailsWrapper = response.body();
-                assert detailsWrapper != null;
-
-                if (detailsWrapper.getStatus() == 401) {
-                    //Go to phone verification step
-                    loginWarningShow(detailsWrapper.getMessage());
-
-                }if (detailsWrapper.getStatus() == 200) {
-                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
-                    //Details refresh
-                    load_details(client);
-
-                }else{
-                    warningShow(detailsWrapper.getMessage());
-                    //Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<DetailsWrapper> call, Throwable t) {
-                progressDialog.hideDialog();
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
 
     public void informSmsSend()
     {
@@ -568,6 +508,42 @@ public class ClientDetails extends AppCompatActivity {
         dlg.show();
     }
 
+    public void expiredClientDisconnectSms(Client mClient) {
+        progressDialog.showDialog();
+        Call<DetailsWrapper> call = apiInterface.expiredClientDisconnectSms(mClient);
+        call.enqueue(new Callback<DetailsWrapper>() {
+            @SuppressLint("ResourceType")
+            @Override
+            public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
+
+                progressDialog.hideDialog();
+
+                DetailsWrapper detailsWrapper = response.body();
+                assert detailsWrapper != null;
+
+                if (detailsWrapper.getStatus() == 401) {
+                    //Go to phone verification step
+                    loginWarningShow(detailsWrapper.getMessage());
+
+                }if (detailsWrapper.getStatus() == 200) {
+                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                    finish();
+
+                }else{
+                    warningShow(detailsWrapper.getMessage());
+                    //Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<DetailsWrapper> call, Throwable t) {
+                progressDialog.hideDialog();
+                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     public void admin_make_payment(Trns mTrns)
     {
         progressDialog.showDialog();
@@ -649,6 +625,34 @@ public class ClientDetails extends AppCompatActivity {
             }
         });
         android.app.AlertDialog dlg = alert.create();
+        dlg.show();
+    }
+
+    public void warningExpiredClientDisconnect(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setCancelable(true);
+        alert.setTitle("Warning");
+        alert.setMessage("বিলের মেয়াদ শেষ হয়ে যাওয়াতে লাইন বন্ধের SMS পাঠাতে চান?");
+        alert.setIcon(R.drawable.ic_baseline_warning_24);
+
+        alert.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                client.setJwt(jwt);
+                client.setPppName(pppName);
+                client.setId(id);
+                client.setPhone(phone);
+                expiredClientDisconnectSms(client);
+            }
+        });
+
+        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog dlg = alert.create();
         dlg.show();
     }
 

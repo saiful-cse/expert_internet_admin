@@ -32,16 +32,6 @@
                     android:layout_margin="10dp">
 
                     <Button
-                        android:id="@+id/btnAlertSmsSend"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Alert client SMS Send"
-                        android:textColor="@color/colorPrimary"
-                        android:textAllCaps="false"
-                        />
-
-                    <Button
                         android:background="@drawable/button_round"
                         android:layout_marginTop="10dp"
                         android:id="@+id/btnbillwarning"
@@ -51,20 +41,6 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="Bill Expire Warning"
-                        android:textColor="@color/colorPrimary"
-                        android:textAllCaps="false"
-                        />
-
-                    <Button
-                        android:background="@drawable/button_round"
-                        android:layout_marginTop="10dp"
-                        android:textAlignment="center"
-                        android:padding="10dp"
-                        android:id="@+id/btnexpireddiscont"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Expired Client Disconnect"
                         android:textColor="@color/colorPrimary"
                         android:textAllCaps="false"
                         />

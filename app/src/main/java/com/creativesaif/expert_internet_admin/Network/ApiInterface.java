@@ -11,52 +11,55 @@ import retrofit2.http.POST;
 
 public interface ApiInterface {
 
-    String base_url = "http://192.168.1.3:8012/";
+//    String base_url = "http://192.168.1.5:8012/";
+//    String second_path = "api/expert_internet_api/";
+//    String api_version = "exp-v4.3/";
 
-    @POST(base_url+"api/expert_internet_api/exp-v4.1/client/registered_client.php")
+    String base_url = "https://creativesaif.com/";
+    String second_path = "api/";
+    String api_version = "exp-v4.3/";
+
+    @POST(base_url+second_path+api_version+"client/registered_client.php")
     Call<ClientWrapper> getRegistered_client(@Body Client client);
 
-    @POST(base_url+"api/expert_internet_api/exp-v4.1/client/unregistered_client.php")
+    @POST(base_url+second_path+api_version+"client/unregistered_client.php")
     Call<ClientWrapper> getUnRegistered_client(@Body Client client);
 
-    @POST(base_url+"api/expert_internet_api/exp-v4.1/client/expired_client.php")
+    @POST(base_url+second_path+api_version+"client/expired_client.php")
     Call<ClientWrapper> getExpired_client(@Body Client client);
 
-    @POST(base_url+"api/expert_internet_api/exp-v4.1/client/disabled_client.php")
+    @POST(base_url+second_path+api_version+"client/expired3day_client.php")
+    Call<ClientWrapper> get3DayExpired_client(@Body Client client);
+
+    @POST(base_url+second_path+api_version+"client/disabled_client.php")
     Call<ClientWrapper> getDisabled_client(@Body Client client);
 
-    @POST(base_url+"api/expert_internet_api/exp-v4.1/client/enabled_client.php")
+    @POST(base_url+second_path+api_version+"client/enabled_client.php")
     Call<ClientWrapper> getEnabled_client(@Body Client client);
 
-    @POST(base_url+"api/expert_internet_api/exp-v4.1/client/online_client.php")
-    Call<ClientWrapper> getOnline_client(@Body Client client);
-
-
-    @POST(base_url+"api/expert_internet_api/exp-v4.1/client/client_details.php")
+    @POST(base_url+second_path+api_version+"client/client_details.php")
     Call<DetailsWrapper> getClientDetails(@Body Client client);
-    @POST(base_url+"api/expert_internet_api/exp-v4.1/client/client_details_id.php")
+
+    @POST(base_url+second_path+api_version+"client/client_details_id.php")
     Call<DetailsWrapper> getClientDetailsId(@Body Client client);
 
-    @POST(base_url+"api/expert_internet_api/exp-v4.1/client/ppp_action.php")
-    Call<DetailsWrapper> getPPPAction(@Body Client client);
-
-    @POST(base_url+"api/expert_internet_api/exp-v4.1/txn/admin_make_payment.php")
+    @POST(base_url+second_path+api_version+"txn/admin_make_payment.php")
     Call<Trns> adminMakePayment(@Body Trns trns);
 
-    @POST(base_url+"api/expert_internet_api/exp-v4.1/client/client_details_update.php")
+    @POST(base_url+second_path+api_version+"client/client_details_update.php")
     Call<DetailsWrapper> updateDetails(@Body Client client);
 
-    @POST(base_url+"api/expert_internet_api/exp-v4.1/client/client_registration_update.php")
+    @POST(base_url+second_path+api_version+"client/client_registration_update.php")
     Call<DetailsWrapper> updateRegistration(@Body Client client);
 
-    @POST(base_url+"api/expert_internet_api/exp-v4.1/client/client_registration.php")
+    @POST(base_url+second_path+api_version+"client/client_registration.php")
     Call<DetailsWrapper> clientRegistration(@Body Client client);
 
-    @POST(base_url+"api/expert_internet_api/exp-v4.1/sms/bill_expire_warning.php")
+    @POST(base_url+second_path+api_version+"/sms/bill_expire_warning.php")
     Call<DetailsWrapper> bilExpireWarningSend(@Body Client client);
 
-    @POST(base_url+"api/expert_internet_api/exp-v4.1/client/expired_client_disconnect.php")
-    Call<DetailsWrapper> expiredClientDisconnect(@Body Client client);
+    @POST(base_url+second_path+api_version+"/sms/expired_client_disconnect_sms.php")
+    Call<DetailsWrapper> expiredClientDisconnectSms(@Body Client client);
 
 
 }

@@ -20,7 +20,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.creativesaif.expert_internet_admin.ClientList.ClientDetails;
 import com.creativesaif.expert_internet_admin.ClientList.ClientDetailsEdit;
 import com.creativesaif.expert_internet_admin.MySingleton;
-import com.creativesaif.expert_internet_admin.NewsFeed.NewsDetails;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
 

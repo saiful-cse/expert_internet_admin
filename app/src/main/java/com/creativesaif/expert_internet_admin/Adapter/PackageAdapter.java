@@ -33,7 +33,7 @@ public class PackageAdapter extends RecyclerView.Adapter<PackageAdapter.MyViewHo
 
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder( ViewGroup viewGroup, int i) {
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view =  LayoutInflater.from(context).inflate(R.layout.each_package_card, viewGroup, false);
         return new MyViewHolder(view);
     }

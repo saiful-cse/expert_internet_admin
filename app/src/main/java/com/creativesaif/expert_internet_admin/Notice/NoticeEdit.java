@@ -17,8 +17,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.creativesaif.expert_internet_admin.MySingleton;
-import com.creativesaif.expert_internet_admin.NewsFeed.NewsDetails;
-import com.creativesaif.expert_internet_admin.NewsFeed.NewsEdit;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
 

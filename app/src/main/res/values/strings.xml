@@ -42,18 +42,10 @@
     <!--                server URL              -->
 
     <!-- base url -->
-    <string name="base_url">http://192.168.1.3:8012/API/expert_internet_api/exp-v4.1/</string>
-    <!--    <string name="base_url">https://creativesaif.com/api/exp-v4.1/</string>-->
+<!--    <string name="base_url">http://192.168.1.5:8012/API/expert_internet_api/exp-v4.3/</string>-->
+    <string name="base_url">https://creativesaif.com/api/exp-v4.3/</string>
 
     <!-- news script directory -->
-    <!-- News CRUD -->
-    <string name="news_create">news/create.php</string>
-    <string name="news_read">news/read.php</string>
-    <string name="news_update">news/update.php</string>
-    <string name="news_delete">news/delete.php</string>
-    <string name="news_image_path">news/images/</string>
-    <string name="ads_details">Post Details</string>
-
     <!-- Search -->
     <string name="search">search/search.php?q=</string>
 
@@ -80,8 +72,6 @@
     <string name="feedback_read">feedback/read.php</string>
 
     <!-- Sms service -->
-    <string name="get_sms_status">sms/get_sms_status.php</string>
-    <string name="alert_client_sms_service">sms/alert_client_sms_service.php</string>
     <string name="active_client_sms_service">sms/active_client_sms_service.php</string>
     <string name="idwise_sms_service">sms/idwise_sms_service.php</string>
     <string name="sms_history">sms/sms_history.php</string>

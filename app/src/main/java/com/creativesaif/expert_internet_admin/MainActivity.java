@@ -36,10 +36,9 @@ import com.creativesaif.expert_internet_admin.ClientList.ClientReg;
 import com.creativesaif.expert_internet_admin.ClientList.ClientRegUpdate;
 import com.creativesaif.expert_internet_admin.Dashboard.Dashboard;
 import com.creativesaif.expert_internet_admin.Feedback.FeedbackList;
-import com.creativesaif.expert_internet_admin.NewsFeed.News;
-import com.creativesaif.expert_internet_admin.NewsFeed.NewsAdapter;
+
 import com.creativesaif.expert_internet_admin.Notice.NoticeRead;
-import com.creativesaif.expert_internet_admin.NewsFeed.NewsAdd;
+
 import com.creativesaif.expert_internet_admin.Sms.SmsHistory;
 import com.creativesaif.expert_internet_admin.TransactionList.TransactionList;
 
@@ -55,9 +54,7 @@ public class MainActivity extends AppCompatActivity
     private String last_id = "0";
     private boolean isLoading = true;
 
-    // initialize adapter and data structure here
-    private NewsAdapter newsAdapter;
-    private ArrayList<News> newsArrayList;
+
 
     RecyclerView recyclerView;
 
@@ -75,14 +72,6 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-                startActivity(new Intent(MainActivity.this, NewsAdd.class));
-            }
-        });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -95,72 +84,7 @@ public class MainActivity extends AppCompatActivity
         /*
         id initialize here
          */
-        //assign all objects to avoid nullPointerException
-        newsArrayList = new ArrayList<>();
-        newsAdapter = new NewsAdapter(this,newsArrayList);
-
-        recyclerView = findViewById(R.id.recyclerViewMain);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
-
-        //now set adapter to recyclerView
-        recyclerView.setAdapter(newsAdapter);
-
-        linearLayout = findViewById(R.id.progress_layout);
-
-        swipeRefreshLayout = findViewById(R.id.post_refresh);
-
         sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
-
-        //if internet is connected, then posts is load from server
-        if (isNetworkConnected()){
-
-            news_load();
-
-        }else{
-            TextView textView = findViewById(R.id.warning_viw);
-            textView.setVisibility(View.VISIBLE);
-        }
-
-        // here add a recyclerView listener, to listen to scrolling,
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            //this is the ONLY method that we need, ignore the rest
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                if (dy > 0) {
-                    // Recycle view scrolling downwards...
-                    // this if statement detects when user reaches the end of recyclerView, this is only time we should load more
-                    if (!recyclerView.canScrollVertically(RecyclerView.FOCUS_DOWN)) {
-                        // remember "!" is the same as "== false"
-                        // here we are now allowed to load more, but we need to be careful
-                        // we must check if itShouldLoadMore variable is true [unlocked]
-                        if (isLoading && isNetworkConnected()) {
-                            more_news_load();
-                        }
-                    }
-
-                }
-            }
-        });
-
-
-        //reload or refresh posts
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (isNetworkConnected() && isLoading){
-                    news_load();
-
-                }
-                else{
-                    Snackbar.make(findViewById(android.R.id.content),"Please!! Check internet connection.",Snackbar.LENGTH_LONG).show();
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-            }
-        });
 
     }
 
@@ -267,145 +191,6 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    /*
-    News load via recyclerView
-     */
-
-    public void news_load()
-    {
-        swipeRefreshLayout.setRefreshing(true);
-        isLoading = false;
-        String url = getString(R.string.base_url)+getString(R.string.news_read);
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                isLoading = true;
-                swipeRefreshLayout.setRefreshing(false);
-
-                try{
-
-                    newsArrayList.clear();
-                    JSONObject jsonObject = new JSONObject(response);
-
-                    boolean m = jsonObject.has("message");
-                    if (m)
-                    {
-                        String message = jsonObject.getString("message");
-                        Toast.makeText(MainActivity.this,message,Toast.LENGTH_SHORT).show();
-
-                    }else
-                    {
-                        JSONArray jsonArray = jsonObject.getJSONArray("news");
-
-                        for (int i=0; i<=jsonArray.length(); i++)
-                        {
-                            News news  = new News();
-
-                            JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-
-                            news.setId(jsonObject1.getString("id"));
-                            news.setTitle(jsonObject1.getString("title"));
-                            news.setDescription(jsonObject1.getString("description"));
-                            news.setImage_path(jsonObject1.getString("image_path"));
-                            news.setCreated_at(jsonObject1.getString("created_at"));
-
-                            newsArrayList.add(news);
-
-                            last_id = jsonObject1.getString("id");
-
-                            newsAdapter.notifyDataSetChanged();
-                        }
-
-                    }
-
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                isLoading = true;
-                swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(MainActivity.this,error.toString(),Toast.LENGTH_LONG).show();
-            }
-        });
-        MySingleton.getInstance().addToRequestQueue(stringRequest);
-
-    }
-
-
-    /*
-    more News load via recyclerView
-     */
-
-    public void more_news_load()
-    {
-        progressEnable();
-        isLoading = false;
-        String url = getString(R.string.base_url)+getString(R.string.news_read)+"?last_id="+last_id;
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                isLoading = true;
-                progressDisable();
-
-                try{
-
-                    JSONObject jsonObject = new JSONObject(response);
-
-                    boolean m = jsonObject.has("message");
-                    if (m)
-                    {
-                        String message = jsonObject.getString("message");
-                        Toast.makeText(MainActivity.this,message,Toast.LENGTH_SHORT).show();
-
-                    }else
-                    {
-                        JSONArray jsonArray = jsonObject.getJSONArray("news");
-
-                        for (int i=0; i<=jsonArray.length(); i++)
-                        {
-                            News news  = new News();
-
-                            JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-
-                            news.setTitle(jsonObject1.getString("title"));
-                            news.setDescription(jsonObject1.getString("description"));
-                            news.setImage_path(jsonObject1.getString("image_path"));
-                            news.setCreated_at(jsonObject1.getString("created_at"));
-
-                            newsArrayList.add(news);
-
-                            last_id = jsonObject1.getString("id");
-
-                            newsAdapter.notifyDataSetChanged();
-                        }
-
-                    }
-
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                isLoading = true;
-                progressDisable();
-                Toast.makeText(MainActivity.this,error.toString(),Toast.LENGTH_LONG).show();
-            }
-        });
-        MySingleton.getInstance().addToRequestQueue(stringRequest);
-
     }
 
     //Internet connection check

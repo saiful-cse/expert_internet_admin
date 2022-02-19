@@ -158,7 +158,7 @@ public class Dashboard extends AppCompatActivity {
                     double misbaProfit = monthlyProfit/2;
 
 
-                        textViewActive.setText("Enabled Client\n"+activeClient);
+                    textViewActive.setText("Enabled Client\n"+activeClient);
                     textViewInactive.setText("Disabled Client\n"+inactiveClient);
 
                     textViewMonthCredit.setText("This Month Credit\n"+monthCredit);

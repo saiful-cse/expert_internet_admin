@@ -51,14 +51,11 @@ public class ClientDetailsEdit extends AppCompatActivity{
     private EditText edclientname, edclientphone, edpppusername, edpppassword;
 
     //Declaring RadioButton
-    private RadioGroup radioGroupPaymentMethod;
+    private RadioGroup radioGroupPaymentMethod, radioGroupClientMode;
 
     //Declaring String
     private String jwt, id, name, phone, existArea, selectedArea,
             exPpname, pppname, pppassword, selectedPackage;
-
-    //Declaring Button
-    private Button buttonUpdate;
 
     //Declaring progress dialog
     private ProgressDialog progressDialog;
@@ -68,7 +65,6 @@ public class ClientDetailsEdit extends AppCompatActivity{
 
     //Declaring Array List
     private ArrayList<String> areaList;
-    private SharedPreferences preferences;
 
     private ApiInterface apiInterface;
     private Client client;
@@ -81,7 +77,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
 
         progressDialog = new ProgressDialog(this);
         id = getIntent().getStringExtra("id");
-        preferences = this.getSharedPreferences("users", MODE_PRIVATE);
+        SharedPreferences preferences = this.getSharedPreferences("users", MODE_PRIVATE);
         jwt = preferences.getString("jwt", null);
 
         apiInterface = RetrofitApiClient.getClient().create(ApiInterface.class);
@@ -95,11 +91,13 @@ public class ClientDetailsEdit extends AppCompatActivity{
         areaList = new ArrayList<>();
 
         radioGroupPaymentMethod = findViewById(R.id.radioGroupPaymentMethod);
+        radioGroupClientMode = findViewById(R.id.radioGroupClientMode);
         edclientname = findViewById(R.id.edclientname);
         edclientphone = findViewById(R.id.edclientphone);
         edpppusername = findViewById(R.id.edpppusername);
         edpppassword = findViewById(R.id.edppppassword);
-        buttonUpdate = findViewById(R.id.update_button);
+        //Declaring Button
+        Button buttonUpdate = findViewById(R.id.update_button);
 
         if (id == null ){
             loginWarningShow("Session expired!!");
@@ -150,13 +148,17 @@ public class ClientDetailsEdit extends AppCompatActivity{
                     RadioButton radioButtonPaymentMethod = findViewById(selectedPaymentMethod);
                     String payment_method = radioButtonPaymentMethod.getText().toString().trim();
 
+                    int selectedClientMode = radioGroupClientMode.getCheckedRadioButtonId();
+                    RadioButton radioButtonClientMode = findViewById(selectedClientMode);
+                    String client_mode = radioButtonClientMode.getText().toString().trim();
+
                     client.setJwt(jwt);
                     client.setId(id);
+                    client.setMode(client_mode);
                     client.setPaymentMethod(payment_method);
                     client.setName(name);
                     client.setPhone(phone);
                     client.setArea(selectedArea);
-                    client.setExPppname(exPpname);
                     client.setPppName(pppname);
                     client.setPppPass(pppassword);
                     client.setPkgId(selectedPackage);
@@ -225,6 +227,13 @@ public class ClientDetailsEdit extends AppCompatActivity{
 
                     } else if (detailsWrapper.getPaymentMethod().equals("Mobile")) {
                         radioGroupPaymentMethod.check(R.id.payment_mobile);
+                    }
+
+                    if (detailsWrapper.getMode().equals("Enable")){
+                        radioGroupClientMode.check(R.id.client_enable);
+
+                    }else if(detailsWrapper.getMode().equals("Disable")){
+                        radioGroupClientMode.check(R.id.client_disable);
                     }
 
                     exPpname = detailsWrapper.getPppName();
@@ -337,7 +346,6 @@ public class ClientDetailsEdit extends AppCompatActivity{
                 } else if (detailsWrapper.getStatus() == 200) {
                     Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
                     finish();
-                    startActivity(new Intent(ClientDetailsEdit.this, ClientList.class));
 
                 }else{
                     warningShow(detailsWrapper.getMessage());

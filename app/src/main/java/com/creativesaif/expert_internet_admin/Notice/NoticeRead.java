@@ -25,8 +25,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.creativesaif.expert_internet_admin.ClientList.ClientList;
 import com.creativesaif.expert_internet_admin.MainActivity;
 import com.creativesaif.expert_internet_admin.MySingleton;
-import com.creativesaif.expert_internet_admin.NewsFeed.News;
-import com.creativesaif.expert_internet_admin.NewsFeed.NewsAdapter;
+
 import com.creativesaif.expert_internet_admin.R;
 
 import org.json.JSONArray;

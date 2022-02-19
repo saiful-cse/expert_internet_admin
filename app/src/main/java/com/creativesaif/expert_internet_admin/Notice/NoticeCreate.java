@@ -104,7 +104,7 @@ public class NoticeCreate extends AppCompatActivity {
 
 
         // ----- sms service for alert client -----
-        Button buttonAlertSmsSend = findViewById(R.id.btnAlertSmsSend);
+
         Button buttonActiveSmsSend = findViewById(R.id.btnActiveSmsSend);
 
         Button btnBillExpireWarning = findViewById(R.id.btnbillwarning);
@@ -115,32 +115,6 @@ public class NoticeCreate extends AppCompatActivity {
             }
         });
 
-        Button btnExpiredClientDisconnect = findViewById(R.id.btnexpireddiscont);
-        btnExpiredClientDisconnect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                warningExpiredClientDisconnect();
-            }
-        });
-
-        buttonAlertSmsSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if (jwt == null ){
-                    finish();
-                    startActivity(new Intent(NoticeCreate.this, Login.class));
-
-                }
-                else if(!isNetworkConnected()){
-                    Toast.makeText(NoticeCreate.this,"Check Internet Connection.",Toast.LENGTH_SHORT).show();
-
-                }else{
-                    //confirm dialog
-                    warning_alert_client_sms();
-                }
-            }
-        });
 
         editTextActiveClientMsg = findViewById(R.id.edActiveClientSMs);
         buttonActiveSmsSend.setOnClickListener(new View.OnClickListener() {
@@ -202,97 +176,6 @@ public class NoticeCreate extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    public void expiredClientDisconnect(Client mClient) {
-        progressDialog.showDialog();
-        Call<DetailsWrapper> call = apiInterface.expiredClientDisconnect(mClient);
-        call.enqueue(new Callback<DetailsWrapper>() {
-            @SuppressLint("ResourceType")
-            @Override
-            public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
-
-                progressDialog.hideDialog();
-
-                DetailsWrapper detailsWrapper = response.body();
-                assert detailsWrapper != null;
-
-                if (detailsWrapper.getStatus() == 401) {
-                    //Go to phone verification step
-                    loginWarningShow(detailsWrapper.getMessage());
-
-                }if (detailsWrapper.getStatus() == 200) {
-                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
-                    finish();
-
-                }else{
-                    warningShow(detailsWrapper.getMessage());
-                    //Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<DetailsWrapper> call, Throwable t) {
-                progressDialog.hideDialog();
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-
-    public void alertSmsSend()
-    {
-        progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.alert_client_sms_service);
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                progressDialog.hideDialog();
-
-                try{
-                    JSONObject jsonObject = new JSONObject(response);
-                    String status = jsonObject.getString("status");
-                    String message = jsonObject.getString("message");
-
-                    if (status.equals("200")){
-                        Toast.makeText(NoticeCreate.this, message,Toast.LENGTH_LONG).show();
-                        finish();
-
-                    }else if(status.equals("401")){
-
-                        warningShow(message);
-
-                    }else{
-                        Toast.makeText(NoticeCreate.this, message,Toast.LENGTH_LONG).show();
-                    }
-
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.hideDialog();
-                Toast.makeText(NoticeCreate.this,error.toString(),Toast.LENGTH_LONG).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams()throws AuthFailureError {
-                Map<String,String> map = new HashMap<>();
-
-                map.put("jwt", jwt);
-                return map;
-
-            }
-        };
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        MySingleton.getInstance().addToRequestQueue(stringRequest);
     }
 
     public void activeClientSmsSend()
@@ -406,30 +289,6 @@ public class NoticeCreate extends AppCompatActivity {
         MySingleton.getInstance().addToRequestQueue(stringRequest);
     }
 
-    public void warningExpiredClientDisconnect(){
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setCancelable(true);
-        alert.setTitle("সতর্কতা!!");
-        alert.setMessage("যে সব ক্লায়েন্টদের বিলের মেয়াদ শেষ হয়ে গেছে তাদের ফোনে SMS যাবে এবং সাথে মাইক্রোটিক সার্ভার থেকে ডিস্কানেক্ট হবে।");
-        alert.setIcon(R.drawable.ic_baseline_warning_24);
-
-        alert.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                client.setJwt(jwt);
-                expiredClientDisconnect(client);
-            }
-        });
-
-        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-        AlertDialog dlg = alert.create();
-        dlg.show();
-    }
 
     public void warningBillExpire(){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -455,31 +314,6 @@ public class NoticeCreate extends AppCompatActivity {
         AlertDialog dlg = alert.create();
         dlg.show();
     }
-
-    public void warning_alert_client_sms(){
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setCancelable(true);
-        alert.setTitle("সতর্কতা!!");
-        alert.setMessage("যে সব ক্লায়েন্টদের কানেকশনের মেয়াদ ১ মাস হয়ে গেছে তাদের ফোনে এস এম এস যাবে।");
-        alert.setIcon(R.drawable.ic_baseline_warning_24);
-
-        alert.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                alertSmsSend();
-            }
-        });
-
-        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-        AlertDialog dlg = alert.create();
-        dlg.show();
-    }
-
 
     public void warning_active_client_sms(){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);

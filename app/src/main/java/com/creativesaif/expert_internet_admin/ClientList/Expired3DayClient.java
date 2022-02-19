@@ -35,7 +35,7 @@ import retrofit2.Callback;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class OnlineClient extends Fragment {
+public class Expired3DayClient extends Fragment {
 
     private RecyclerView recyclerView;
     private ClientAdapter clientAdapter;
@@ -100,7 +100,7 @@ public class OnlineClient extends Fragment {
 
     public void load_client(Client mClient) {
 
-        Call<ClientWrapper> call = apiInterface.getOnline_client(mClient);
+        Call<ClientWrapper> call = apiInterface.get3DayExpired_client(mClient);
         call.enqueue(new Callback<ClientWrapper>() {
             @Override
             public void onResponse(Call<ClientWrapper> call, retrofit2.Response<ClientWrapper> response) {
@@ -117,18 +117,19 @@ public class OnlineClient extends Fragment {
                     getActivity().finish();
                     Intent intent = new Intent(getActivity(), Login.class);
                     startActivity(intent);
-                }
 
-                if (clientWrapper.getStatus() == 404) {
+                }else if (clientWrapper.getStatus() == 404) {
                     //client not found then visible error
                     errorImage.setImageResource(R.drawable.ic_baseline_client_24);
                     errorText.setText(clientWrapper.getMessage());
-                }
 
-                if (clientWrapper.getStatus() == 200) {
+                }else if (clientWrapper.getStatus() == 200) {
                     errorImage.setVisibility(View.GONE);
                     errorText.setVisibility(View.GONE);
                     clientAdapter.setClientList(clientWrapper.getClients());
+
+                }else {
+                    Toast.makeText(getActivity(), clientWrapper.getStatus()+"\n"+clientWrapper.getMessage(), Toast.LENGTH_LONG).show();
                 }
 
             }

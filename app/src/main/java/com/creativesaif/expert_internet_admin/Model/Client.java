@@ -11,6 +11,9 @@ public class Client {
         @SerializedName("id")
         @Expose
         private String id;
+        @SerializedName("mode")
+        @Expose
+        private String mode;
         @SerializedName("registered")
         @Expose
         private String registered;
@@ -20,9 +23,7 @@ public class Client {
         @SerializedName("phone")
         @Expose
         private String phone;
-        @SerializedName("ex_phone")
-        @Expose
-        private String exPhone;
+
         @SerializedName("area")
         @Expose
         private String area;
@@ -182,6 +183,14 @@ public class Client {
 
         public void setExPppname(String exPppname) {
             this.exPppname = exPppname;
+        }
+
+        public String getMode() {
+            return mode;
+        }
+
+        public void setMode(String mode) {
+            this.mode = mode;
         }
 
         // --- From router OS ----

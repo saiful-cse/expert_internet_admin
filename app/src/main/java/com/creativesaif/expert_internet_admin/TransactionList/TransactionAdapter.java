@@ -8,8 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.creativesaif.expert_internet_admin.NewsFeed.News;
-import com.creativesaif.expert_internet_admin.NewsFeed.NewsAdapter;
 import com.creativesaif.expert_internet_admin.R;
 
 import java.util.List;

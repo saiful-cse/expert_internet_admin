@@ -298,43 +298,6 @@ public class ClientRegUpdate extends AppCompatActivity {
 
     }
 
-    public void clientRegistration(Client client) {
-
-        progressDialog.showDialog();
-        Call<DetailsWrapper> call = apiInterface.clientRegistration(client);
-        call.enqueue(new Callback<DetailsWrapper>() {
-            @SuppressLint("ResourceType")
-            @Override
-            public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
-
-                progressDialog.hideDialog();
-
-                DetailsWrapper detailsWrapper = response.body();
-                assert detailsWrapper != null;
-
-                if (detailsWrapper.getStatus() == 401) {
-                    //Go to phone verification step
-                    loginWarningShow(detailsWrapper.getMessage());
-
-                } else if (detailsWrapper.getStatus() == 200) {
-                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
-                    finish();
-
-                }else{
-                    warningShow(detailsWrapper.getMessage());
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<DetailsWrapper> call, Throwable t) {
-                progressDialog.hideDialog();
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-
-            }
-        });
-    }
-
     public void updateRegistration(Client client) {
 
         progressDialog.showDialog();
