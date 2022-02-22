@@ -54,8 +54,15 @@ public class ClientDetailsEdit extends AppCompatActivity{
     private RadioGroup radioGroupPaymentMethod, radioGroupClientMode;
 
     //Declaring String
-    private String jwt, id, name, phone, existArea, selectedArea,
-            exPpname, pppname, pppassword, selectedPackage;
+    private String jwt;
+    private String id;
+    private String name;
+    private String phone;
+    private String existArea;
+    private String selectedArea;
+    private String pppname;
+    private String pppassword;
+    private String selectedPackage;
 
     //Declaring progress dialog
     private ProgressDialog progressDialog;
@@ -236,7 +243,6 @@ public class ClientDetailsEdit extends AppCompatActivity{
                         radioGroupClientMode.check(R.id.client_disable);
                     }
 
-                    exPpname = detailsWrapper.getPppName();
                     edpppusername.setText(detailsWrapper.getPppName());
                     edpppassword.setText(detailsWrapper.getPppPass());
 
@@ -339,6 +345,8 @@ public class ClientDetailsEdit extends AppCompatActivity{
                 DetailsWrapper detailsWrapper = response.body();
                 assert detailsWrapper != null;
 
+                //Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
+
                 if (detailsWrapper.getStatus() == 401) {
                     //Go to phone verification step
                     loginWarningShow(detailsWrapper.getMessage());
@@ -356,7 +364,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
             @Override
             public void onFailure(Call<DetailsWrapper> call, Throwable t) {
                 progressDialog.hideDialog();
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Failure: "+t.toString(), Toast.LENGTH_LONG).show();
 
             }
         });

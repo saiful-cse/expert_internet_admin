@@ -71,12 +71,11 @@ import retrofit2.Callback;
 
 public class ClientDetails extends AppCompatActivity {
 
-    private Button btnSmsHistory;
-
     private TextView tvname, tvphone, tvarea,
             tvppname, tvpppass,
             tvmode, tvpaymentmethod, tvpackgeid, tvregdate, tvexpiredate;
 
+    String currentMode;
     private String jwt, name, id, pppName, admin_id, phone, informMessage;
     private SharedPreferences sharedPreferences;
     private ApiInterface apiInterface;
@@ -89,8 +88,6 @@ public class ClientDetails extends AppCompatActivity {
     Payment Details
      */
 // initialize adapter and data structure here
-
-
     /*
     Make txn
      */
@@ -99,7 +96,7 @@ public class ClientDetails extends AppCompatActivity {
     private EditText editTextAmount, editTextInformSms;
     private String payment_type, payment_method, amount;
     private RadioGroup radioGroup, radioGroup2;
-
+    Button buttonTxnSubmit;
     /*
    Progress dialog
     */
@@ -123,7 +120,6 @@ public class ClientDetails extends AppCompatActivity {
         radioGroup = findViewById(R.id.radioGroup);
         radioGroup2 = findViewById(R.id.radioGroup2);
         editTextAmount = findViewById(R.id.edAmount);
-        Button buttonTxnSubmit = findViewById(R.id.txn_submit);
 
         Button btnPaymentHistory = findViewById(R.id.btnPaymentHistory);
         ImageView user_call = findViewById(R.id.user_direct_call);
@@ -139,7 +135,6 @@ public class ClientDetails extends AppCompatActivity {
         //now set adapter to recyclerView
         recyclerView.setAdapter(packageAdapter);
 
-
         //----------------------
         // Details ID initialize
         //-----------------------
@@ -152,7 +147,6 @@ public class ClientDetails extends AppCompatActivity {
         //--------PPPoE Connection-------
         tvppname = findViewById(R.id.tvppp_name);
         tvpppass = findViewById(R.id.tvppp_pass);
-
 
         //------Service details--------
         tvpaymentmethod = findViewById(R.id.tvpaymentmethod);
@@ -219,7 +213,10 @@ public class ClientDetails extends AppCompatActivity {
                 amount = editTextAmount.getText().toString().trim();
                 admin_id = sharedPreferences.getString("admin_id", null);
 
-                if (jwt == null){
+                if (currentMode.equals("Disable")){
+                    warningShowDisablePayment();
+
+                } else if (jwt == null){
                     finish();
                     startActivity(new Intent(ClientDetails.this, Login.class));
 
@@ -318,43 +315,6 @@ public class ClientDetails extends AppCompatActivity {
         return cm.getActiveNetworkInfo() != null;
     }
 
-
-    public void billExpireWarningSend(Client mClient) {
-        progressDialog.showDialog();
-        Call<DetailsWrapper> call = apiInterface.bilExpireWarningSend(mClient);
-        call.enqueue(new Callback<DetailsWrapper>() {
-            @SuppressLint("ResourceType")
-            @Override
-            public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
-
-                progressDialog.hideDialog();
-
-                DetailsWrapper detailsWrapper = response.body();
-                assert detailsWrapper != null;
-
-                if (detailsWrapper.getStatus() == 401) {
-                    //Go to phone verification step
-                    loginWarningShow(detailsWrapper.getMessage());
-
-                }if (detailsWrapper.getStatus() == 200) {
-                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
-                    finish();
-
-                }else{
-                    warningShow(detailsWrapper.getMessage());
-                    //Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<DetailsWrapper> call, Throwable t) {
-                progressDialog.hideDialog();
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
     public void load_details(Client mClient) {
 
         progressDialog.showDialog();
@@ -384,6 +344,14 @@ public class ClientDetails extends AppCompatActivity {
                     tvphone.setText(detailsWrapper.getPhone());
                     tvarea.setText(detailsWrapper.getArea());
 
+                    if (detailsWrapper.getMode().equals("Disable")){
+                        tvmode.setTextColor(Color.RED);
+                    }else{
+                        tvmode.setTextColor(Color.GREEN);
+                    }
+                    currentMode = detailsWrapper.getMode();
+                    tvmode.setText(detailsWrapper.getMode());
+
                     pppName = detailsWrapper.getPppName();
                     tvppname.setText(detailsWrapper.getPppName());
                     tvpppass.setText(detailsWrapper.getPppPass());
@@ -392,7 +360,8 @@ public class ClientDetails extends AppCompatActivity {
                     tvpackgeid.setText(detailsWrapper.getPkgId());
                     tvregdate.setText(detailsWrapper.getRegDate());
                     tvexpiredate.setText(detailsWrapper.getExpireDate());
-                    tvmode.setText(detailsWrapper.getMode());
+
+
 
                 }else{
                     warningShow(detailsWrapper.getMessage());
@@ -493,7 +462,6 @@ public class ClientDetails extends AppCompatActivity {
                 trns.setAmount(amount);
 
                 //Toast.makeText(getApplicationContext(), client_id+"\n"+admin_id+"\n"+payment_type+"\n"+payment_method+"\n"+amount,Toast.LENGTH_LONG).show();
-
                 admin_make_payment(trns);
             }
         });
@@ -664,6 +632,24 @@ public class ClientDetails extends AppCompatActivity {
         alert.setIcon(R.drawable.ic_baseline_warning_24);
 
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        android.app.AlertDialog dlg = alert.create();
+        dlg.show();
+    }
+
+
+    public void warningShowDisablePayment(){
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
+        alert.setCancelable(false);
+        alert.setTitle("Warning!!");
+        alert.setMessage("ক্লায়েন্টের মোড Disable অবস্থায় পেমেন্ট ইনফুট দেওয়া যাবেনা। ক্লায়েন্ট লাইন চালাবে কিনা করফার্ম করে Enable করার পর পেমেন্টে ইনফুট দিন");
+        alert.setIcon(R.drawable.ic_baseline_warning_24);
+
+        alert.setNegativeButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();

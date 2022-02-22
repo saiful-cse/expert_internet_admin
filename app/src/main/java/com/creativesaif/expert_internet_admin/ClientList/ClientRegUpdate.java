@@ -48,7 +48,7 @@ public class ClientRegUpdate extends AppCompatActivity {
     private EditText edclientname, edclientphone, edpppusername, edpppassword;
 
     //Declaring RadioButton
-    private RadioGroup radioGroupPaymentMethod;
+    private RadioGroup radioGroupPaymentMethod, radioGroupClientMode;
 
     //Declaring String
     private String jwt, id, name, phone, existArea, selectedArea,
@@ -88,6 +88,7 @@ public class ClientRegUpdate extends AppCompatActivity {
         areaList = new ArrayList<>();
 
         radioGroupPaymentMethod = findViewById(R.id.radioGroupPaymentMethod);
+        radioGroupClientMode = findViewById(R.id.radioGroupClientMode);
         edclientname = findViewById(R.id.edclientname);
         edclientphone = findViewById(R.id.edclientphone);
         edpppusername = findViewById(R.id.edpppusername);
@@ -133,9 +134,14 @@ public class ClientRegUpdate extends AppCompatActivity {
                     RadioButton radioButtonPaymentMethod = findViewById(selectedPaymentMethod);
                     String payment_method = radioButtonPaymentMethod.getText().toString().trim();
 
+                    int selectedClientMode = radioGroupClientMode.getCheckedRadioButtonId();
+                    RadioButton radioButtonClientMode = findViewById(selectedClientMode);
+                    String client_mode = radioButtonClientMode.getText().toString().trim();
+
                     client.setJwt(jwt);
                     client.setId(id);
                     client.setPaymentMethod(payment_method);
+                    client.setMode(client_mode);
                     client.setName(name);
                     client.setPhone(phone);
                     client.setArea(selectedArea);
@@ -207,6 +213,13 @@ public class ClientRegUpdate extends AppCompatActivity {
 
                     } else if (detailsWrapper.getPaymentMethod().equals("Mobile")) {
                         radioGroupPaymentMethod.check(R.id.payment_mobile);
+                    }
+
+                    if (detailsWrapper.getMode().equals("Enable")){
+                        radioGroupClientMode.check(R.id.client_enable);
+
+                    }else if(detailsWrapper.getMode().equals("Disable")){
+                        radioGroupClientMode.check(R.id.client_disable);
                     }
 
                     edpppusername.setText(detailsWrapper.getPppName());

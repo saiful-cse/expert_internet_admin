@@ -40,10 +40,10 @@ import java.util.Map;
 
 public class Dashboard extends AppCompatActivity {
 
-    TextView textViewActive, textViewInactive, textViewMonthCredit, textViewMonthDebit,
+    TextView textViewTotalExpiredClient, textViewActive, textViewInactive, textViewMonthCredit, textViewMonthDebit,
             textViewOverCredit, textViewOverDebit, textViewTotalInvest,
             textViewSaifuPercent, textViewMisbaPercent, textViewSaifulProfit, textViewMisbaProfit;
-    String jwt, activeClient, inactiveClient, monthCredit, monthDebit, overCredit, overDebit;
+    String jwt, totalExpiredCLient, activeClient, inactiveClient, monthCredit, monthDebit, overCredit, overDebit;
     ProgressDialog progressDialog;
 
     ArrayList noOfClient;
@@ -60,6 +60,7 @@ public class Dashboard extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        textViewTotalExpiredClient = findViewById(R.id.dashboard_total_expired_client);
         textViewActive = findViewById(R.id.dashboard_active);
         textViewInactive = findViewById(R.id.dashboard_inactive);
         textViewMonthCredit = findViewById(R.id.dashboard_mon_credit);
@@ -137,6 +138,7 @@ public class Dashboard extends AppCompatActivity {
 
                     }else{
 
+                        totalExpiredCLient = jsonObject.getString("total_expired_client");
                     activeClient = jsonObject.getString("total_enabled_client");
                     inactiveClient = jsonObject.getString("total_disabled_client");
                     monthCredit = jsonObject.getString("current_month_total_credit");
@@ -158,6 +160,7 @@ public class Dashboard extends AppCompatActivity {
                     double misbaProfit = monthlyProfit/2;
 
 
+                    textViewTotalExpiredClient.setText("Total Expired Client\n"+totalExpiredCLient);
                     textViewActive.setText("Enabled Client\n"+activeClient);
                     textViewInactive.setText("Disabled Client\n"+inactiveClient);
 

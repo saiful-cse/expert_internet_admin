@@ -37,11 +37,9 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class EnabledClient extends Fragment {
 
-    private RecyclerView recyclerView;
     private ClientAdapter clientAdapter;
     private List<Client> clientList;
     private ApiInterface apiInterface;
-    private SharedPreferences preferences;
     private String jwt;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Client client;
@@ -55,12 +53,12 @@ public class EnabledClient extends Fragment {
 
         errorImage = view.findViewById(R.id.error_icon);
         errorText = view.findViewById(R.id.error_text);
-        preferences = view.getContext().getSharedPreferences("users", MODE_PRIVATE);
+        SharedPreferences preferences = view.getContext().getSharedPreferences("users", MODE_PRIVATE);
         swipeRefreshLayout = view.findViewById(R.id.layout_refresh);
         clientList = new ArrayList<>();
         clientAdapter = new ClientAdapter(getActivity(), clientList);
 
-        recyclerView = view.findViewById(R.id.recyclerViewClient);
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewClient);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(clientAdapter);

@@ -53,6 +53,10 @@ public class Client {
         @Expose
         private String exPppname;
 
+        @SerializedName("search_key")
+        @Expose
+        private String searchKey;
+
 
         //---- from router os -----
 
@@ -191,6 +195,14 @@ public class Client {
 
         public void setMode(String mode) {
             this.mode = mode;
+        }
+
+        public String getSearchKey(){
+            return searchKey;
+        }
+
+        public void setSearchKey(String searchKey){
+            this.searchKey = searchKey;
         }
 
         // --- From router OS ----

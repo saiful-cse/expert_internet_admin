@@ -111,6 +111,7 @@ public class UnRegisteredClient extends Fragment {
                 ClientWrapper clientWrapper = response.body();
                 assert clientWrapper != null;
 
+
                 if (clientWrapper.getStatus() == 401) {
                     //Go to phone verification step
                     Toast.makeText(getActivity(), clientWrapper.getMessage(), Toast.LENGTH_LONG).show();

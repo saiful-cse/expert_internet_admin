@@ -54,13 +54,7 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
 
                 Intent i;
 
-                if (client.getArea().equals("router")){
-                    i = new Intent(mContext, ClientDetails.class);
-                    i.putExtra("ppp_name", client.getName());
-
-
-
-                } else if (client.getRegistered().equals("0")){
+                if (client.getRegistered().equals("0")){
 
                     i = new Intent(mContext, ClientRegUpdate.class);
                     i.putExtra("id", client.getId());
@@ -68,8 +62,10 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
                 }else{
                     i = new Intent(mContext, ClientDetails.class);
                     i.putExtra("ppp_name", client.getPppName());
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 }
                 mContext.startActivity(i);
+
 
                 //Toast.makeText(mContext.getApplicationContext(), "You have clicked", Toast.LENGTH_SHORT).show();
 

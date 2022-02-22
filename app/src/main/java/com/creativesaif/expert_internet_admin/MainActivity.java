@@ -39,6 +39,7 @@ import com.creativesaif.expert_internet_admin.Feedback.FeedbackList;
 
 import com.creativesaif.expert_internet_admin.Notice.NoticeRead;
 
+import com.creativesaif.expert_internet_admin.Search.Search_Page;
 import com.creativesaif.expert_internet_admin.Sms.SmsHistory;
 import com.creativesaif.expert_internet_admin.TransactionList.TransactionList;
 
@@ -171,7 +172,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_search) {
 
-            //startActivity(new Intent(MainActivity.this, SearchPage.class));
+            startActivity(new Intent(MainActivity.this, Search_Page.class));
 
         } else if (id == R.id.nav_notice) {
             startActivity(new Intent(MainActivity.this, NoticeRead.class));

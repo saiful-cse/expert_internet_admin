@@ -195,7 +195,7 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onResponse(String response) {
 
-                //Toast.makeText(ClientDetails.this,response,Toast.LENGTH_SHORT).show();
+                //Toast.makeText(TransactionList.this,response,Toast.LENGTH_SHORT).show();
                 progressDialog.hideDialog();
 
                 try{

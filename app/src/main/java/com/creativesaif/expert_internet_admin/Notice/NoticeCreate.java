@@ -135,7 +135,7 @@ public class NoticeCreate extends AppCompatActivity {
 
                 }else{
                     //confirm dialog
-                    warning_active_client_sms();
+                    warning_enabled_client_sms();
                 }
 
             }
@@ -178,10 +178,10 @@ public class NoticeCreate extends AppCompatActivity {
         });
     }
 
-    public void activeClientSmsSend()
+    public void enabledClientSmsSend()
     {
         progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.active_client_sms_service);
+        String url = getString(R.string.base_url)+getString(R.string.enabled_client_sms);
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -294,7 +294,7 @@ public class NoticeCreate extends AppCompatActivity {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setCancelable(true);
         alert.setTitle("সতর্কতা!!");
-        alert.setMessage("যে সব ক্লায়েন্টদের বিলের মেয়াদ শেষ হতে ৩ দিন বাকি আছে তাদের ফোনে SMS যাবে।");
+        alert.setMessage("যে সব ক্লায়েন্টদের বিলের মেয়াদ শেষ তাদের ফোনে SMS যাবে।");
         alert.setIcon(R.drawable.ic_baseline_warning_24);
 
         alert.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
@@ -315,7 +315,7 @@ public class NoticeCreate extends AppCompatActivity {
         dlg.show();
     }
 
-    public void warning_active_client_sms(){
+    public void warning_enabled_client_sms(){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setCancelable(true);
         alert.setTitle("সতর্কতা!!");
@@ -325,7 +325,7 @@ public class NoticeCreate extends AppCompatActivity {
         alert.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                activeClientSmsSend();
+                enabledClientSmsSend();
             }
         });
 

@@ -72,7 +72,7 @@
     <string name="feedback_read">feedback/read.php</string>
 
     <!-- Sms service -->
-    <string name="active_client_sms_service">sms/active_client_sms_service.php</string>
+    <string name="enabled_client_sms">sms/enabled_clients_sms.php</string>
     <string name="idwise_sms_service">sms/idwise_sms_service.php</string>
     <string name="sms_history">sms/sms_history.php</string>
 

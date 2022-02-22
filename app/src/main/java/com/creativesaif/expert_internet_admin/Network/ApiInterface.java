@@ -55,11 +55,14 @@ public interface ApiInterface {
     @POST(base_url+second_path+api_version+"client/client_registration.php")
     Call<DetailsWrapper> clientRegistration(@Body Client client);
 
-    @POST(base_url+second_path+api_version+"/sms/bill_expire_warning.php")
+    @POST(base_url+second_path+api_version+"/sms/expired_clients_sms.php")
     Call<DetailsWrapper> bilExpireWarningSend(@Body Client client);
 
     @POST(base_url+second_path+api_version+"/sms/expired_client_disconnect_sms.php")
     Call<DetailsWrapper> expiredClientDisconnectSms(@Body Client client);
+
+    @POST(base_url+second_path+api_version+"search/search.php")
+    Call<ClientWrapper> search_data(@Body Client client);
 
 
 }

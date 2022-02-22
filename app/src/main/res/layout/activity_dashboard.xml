@@ -10,8 +10,7 @@
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/barchart"
         android:layout_width="match_parent"
-        android:layout_height="200dp"/>
-
+        android:layout_height="180dp"/>
 
     <LinearLayout
         android:layout_marginTop="20dp"
@@ -19,6 +18,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
+        <TextView
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:id="@+id/dashboard_total_expired_client"
+            android:background="@color/activity_backround"
+            android:layout_marginBottom="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryDark"
+            />
 
     <LinearLayout
         android:background="@color/activity_backround"
