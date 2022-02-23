@@ -193,7 +193,6 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
                             android:textAlignment="center"
-                            android:maxLength="11"
                             android:inputType="phone"
                             android:textSize="15sp" />
                     </LinearLayout>
