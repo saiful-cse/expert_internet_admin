@@ -361,8 +361,6 @@ public class ClientDetails extends AppCompatActivity {
                     tvregdate.setText(detailsWrapper.getRegDate());
                     tvexpiredate.setText(detailsWrapper.getExpireDate());
 
-
-
                 }else{
                     warningShow(detailsWrapper.getMessage());
                     //Toast.makeText(getApplicationContext(), detailsWrapper.getStatus()+"\n"+detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();

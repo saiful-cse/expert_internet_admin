@@ -37,6 +37,7 @@ import com.creativesaif.expert_internet_admin.ClientList.ClientRegUpdate;
 import com.creativesaif.expert_internet_admin.Dashboard.Dashboard;
 import com.creativesaif.expert_internet_admin.Feedback.FeedbackList;
 
+import com.creativesaif.expert_internet_admin.Notice.NoticeCreate;
 import com.creativesaif.expert_internet_admin.Notice.NoticeRead;
 
 import com.creativesaif.expert_internet_admin.Search.Search_Page;
@@ -175,7 +176,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, Search_Page.class));
 
         } else if (id == R.id.nav_notice) {
-            startActivity(new Intent(MainActivity.this, NoticeRead.class));
+            startActivity(new Intent(MainActivity.this, NoticeCreate.class));
 
         } else if (id == R.id.nav_feedback) {
 
