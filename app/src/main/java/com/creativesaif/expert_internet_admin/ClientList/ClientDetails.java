@@ -108,7 +108,7 @@ public class ClientDetails extends AppCompatActivity {
         setContentView(R.layout.activity_client_details);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        pppName = getIntent().getStringExtra("ppp_name");
+        id = getIntent().getStringExtra("id");
         sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
         jwt = sharedPreferences.getString("jwt", null);
 
@@ -169,7 +169,7 @@ public class ClientDetails extends AppCompatActivity {
 
         }else{
             client.setJwt(jwt);
-            client.setPppName(pppName);
+            client.setId(id);
             load_details(client);
         }
 
@@ -200,7 +200,7 @@ public class ClientDetails extends AppCompatActivity {
                 }
                 else{
                     client.setJwt(jwt);
-                    client.setPppName(pppName);
+                    client.setId(id);
                     load_details(client);
                 }
             }
