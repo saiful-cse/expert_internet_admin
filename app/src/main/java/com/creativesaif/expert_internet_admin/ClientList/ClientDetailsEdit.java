@@ -137,7 +137,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                 }else if(phone.length() > 11){
                     Toast.makeText(getApplicationContext(), "Enter correct phone number", Toast.LENGTH_SHORT).show();
 
-                }else if(pppname.isEmpty() || pppname.equals("---")){
+                }else if(pppname.isEmpty()){
                     Toast.makeText(getApplicationContext(), "Enter PPP name", Toast.LENGTH_SHORT).show();
 
                 }else if(pppassword.isEmpty()){
