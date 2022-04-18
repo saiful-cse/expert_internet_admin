@@ -61,7 +61,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +78,7 @@ public class ClientDetails extends AppCompatActivity {
     private TextView tvname, tvphone, tvarea,
             tvppname, tvpppass,
             tvmode, tvpaymentmethod, tvpackgeid, tvregdate, tvexpiredate;
+    private CardView expiredTagCard;
 
     String currentMode;
     private String jwt, name, id, pppName, admin_id, phone, informMessage;
@@ -115,6 +120,7 @@ public class ClientDetails extends AppCompatActivity {
         /*
         Txn ID initialize
          */
+        expiredTagCard = findViewById(R.id.dateexpiredcard);
         swipeRefreshLayout = findViewById(R.id.details_refresh);
 
         radioGroup = findViewById(R.id.radioGroup);
@@ -157,6 +163,7 @@ public class ClientDetails extends AppCompatActivity {
 
         // -----------End-----------------------
 
+        expiredTagCard.setVisibility(View.GONE);
         progressDialog = new ProgressDialog(this);
 
         apiInterface = RetrofitApiClient.getClient().create(ApiInterface.class);
@@ -360,6 +367,24 @@ public class ClientDetails extends AppCompatActivity {
                     tvpackgeid.setText(detailsWrapper.getPkgId());
                     tvregdate.setText(detailsWrapper.getRegDate());
                     tvexpiredate.setText(detailsWrapper.getExpireDate());
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+                    try {
+                        Calendar cal = Calendar.getInstance();
+                        Date currentDate = cal.getTime();
+                        Date expire_Date = sdf.parse(detailsWrapper.getExpireDate());
+
+                        int result = currentDate.compareTo(expire_Date);
+
+                        if (result >= 0){
+                            expiredTagCard.setVisibility(View.VISIBLE);
+                        }
+
+                    } catch (ParseException e) {
+                        //e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), (CharSequence) e, Toast.LENGTH_LONG).show();
+                    }
 
                 }else{
                     warningShow(detailsWrapper.getMessage());
