@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -31,6 +32,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.creativesaif.expert_internet_admin.ClientList.ClientDetails;
+import com.creativesaif.expert_internet_admin.ClientList.ClientDetailsEdit;
 import com.creativesaif.expert_internet_admin.ClientList.ClientList;
 import com.creativesaif.expert_internet_admin.ClientList.ClientReg;
 import com.creativesaif.expert_internet_admin.ClientList.ClientRegUpdate;
@@ -43,6 +46,7 @@ import com.creativesaif.expert_internet_admin.Notice.NoticeRead;
 import com.creativesaif.expert_internet_admin.Search.Search_Page;
 import com.creativesaif.expert_internet_admin.Sms.SmsHistory;
 import com.creativesaif.expert_internet_admin.TransactionList.TransactionList;
+import com.creativesaif.expert_internet_admin.Webview.Webviewpage;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,7 +59,6 @@ public class MainActivity extends AppCompatActivity
 
     private String last_id = "0";
     private boolean isLoading = true;
-
 
 
     RecyclerView recyclerView;
@@ -88,16 +91,6 @@ public class MainActivity extends AppCompatActivity
          */
         sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
 
-    }
-
-    void progressEnable()
-    {
-        linearLayout.setVisibility(View.VISIBLE);
-    }
-
-    void progressDisable()
-    {
-        linearLayout.setVisibility(View.GONE);
     }
 
 
@@ -188,7 +181,27 @@ public class MainActivity extends AppCompatActivity
         }else if (id == R.id.nav_smsHistory) {
 
             startActivity(new Intent(MainActivity.this, SmsHistory.class));
+
+        }else if (id == R.id.nav_baysoft) {
+
+            Intent intent = new Intent(MainActivity.this, Webviewpage.class);
+            intent.putExtra("url", "http://bay.robotispsoft.net/include/login.php");
+            startActivity(intent);
+
         }
+        else if (id == R.id.nav_olt7) {
+
+            selectLoginUrlDialog(7777);
+
+        }else if (id == R.id.nav_olt8) {
+
+            selectLoginUrlDialog(8888);
+
+        }else if (id == R.id.nav_olt9) {
+
+            selectLoginUrlDialog(9999);
+        }
+
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -202,6 +215,46 @@ public class MainActivity extends AppCompatActivity
         return cm.getActiveNetworkInfo() != null;
     }
 
+    public void selectLoginUrlDialog(int port){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setCancelable(true);
+        alert.setTitle("Warning");
+        alert.setMessage("Select your network connection");
+        alert.setIcon(R.drawable.ic_baseline_warning_24);
 
+        alert.setPositiveButton("Mobile Data/Other WiFi", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+//                Intent intent = new Intent(MainActivity.this, Webviewpage.class);
+//                intent.putExtra("url", "http://103.134.39.146:"+port+"/action/login.html");
+//                startActivity(intent);
 
+                Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("https://103.134.39.146:"+port+"/action/login.html"));
+                startActivity(in);
+            }
+        });
+
+        alert.setNegativeButton("Self WiFi", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                if (port == 7777){
+
+                    Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("https://77.77.77.2/action/login.html"));
+                    startActivity(in);
+
+                }else if(port == 8888){
+                    Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("https://88.88.88.2/action/login.html"));
+                    startActivity(in);
+
+                }else{
+                    Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("https://99.99.99.2/action/login.html"));
+                    startActivity(in);
+                }
+
+            }
+        });
+        AlertDialog dlg = alert.create();
+        dlg.show();
+    }
 }

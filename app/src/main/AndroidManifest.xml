@@ -16,7 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Search.Search_Page"></activity>
+        <activity android:name=".Webview.Webviewpage"></activity>
+        <activity android:name=".Search.Search_Page" />
         <activity android:name=".ClientList.ClientReg" />
         <activity
             android:name=".ClientList.ClientRegUpdate"
@@ -31,8 +32,7 @@
             android:name=".Sms.SmsHistory"
             android:label="@string/title_sms_history" />
         <activity android:name=".TransactionList.TransactionEdit" />
-        <activity
-            android:name=".Login">
+        <activity android:name=".Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

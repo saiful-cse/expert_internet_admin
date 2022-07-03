@@ -45,6 +45,26 @@
             android:id="@+id/nav_smsHistory"
             android:icon="@drawable/ic_baseline_sms_24"
             android:title="@string/menu_smsHistory"/>
+
+        <item
+            android:id="@+id/nav_baysoft"
+            android:icon="@drawable/ic_baseline_supervised_user_circle_24"
+            android:title="Mikrotik Users"/>
+
+        <item
+            android:id="@+id/nav_olt7"
+            android:icon="@drawable/ic_baseline_storage_24"
+            android:title="OLT-7"/>
+
+        <item
+            android:id="@+id/nav_olt8"
+            android:icon="@drawable/ic_baseline_storage_24"
+            android:title="OLT-8"/>
+
+        <item
+            android:id="@+id/nav_olt9"
+            android:icon="@drawable/ic_baseline_storage_24"
+            android:title="OLT-9"/>
     </group>
 
 </menu>
