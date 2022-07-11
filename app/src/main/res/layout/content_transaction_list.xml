@@ -28,11 +28,11 @@
                     android:id="@+id/btn_datepicker1"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
-                    android:text="From"
-                    android:textColor="@color/colorPrimary"
                     android:layout_alignParentStart="true"
+                    android:background="@drawable/button_round"
+                    android:text="From"
                     android:textAllCaps="false"
-                    android:background="@drawable/button_round"/>
+                    android:textColor="@color/colorPrimary" />
 
                 <Button
                     android:id="@+id/btn_datepicker2"

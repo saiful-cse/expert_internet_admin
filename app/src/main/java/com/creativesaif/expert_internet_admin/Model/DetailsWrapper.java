@@ -28,6 +28,9 @@ public class DetailsWrapper {
     @SerializedName("area")
     @Expose
     private String area;
+    @SerializedName("zone")
+    @Expose
+    private String zone;
     @SerializedName("ppp_name")
     @Expose
     private String pppName;
@@ -46,6 +49,9 @@ public class DetailsWrapper {
     @SerializedName("expire_date")
     @Expose
     private String expireDate;
+    @SerializedName("disable_date")
+    @Expose
+    private String disableDate;
     @SerializedName("mode")
     @Expose
     private String mode;
@@ -130,6 +136,14 @@ public class DetailsWrapper {
         this.area = area;
     }
 
+    public String getZone() {
+        return zone;
+    }
+
+    public void setZone(String zone) {
+        this.zone = zone;
+    }
+
     public String getPppName() {
         return pppName;
     }
@@ -168,6 +182,14 @@ public class DetailsWrapper {
 
     public void setRegDate(String regDate) {
         this.regDate = regDate;
+    }
+
+    public String getDisableDate() {
+        return disableDate;
+    }
+
+    public void setDisableDate(String disableDate) {
+        this.disableDate = disableDate;
     }
 
     public String getExpireDate() {

@@ -23,7 +23,9 @@ public class Client {
         @SerializedName("phone")
         @Expose
         private String phone;
-
+        @SerializedName("zone")
+        @Expose
+        private String zone;
         @SerializedName("area")
         @Expose
         private String area;
@@ -140,7 +142,13 @@ public class Client {
             this.pppPass = pppPass;
         }
 
+        public String getZone() {
+            return zone;
+        }
 
+        public void setZone(String zone) {
+            this.zone = zone;
+        }
         public String getPkgId() {
             return pkgId;
         }

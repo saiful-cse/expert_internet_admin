@@ -6,9 +6,8 @@
 
     <ImageView
         android:id="@+id/custom_loading_imageView"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:src="@drawable/loader"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

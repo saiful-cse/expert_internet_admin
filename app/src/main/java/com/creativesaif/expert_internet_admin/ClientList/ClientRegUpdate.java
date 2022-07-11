@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -51,18 +52,19 @@ public class ClientRegUpdate extends AppCompatActivity {
     private RadioGroup radioGroupPaymentMethod, radioGroupClientMode;
 
     //Declaring String
-    private String jwt, id, name, phone, existArea, selectedArea,
+    private String jwt, id, name, phone, existArea, selectedArea, selectedZone,
             pppname, pppassword, selectedPackage;
 
     //Declaring progress dialog
     private ProgressDialog progressDialog;
 
+    private ProgressBar areaLoader;
+
     //Declaring spinner
-    private Spinner areaSpinner, packageSpinner;
+    private Spinner areaSpinner, zoneSpinner, packageSpinner;
 
     //Declaring Array List
     private ArrayList<String> areaList;
-
     private ApiInterface apiInterface;
     private Client client;
 
@@ -73,6 +75,8 @@ public class ClientRegUpdate extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         progressDialog = new ProgressDialog(this);
+        areaLoader = findViewById(R.id.areaLoadProgressBar);
+
         id = getIntent().getStringExtra("id");
         SharedPreferences preferences = this.getSharedPreferences("users", MODE_PRIVATE);
         jwt = preferences.getString("jwt", null);
@@ -84,6 +88,7 @@ public class ClientRegUpdate extends AppCompatActivity {
         Id initialize
          */
         areaSpinner = findViewById(R.id.areaListSpinner);
+        zoneSpinner = findViewById(R.id.zoneListSpinner);
         packageSpinner = findViewById(R.id.spinnerpkgs);
         areaList = new ArrayList<>();
 
@@ -148,6 +153,7 @@ public class ClientRegUpdate extends AppCompatActivity {
                     client.setName(name);
                     client.setPhone(phone);
                     client.setArea(selectedArea);
+                    client.setZone(selectedZone);
                     client.setPppName(pppname);
                     client.setPppPass(pppassword);
                     client.setPkgId(selectedPackage);
@@ -163,6 +169,21 @@ public class ClientRegUpdate extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // On selecting a spinner item
                 selectedArea = parentView.getItemAtPosition(position).toString();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+
+        //Spinner item choice and click event
+        zoneSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // On selecting a spinner item
+                selectedZone = parentView.getItemAtPosition(position).toString();
+
             }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
@@ -211,6 +232,19 @@ public class ClientRegUpdate extends AppCompatActivity {
                     edclientname.setText(detailsWrapper.getName());
                     edclientphone.setText(detailsWrapper.getPhone());
                     existArea = detailsWrapper.getArea();
+
+                    List<String> zoneList = new ArrayList<>();
+                    zoneList.add("Main");
+                    zoneList.add("Osman");
+
+                    ArrayAdapter<String> zoneArrayAdapter = new ArrayAdapter<>(ClientRegUpdate.this,
+                            android.R.layout.simple_spinner_dropdown_item, zoneList);
+                    zoneSpinner.setAdapter(zoneArrayAdapter);
+
+                    int zonespinnerPosition = zoneArrayAdapter.getPosition(detailsWrapper.getZone());
+                    zoneSpinner.setSelection(zonespinnerPosition);
+
+
                     if (detailsWrapper.getPaymentMethod().equals("Cash")) {
                         radioGroupPaymentMethod.check(R.id.payment_cash);
 
@@ -238,6 +272,7 @@ public class ClientRegUpdate extends AppCompatActivity {
                     ArrayAdapter<String> packageArrayAdapter = new ArrayAdapter<>(ClientRegUpdate.this,
                             android.R.layout.simple_spinner_dropdown_item, packageList);
                     packageSpinner.setAdapter(packageArrayAdapter);
+
                     int spinnerPosition = packageArrayAdapter.getPosition(detailsWrapper.getPkgId());
                     packageSpinner.setSelection(spinnerPosition);
 
@@ -278,12 +313,13 @@ public class ClientRegUpdate extends AppCompatActivity {
     //Area load
     public void area_load()
     {
+        areaLoader.setVisibility(View.VISIBLE);
         String url = getString(R.string.base_url)+getString(R.string.area_load);
-
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
+                areaLoader.setVisibility(View.GONE);
                 try {
 
                     JSONArray jsonArray = new JSONArray(response);
@@ -298,7 +334,6 @@ public class ClientRegUpdate extends AppCompatActivity {
                     int spinnerPosition2 = AreaArrayAdapter.getPosition(existArea);
                     areaSpinner.setSelection(spinnerPosition2);
 
-
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -306,6 +341,7 @@ public class ClientRegUpdate extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                areaLoader.setVisibility(View.GONE);
                 Toast.makeText(ClientRegUpdate.this,error.toString(),Toast.LENGTH_LONG).show();
                 finish();
             }

@@ -2,6 +2,7 @@ package com.creativesaif.expert_internet_admin.ClientList;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -39,8 +41,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,34 +53,34 @@ import retrofit2.Callback;
 public class ClientDetailsEdit extends AppCompatActivity{
 
     //Declaring EditText
-    private EditText edclientname, edclientphone, edpppusername, edpppassword;
+    private EditText edclientname, edclientphone, edExpiredate, edpppusername, edpppassword;
 
     //Declaring RadioButton
     private RadioGroup radioGroupPaymentMethod, radioGroupClientMode;
-
     //Declaring String
     private String jwt;
     private String id;
     private String name;
     private String phone;
     private String existArea;
-    private String selectedArea;
+    private String selectedArea, expire_date;
     private String pppname;
     private String pppassword;
-    private String selectedPackage;
+    private String selectedPackage, selectedZone;
 
     //Declaring progress dialog
     private ProgressDialog progressDialog;
 
     //Declaring spinner
-    private Spinner areaSpinner, packageSpinner;
+    private Spinner areaSpinner,zoneSpinner, packageSpinner;
 
     //Declaring Array List
     private ArrayList<String> areaList;
 
     private ApiInterface apiInterface;
     private Client client;
-
+    final Calendar myCalendar= Calendar.getInstance();
+    private String admin_id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,20 +94,50 @@ public class ClientDetailsEdit extends AppCompatActivity{
 
         apiInterface = RetrofitApiClient.getClient().create(ApiInterface.class);
         client = new Client();
-
+        admin_id = preferences.getString("admin_id", null);
         /*
         Id initialize
          */
         areaSpinner = findViewById(R.id.areaListSpinner);
         packageSpinner = findViewById(R.id.spinnerpkgs);
+        zoneSpinner = findViewById(R.id.zoneListSpinner);
         areaList = new ArrayList<>();
 
         radioGroupPaymentMethod = findViewById(R.id.radioGroupPaymentMethod);
         radioGroupClientMode = findViewById(R.id.radioGroupClientMode);
         edclientname = findViewById(R.id.edclientname);
         edclientphone = findViewById(R.id.edclientphone);
+        edExpiredate = findViewById(R.id.edexpdateedit);
         edpppusername = findViewById(R.id.edpppusername);
         edpppassword = findViewById(R.id.edppppassword);
+
+        DatePickerDialog.OnDateSetListener date =new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int day) {
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH,month);
+                myCalendar.set(Calendar.DAY_OF_MONTH,day);
+
+                String myFormat="yyyy-MM-dd 09:00:00";
+                SimpleDateFormat dateFormat=new SimpleDateFormat(myFormat, Locale.ENGLISH);
+                edExpiredate.setText(dateFormat.format(myCalendar.getTime()));
+                expire_date = dateFormat.format(myCalendar.getTime());
+            }
+        };
+
+
+        edExpiredate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (admin_id.equals("9161")){
+                    new DatePickerDialog(ClientDetailsEdit.this,date,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                }else{
+                   warningShow("You don't have permission to edit. In case you need to edit, contact with Super Admin");
+                }
+            }
+        });
+
         //Declaring Button
         Button buttonUpdate = findViewById(R.id.update_button);
 
@@ -137,7 +172,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                 }else if(phone.length() > 11){
                     Toast.makeText(getApplicationContext(), "Enter correct phone number", Toast.LENGTH_SHORT).show();
 
-                }else if(pppname.isEmpty()){
+                } else if(pppname.isEmpty()){
                     Toast.makeText(getApplicationContext(), "Enter PPP name", Toast.LENGTH_SHORT).show();
 
                 }else if(pppassword.isEmpty()){
@@ -162,18 +197,25 @@ public class ClientDetailsEdit extends AppCompatActivity{
                     RadioButton radioButtonClientMode = findViewById(selectedClientMode);
                     String client_mode = radioButtonClientMode.getText().toString().trim();
 
-                    client.setJwt(jwt);
-                    client.setId(id);
-                    client.setMode(client_mode);
-                    client.setPaymentMethod(payment_method);
-                    client.setName(name);
-                    client.setPhone(phone);
-                    client.setArea(selectedArea);
-                    client.setPppName(pppname);
-                    client.setPppPass(pppassword);
-                    client.setPkgId(selectedPackage);
+                    if(client_mode.equals("Disable") && !admin_id.equals("9161")){
+                        warningShow("You don't have permission to Disable. In case you need to disable, contact with Super Admin");
 
-                    updateDetails(client);
+                    } else{
+                        client.setJwt(jwt);
+                        client.setId(id);
+                        client.setMode(client_mode);
+                        client.setPaymentMethod(payment_method);
+                        client.setName(name);
+                        client.setPhone(phone);
+                        client.setArea(selectedArea);
+                        client.setZone(selectedZone);
+                        client.setExpireDate(expire_date);
+                        client.setPppName(pppname);
+                        client.setPppPass(pppassword);
+                        client.setPkgId(selectedPackage);
+                        updateDetails(client);
+                    }
+
                 }
             }
         });
@@ -184,6 +226,21 @@ public class ClientDetailsEdit extends AppCompatActivity{
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // On selecting a spinner item
                 selectedArea = parentView.getItemAtPosition(position).toString();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+
+        //Spinner item choice and click event
+        zoneSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // On selecting a spinner item
+                selectedZone = parentView.getItemAtPosition(position).toString();
+
             }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
@@ -246,6 +303,19 @@ public class ClientDetailsEdit extends AppCompatActivity{
                         radioGroupClientMode.check(R.id.client_disable);
                     }
 
+                    List<String> zoneList = new ArrayList<>();
+                    zoneList.add("Main");
+                    zoneList.add("Osman");
+
+                    ArrayAdapter<String> zoneArrayAdapter = new ArrayAdapter<>(ClientDetailsEdit.this,
+                            android.R.layout.simple_spinner_dropdown_item, zoneList);
+                    zoneSpinner.setAdapter(zoneArrayAdapter);
+
+                    int zonespinnerPosition = zoneArrayAdapter.getPosition(detailsWrapper.getZone());
+                    zoneSpinner.setSelection(zonespinnerPosition);
+
+                    expire_date = detailsWrapper.getExpireDate();
+                    edExpiredate.setText(expire_date);
                     edpppusername.setText(detailsWrapper.getPppName());
                     edpppassword.setText(detailsWrapper.getPppPass());
 

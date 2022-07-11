@@ -39,7 +39,7 @@ public class ProgressDialog {
 
         Glide.with(activity)
                 .load(R.drawable.loader)
-                .placeholder(R.drawable.loading)
+                .placeholder(R.drawable.loader)
                 .centerCrop()
                 .into(gifImageView);
 
