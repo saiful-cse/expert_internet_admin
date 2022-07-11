@@ -25,6 +25,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.creativesaif.expert_internet_admin.ClientList.ClientDetails;
+import com.creativesaif.expert_internet_admin.ClientList.ClientDetailsEdit;
 import com.creativesaif.expert_internet_admin.Dashboard.Dashboard;
 import com.creativesaif.expert_internet_admin.MainActivity;
 import com.creativesaif.expert_internet_admin.MySingleton;
@@ -36,10 +37,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
-public class TransactionList extends AppCompatActivity implements View.OnClickListener{
+public class TransactionList extends AppCompatActivity {
 
     private TransactionMonthlyAdapter transactionMonthlyAdapter;
     private ArrayList<Transaction> transactionArrayList;
@@ -51,7 +54,7 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
 
     String first_date, last_date, summary;
 
-    private int mYear, mMonth, mDay;
+    final Calendar myCalendar= Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +73,6 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
         buttonDatePicker2 = findViewById(R.id.btn_datepicker2);
         buttonTxnView = findViewById(R.id.btn_txn_view);
 
-        buttonDatePicker1.setOnClickListener(this);
-        buttonDatePicker2.setOnClickListener(this);
-        buttonTxnView.setOnClickListener(this);
-
         progressDialog = new ProgressDialog(this);
         transactionArrayList = new ArrayList<>();
         transactionMonthlyAdapter = new TransactionMonthlyAdapter(this,transactionArrayList);
@@ -84,6 +83,73 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
 
         //now set adapter to recyclerView
         recyclerView.setAdapter(transactionMonthlyAdapter);
+
+
+        DatePickerDialog.OnDateSetListener date1 =new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int day) {
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH,month);
+                myCalendar.set(Calendar.DAY_OF_MONTH,day);
+
+                String date1Format = "yyyy-MM-dd 00:00:00";
+                SimpleDateFormat dateFormat = new SimpleDateFormat(date1Format, Locale.ENGLISH);
+                SimpleDateFormat dateViewFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+                buttonDatePicker1.setText(dateViewFormat.format(myCalendar.getTime()));
+                first_date = dateFormat.format(myCalendar.getTime());
+            }
+        };
+
+        DatePickerDialog.OnDateSetListener date2 =new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int day) {
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH,month);
+                myCalendar.set(Calendar.DAY_OF_MONTH,day);
+
+                String date2Format = "yyyy-MM-dd 23:59:59";
+                SimpleDateFormat dateFormat=new SimpleDateFormat(date2Format, Locale.ENGLISH);
+                SimpleDateFormat dateViewFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+                buttonDatePicker2.setText(dateViewFormat.format(myCalendar.getTime()));
+                last_date = dateFormat.format(myCalendar.getTime());
+            }
+        };
+
+        buttonDatePicker1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DatePickerDialog(TransactionList.this,date1 ,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+
+            }
+        });
+
+        buttonDatePicker2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DatePickerDialog(TransactionList.this,date2 ,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+
+            }
+        });
+
+        buttonTxnView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!isNetworkConnected()){
+                    Snackbar.make(findViewById(android.R.id.content),"Please!! Check Internet Connection or Try again later.",Snackbar.LENGTH_LONG).show();
+
+                }else if(first_date == null){
+                    Snackbar.make(findViewById(android.R.id.content),"Select first date",Snackbar.LENGTH_LONG).show();
+
+                }else if(last_date == null){
+                    Snackbar.make(findViewById(android.R.id.content),"Select last date",Snackbar.LENGTH_LONG).show();
+
+                }
+                else {
+
+                    load_txn();
+                }
+            }
+        });
 
         FloatingActionButton fab1 = findViewById(R.id.total);
         fab1.setOnClickListener(new View.OnClickListener() {
@@ -109,74 +175,6 @@ public class TransactionList extends AppCompatActivity implements View.OnClickLi
                 startActivity(new Intent(TransactionList.this, MakeTransaction.class));
             }
         });
-    }
-
-
-    @Override
-    public void onClick(View v) {
-
-        if (v == buttonDatePicker1){
-
-            // Get first Date
-            final Calendar c = Calendar.getInstance();
-            mYear = c.get(Calendar.YEAR);
-            mMonth = c.get(Calendar.MONTH);
-            mDay = c.get(Calendar.DAY_OF_MONTH);
-
-            DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                    new DatePickerDialog.OnDateSetListener() {
-
-                        @Override
-                        public void onDateSet(DatePicker view, int year,
-                                              int monthOfYear, int dayOfMonth) {
-
-                            buttonDatePicker1.setText(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
-                            first_date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
-                        }
-                    }, mYear, mMonth, mDay);
-            datePickerDialog.show();
-
-        }else if(v == buttonDatePicker2){
-
-            // Get first Date
-            final Calendar c = Calendar.getInstance();
-            mYear = c.get(Calendar.YEAR);
-            mMonth = c.get(Calendar.MONTH);
-            mDay = c.get(Calendar.DAY_OF_MONTH);
-
-            DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                    new DatePickerDialog.OnDateSetListener() {
-
-                        @Override
-                        public void onDateSet(DatePicker view, int year,
-                                              int monthOfYear, int dayOfMonth) {
-
-                            buttonDatePicker2.setText(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
-                            last_date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
-                        }
-                    }, mYear, mMonth, mDay);
-            datePickerDialog.show();
-
-        }else if(v == buttonTxnView){
-
-            if (!isNetworkConnected()){
-                Snackbar.make(findViewById(android.R.id.content),"Please!! Check Internet Connection or Try again later.",Snackbar.LENGTH_LONG).show();
-
-            }else if(first_date == null){
-                Snackbar.make(findViewById(android.R.id.content),"Select first date",Snackbar.LENGTH_LONG).show();
-
-            }else if(last_date == null){
-                Snackbar.make(findViewById(android.R.id.content),"Select last date",Snackbar.LENGTH_LONG).show();
-
-            }
-            else {
-
-                load_txn();
-            }
-
-        }
-
-
     }
 
     //Internet connection check

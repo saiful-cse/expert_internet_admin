@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="start|bottom"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/total_icon" />
+        app:srcCompat="@drawable/ic_baseline_view_list_24" />
 
 
 

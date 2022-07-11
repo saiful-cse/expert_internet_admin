@@ -27,37 +27,36 @@
                 <Button
                     android:id="@+id/btn_datepicker1"
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
                     android:layout_alignParentStart="true"
-                    android:background="@drawable/button_round"
-                    android:text="From"
+                    android:layout_height="40dp"
+                    android:text="First Date"
                     android:textAllCaps="false"
+                    android:textSize="15sp"
                     android:textColor="@color/colorPrimary" />
 
                 <Button
                     android:id="@+id/btn_datepicker2"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
-                    android:text="To"
-                    android:textColor="@color/colorPrimary"
+                    android:text="Last Date"
                     android:layout_centerHorizontal="true"
                     android:textAllCaps="false"
-                    android:background="@drawable/button_round"/>
+                    android:textSize="15sp"
+                    android:textColor="@color/colorPrimary" />
 
                 <Button
                     android:id="@+id/btn_txn_view"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
-                    android:text="View"
-                    android:textColor="@color/colorPrimary"
                     android:layout_alignParentEnd="true"
+                    android:text="View"
                     android:textAllCaps="false"
-                    android:background="@drawable/button_round"/>
+                    android:textSize="15sp"
+                    android:textColor="@color/colorPrimary" />
 
             </RelativeLayout>
 
             <LinearLayout
-                android:layout_marginTop="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
