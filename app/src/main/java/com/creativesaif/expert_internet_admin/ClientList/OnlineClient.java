@@ -35,13 +35,11 @@ import retrofit2.Callback;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class Expired3DayClient extends Fragment {
+public class OnlineClient extends Fragment {
 
-    private RecyclerView recyclerView;
     private ClientAdapter clientAdapter;
     private List<Client> clientList;
     private ApiInterface apiInterface;
-    private SharedPreferences preferences;
     private String jwt;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Client client;
@@ -55,12 +53,12 @@ public class Expired3DayClient extends Fragment {
 
         errorImage = view.findViewById(R.id.error_icon);
         errorText = view.findViewById(R.id.error_text);
-        preferences = view.getContext().getSharedPreferences("users", MODE_PRIVATE);
+        SharedPreferences preferences = view.getContext().getSharedPreferences("users", MODE_PRIVATE);
         swipeRefreshLayout = view.findViewById(R.id.layout_refresh);
         clientList = new ArrayList<>();
         clientAdapter = new ClientAdapter(getActivity(), clientList);
 
-        recyclerView = view.findViewById(R.id.recyclerViewClient);
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewClient);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(clientAdapter);
@@ -100,7 +98,7 @@ public class Expired3DayClient extends Fragment {
 
     public void load_client(Client mClient) {
 
-        Call<ClientWrapper> call = apiInterface.get3DayExpired_client(mClient);
+        Call<ClientWrapper> call = apiInterface.getOnline_client(mClient);
         call.enqueue(new Callback<ClientWrapper>() {
             @Override
             public void onResponse(Call<ClientWrapper> call, retrofit2.Response<ClientWrapper> response) {
@@ -129,7 +127,7 @@ public class Expired3DayClient extends Fragment {
                     clientAdapter.setClientList(clientWrapper.getClients());
 
                 }else {
-                    Toast.makeText(getActivity(), clientWrapper.getStatus()+"\n"+clientWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), clientWrapper.getMessage(), Toast.LENGTH_LONG).show();
                 }
 
             }

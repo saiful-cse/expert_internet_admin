@@ -45,7 +45,7 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
         final Client client = clientList.get(i);
         myViewHolder.tv1.setText(client.getName());
         myViewHolder.tv2.setText("Phone: "+client.getPhone());
-        myViewHolder.tv3.setText("PPP: "+client.getPppName());
+        myViewHolder.tv3.setText("PPP: "+client.getPppName()+", Zone: "+client.getZone());
         myViewHolder.tv4.setText("Area: "+client.getArea());
 
         myViewHolder.tv1.setOnClickListener(new View.OnClickListener() {
@@ -65,9 +65,6 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 }
                 mContext.startActivity(i);
-
-
-                //Toast.makeText(mContext.getApplicationContext(), "You have clicked", Toast.LENGTH_SHORT).show();
 
             }
         });
