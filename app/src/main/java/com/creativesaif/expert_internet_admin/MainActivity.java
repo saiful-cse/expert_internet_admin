@@ -1,9 +1,11 @@
 package com.creativesaif.expert_internet_admin;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,7 +26,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,18 +62,18 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private String last_id = "0";
-    private boolean isLoading = true;
-
-
-    RecyclerView recyclerView;
-
-    LinearLayout linearLayout;
-
     //refresh posts
     SwipeRefreshLayout swipeRefreshLayout;
     SharedPreferences sharedPreferences;
 
+    private WebView webview;
+    private static ProgressBar progressBar;
+    private String url;
+    private LinearLayout linearLayoutError;
+
+
+
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,12 +90,64 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+        linearLayoutError = findViewById(R.id.connection_error_layout);
+        progressBar = findViewById(R.id.progressbar);
+        swipeRefreshLayout = findViewById(R.id.viewRefresh);
+        url = getString(R.string.base_url)+"dashboard/view.php";
 
+        webview = findViewById(R.id.webView);
+        webview.getSettings().setJavaScriptEnabled(true);
+        webview.setWebViewClient(new myWebClient());
+
+        if (!isNetworkConnected()){
+            progressBar.setVisibility(View.GONE);
+            linearLayoutError.setVisibility(View.VISIBLE);
+        }else{
+
+            webview.loadUrl(url);
+        }
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                webview.loadUrl(url);
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
         /*
         id initialize here
          */
         sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
 
+    }
+
+
+    public static class myWebClient extends WebViewClient {
+
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            progressBar.setVisibility(View.VISIBLE);
+            view.loadUrl(url);
+            return true;
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    //Internet connection check
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
     }
 
 
@@ -208,13 +265,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    //Internet connection check
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        return cm.getActiveNetworkInfo() != null;
-    }
-
     public void selectLoginUrlDialog(int port){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setCancelable(true);
@@ -225,9 +275,6 @@ public class MainActivity extends AppCompatActivity
         alert.setPositiveButton("Mobile Data/Other WiFi", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-//                Intent intent = new Intent(MainActivity.this, Webviewpage.class);
-//                intent.putExtra("url", "http://103.134.39.146:"+port+"/action/login.html");
-//                startActivity(intent);
 
                 Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("https://103.134.39.146:"+port+"/action/login.html"));
                 startActivity(in);
