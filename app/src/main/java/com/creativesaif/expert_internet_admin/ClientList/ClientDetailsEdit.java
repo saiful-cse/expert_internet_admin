@@ -44,6 +44,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -63,7 +64,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
     private String name;
     private String phone;
     private String existArea;
-    private String selectedArea, expire_date;
+    private String selectedArea, expire_date, disable_date;
     private String pppname;
     private String pppassword;
     private String selectedPackage, selectedZone;
@@ -121,7 +122,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                 myCalendar.set(Calendar.DAY_OF_MONTH,day);
 
                 String myFormat="yyyy-MM-dd 09:00:00";
-                SimpleDateFormat dateFormat=new SimpleDateFormat(myFormat, Locale.ENGLISH);
+                SimpleDateFormat dateFormat=new SimpleDateFormat(myFormat, Locale.getDefault());
                 edExpiredate.setText(dateFormat.format(myCalendar.getTime()));
                 expire_date = dateFormat.format(myCalendar.getTime());
             }
@@ -199,10 +200,18 @@ public class ClientDetailsEdit extends AppCompatActivity{
                     RadioButton radioButtonClientMode = findViewById(selectedClientMode);
                     String client_mode = radioButtonClientMode.getText().toString().trim();
 
+                    if (client_mode.equals("Disable")){
+
+                        Date c = Calendar.getInstance().getTime();
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
+                        disable_date = df.format(c);
+                    }
+
                     if(client_mode.equals("Disable") && !admin_id.equals("9161")){
                         warningShow("You don't have permission to Disable. In case you need to disable, contact with Super Admin");
 
                     } else{
+
                         client.setJwt(jwt);
                         client.setId(id);
                         client.setMode(client_mode);
@@ -212,6 +221,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                         client.setArea(selectedArea);
                         client.setZone(selectedZone);
                         client.setExpireDate(expire_date);
+                        client.setDisableDate(disable_date);
                         client.setPppName(pppname);
                         client.setPppPass(pppassword);
                         client.setPkgId(selectedPackage);
@@ -291,6 +301,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                     edclientname.setText(detailsWrapper.getName());
                     edclientphone.setText(detailsWrapper.getPhone());
                     existArea = detailsWrapper.getArea();
+
                     if (detailsWrapper.getPaymentMethod().equals("Cash")) {
                         radioGroupPaymentMethod.check(R.id.payment_cash);
 
@@ -317,6 +328,8 @@ public class ClientDetailsEdit extends AppCompatActivity{
                     zoneSpinner.setSelection(zonespinnerPosition);
 
                     expire_date = detailsWrapper.getExpireDate();
+                    disable_date = detailsWrapper.getDisableDate();
+
                     edExpiredate.setText(expire_date);
                     edpppusername.setText(detailsWrapper.getPppName());
                     edpppassword.setText(detailsWrapper.getPppPass());

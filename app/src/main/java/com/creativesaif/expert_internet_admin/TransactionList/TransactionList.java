@@ -92,8 +92,7 @@ public class TransactionList extends AppCompatActivity {
                 myCalendar.set(Calendar.MONTH,month);
                 myCalendar.set(Calendar.DAY_OF_MONTH,day);
 
-                String date1Format = "yyyy-MM-dd 00:00:00";
-                SimpleDateFormat dateFormat = new SimpleDateFormat(date1Format, Locale.ENGLISH);
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd 00:00:00", Locale.ENGLISH);
                 SimpleDateFormat dateViewFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
                 buttonDatePicker1.setText(dateViewFormat.format(myCalendar.getTime()));
                 first_date = dateFormat.format(myCalendar.getTime());
@@ -107,8 +106,7 @@ public class TransactionList extends AppCompatActivity {
                 myCalendar.set(Calendar.MONTH,month);
                 myCalendar.set(Calendar.DAY_OF_MONTH,day);
 
-                String date2Format = "yyyy-MM-dd 23:59:59";
-                SimpleDateFormat dateFormat=new SimpleDateFormat(date2Format, Locale.ENGLISH);
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd 23:59:59", Locale.getDefault());
                 SimpleDateFormat dateViewFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
                 buttonDatePicker2.setText(dateViewFormat.format(myCalendar.getTime()));
                 last_date = dateFormat.format(myCalendar.getTime());

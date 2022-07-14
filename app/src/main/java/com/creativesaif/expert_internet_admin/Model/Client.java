@@ -29,6 +29,9 @@ public class Client {
         @SerializedName("area")
         @Expose
         private String area;
+        @SerializedName("disable_date")
+        @Expose
+        private String disableDate;
         @SerializedName("ppp_name")
         @Expose
         private String pppName;
@@ -92,6 +95,14 @@ public class Client {
 
         public void setId(String id) {
             this.id = id;
+        }
+
+        public String getDisableDate() {
+            return disableDate;
+        }
+
+        public void setDisableDate(String disableDate) {
+            this.disableDate = disableDate;
         }
 
         public String getRegistered() {

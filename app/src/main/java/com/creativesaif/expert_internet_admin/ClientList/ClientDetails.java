@@ -193,6 +193,14 @@ public class ClientDetails extends AppCompatActivity {
             }
         });
 
+        Button btnExpiredClientDisconnect = findViewById(R.id.btnexpireddiscont);
+        btnExpiredClientDisconnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                warningExpiredClientDisconnect();
+            }
+        });
+
         //reload or refresh posts
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -551,6 +559,43 @@ public class ClientDetails extends AppCompatActivity {
         dlg.show();
     }
 
+    public void expiredClientDisconnectSms(Client mClient) {
+        progressDialog.showDialog();
+        Call<DetailsWrapper> call = apiInterface.expiredClientDisconnectSms(mClient);
+        call.enqueue(new Callback<DetailsWrapper>() {
+            @SuppressLint("ResourceType")
+            @Override
+            public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
+
+                progressDialog.hideDialog();
+
+                DetailsWrapper detailsWrapper = response.body();
+                assert detailsWrapper != null;
+
+                if (detailsWrapper.getStatus() == 401) {
+                    //Go to phone verification step
+                    loginWarningShow(detailsWrapper.getMessage());
+
+                }if (detailsWrapper.getStatus() == 200) {
+                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                    finish();
+
+                }else{
+                    warningShow(detailsWrapper.getMessage());
+                    //Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<DetailsWrapper> call, Throwable t) {
+                progressDialog.hideDialog();
+                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+
     public void admin_make_payment(Trns mTrns)
     {
         progressDialog.showDialog();
@@ -652,6 +697,33 @@ public class ClientDetails extends AppCompatActivity {
         dlg.show();
     }
 
+    public void warningExpiredClientDisconnect(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setCancelable(true);
+        alert.setTitle("Warning");
+        alert.setMessage("বিলের মেয়াদ শেষ হয়ে যাওয়াতে লাইন বন্ধের SMS পাঠাতে চান?");
+        alert.setIcon(R.drawable.ic_baseline_warning_24);
+
+        alert.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                client.setJwt(jwt);
+                client.setPppName(pppName);
+                client.setId(id);
+                client.setPhone(phone);
+                expiredClientDisconnectSms(client);
+            }
+        });
+
+        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog dlg = alert.create();
+        dlg.show();
+    }
 
     public void warningShowDisablePayment(){
         android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);

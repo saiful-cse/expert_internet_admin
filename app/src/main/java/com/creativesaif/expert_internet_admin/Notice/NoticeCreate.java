@@ -60,6 +60,7 @@ public class NoticeCreate extends AppCompatActivity {
 
     private ApiInterface apiInterface;
     private Client client;
+    private String admin_id;
 
     /*
     Area load from server
@@ -85,6 +86,7 @@ public class NoticeCreate extends AppCompatActivity {
         editTextNotice = findViewById(R.id.edNotice);
         progressDialog = new ProgressDialog(this);
         Button notice_Post = findViewById(R.id.btnNoticePost);
+        admin_id = preferences.getString("admin_id", null);
 
         notice_Post.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +125,10 @@ public class NoticeCreate extends AppCompatActivity {
                 activeClientMessage = editTextActiveClientMsg.getText().toString().trim();
                 jwt = preferences.getString("jwt", null);
 
-                if (jwt == null ){
+                if(!admin_id.equals("9161")){
+                    Toast.makeText(getApplicationContext(), "You don't have permission to send. In case you need to send, contact with Super Admin", Toast.LENGTH_LONG).show();
+
+                } else if (jwt == null ){
                     finish();
                     startActivity(new Intent(NoticeCreate.this, Login.class));
 
