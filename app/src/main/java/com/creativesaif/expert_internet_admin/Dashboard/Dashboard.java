@@ -186,7 +186,6 @@ public class Dashboard extends AppCompatActivity {
 
                         noOfClient.add(new BarEntry(Float.parseFloat(jsonObject1.getString("total")),i));
                         month.add(jsonObject1.getString("month"));
-
                     }
 
                     bardataset = new BarDataSet(noOfClient, "No Of Client");
