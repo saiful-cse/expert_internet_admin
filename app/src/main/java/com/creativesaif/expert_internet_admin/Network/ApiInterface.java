@@ -11,13 +11,13 @@ import retrofit2.http.POST;
 
 public interface ApiInterface {
 
-//    String base_url = "http://192.168.1.5/";
-//    String second_path = "api/expert_internet_api/";
-//    String api_version = "exp-v4.3/";
-
-    String base_url = "https://creativesaif.com/";
-    String second_path = "api/";
+    String base_url = "http://192.168.1.5/";
+    String second_path = "api/expert_internet_api/";
     String api_version = "exp-v4.4/";
+
+//    String base_url = "https://creativesaif.com/";
+//    String second_path = "api/";
+//    String api_version = "exp-v4.4/";
 
     @POST(base_url+second_path+api_version+"client/registered_client.php")
     Call<ClientWrapper> getRegistered_client(@Body Client client);

@@ -54,12 +54,12 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
 
                 Intent i;
 
-                if (client.getRegistered().equals("0")){
+              if(client.getRegistered().equals("0")){
 
                     i = new Intent(mContext, ClientRegUpdate.class);
                     i.putExtra("id", client.getId());
-
-                }else{
+                }
+                else{
                     i = new Intent(mContext, ClientDetails.class);
                     i.putExtra("ppp_name", client.getPppName());
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

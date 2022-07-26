@@ -64,8 +64,6 @@ public class ClientDetails extends AppCompatActivity {
             tvmode, tvpaymentmethod, tvpackgeid, tvregdate, tvexpiredate, tvdisabledate;
     private CardView expiredTagCard;
 
-    private LinearLayout ppswitchLayout;
-
     String currentMode;
     private String jwt, name, id, pppName, admin_id, phone, informMessage;
     private SharedPreferences sharedPreferences;
@@ -103,7 +101,6 @@ public class ClientDetails extends AppCompatActivity {
         sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
         jwt = sharedPreferences.getString("jwt", null);
 
-        ppswitchLayout = findViewById(R.id.ppswitchlayout);
         /*
         Txn ID initialize
          */
@@ -344,10 +341,11 @@ public class ClientDetails extends AppCompatActivity {
                     //Go to phone verification step
                     loginWarningShow(detailsWrapper.getMessage());
 
-                }if (detailsWrapper.getStatus() == 200) {
+                }else if (detailsWrapper.getStatus() == 200) {
                     Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                    warningShow(detailsWrapper.getMessage());
                     //Details refresh
-                    load_details(client);
+                    //load_details(client);
 
                 }else{
                     warningShow(detailsWrapper.getMessage());
@@ -384,8 +382,8 @@ public class ClientDetails extends AppCompatActivity {
                     loginWarningShow(detailsWrapper.getMessage());
 
                 }else if(detailsWrapper.getStatus() == 404){
-                    finish();
-                    Toast.makeText(getApplicationContext(), "Not found client this PPP name", Toast.LENGTH_LONG).show();
+
+                    notfoundShow("Not found client by the PPP name");
 
                 } else if (detailsWrapper.getStatus() == 200) {
 
@@ -409,12 +407,10 @@ public class ClientDetails extends AppCompatActivity {
                     tvppname.setText(detailsWrapper.getPppName());
                     tvpppass.setText(detailsWrapper.getPppPass());
 
-                    if (detailsWrapper.getPppActivity().equals("Online")){
-                        pppswitch.setChecked(true);
+                    pppswitch.setChecked(detailsWrapper.getPppActivity().equals("Online"));
 
-                    }else{
-                        pppswitch.setChecked(false);
-                        ppswitchLayout.setVisibility(View.GONE);
+                    if (detailsWrapper.getPppActivity().equals("Online")){
+                        tvactivity.setTextColor(Color.GREEN);
                     }
 
                     tvactivity.setText(detailsWrapper.getPppActivity());
@@ -691,6 +687,24 @@ public class ClientDetails extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
+            }
+        });
+        android.app.AlertDialog dlg = alert.create();
+        dlg.show();
+    }
+
+    public void notfoundShow(String message){
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
+        alert.setCancelable(false);
+        alert.setTitle("Warning!!");
+        alert.setMessage(message);
+        alert.setIcon(R.drawable.ic_baseline_warning_24);
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+                finish();
             }
         });
         android.app.AlertDialog dlg = alert.create();
