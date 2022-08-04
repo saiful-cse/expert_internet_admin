@@ -42,9 +42,9 @@
     <!--                server URL              -->
 
     <!-- base url -->
-<string name="base_url">http://192.168.1.5/API/expert_internet_api/exp-v4.4/</string>
+<!--<string name="base_url">http://192.168.1.5/API/expert_internet_api/exp-v4.4/</string>-->
 
-<!--    <string name="base_url">https://creativesaif.com/api/exp-v4.4/</string>-->
+    <string name="base_url">https://creativesaif.com/api/exp-v4.4/</string>
 
     <!-- news script directory -->
     <!-- Search -->

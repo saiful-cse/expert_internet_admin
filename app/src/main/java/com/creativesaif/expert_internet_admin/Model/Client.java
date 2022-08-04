@@ -69,16 +69,16 @@ public class Client {
         @Expose
         private String last_log_out;
 
-        @SerializedName("action")
+        @SerializedName("action_type")
         @Expose
-        private String action;
+        private String actionType;
 
-        public String getAction(){
-            return action;
+        public String getActionType(){
+            return actionType;
         }
 
-        public void setAction(String action) {
-            this.action = action;
+        public void setActionType(String actionType) {
+            this.actionType = actionType;
         }
 
         public String getJwt() {

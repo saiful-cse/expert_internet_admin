@@ -24,34 +24,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.v7.widget.CardView
-                android:id="@+id/dateexpiredcard"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/expireText"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="4dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal"
-                    android:layout_margin="20dp">
-
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:src="@drawable/warning_icon"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#CF0404"
-                        android:textSize="20sp"
-                        android:text="Bill date expired"/>
-
-                </LinearLayout>
-
-            </android.support.v7.widget.CardView>
+                android:textColor="#CF0404"
+                android:textSize="15sp"
+                android:layout_gravity="center" />
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"

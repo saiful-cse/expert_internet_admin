@@ -1,5 +1,7 @@
 package com.creativesaif.expert_internet_admin.ClientList;
 
+import static java.util.Calendar.MONTH;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,6 +10,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -49,10 +53,14 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Month;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,7 +70,8 @@ public class ClientDetails extends AppCompatActivity {
     private TextView tvname, tvphone, tvarea, tvzone,
             tvppname, tvpppass, tvactivity, tvroutermac, tvlastlogout, tvuptime,
             tvmode, tvpaymentmethod, tvpackgeid, tvregdate, tvexpiredate, tvdisabledate;
-    private CardView expiredTagCard;
+    private TextView tvExpireText;
+    private LinearLayout linearLayoutPPswitch;
 
     String currentMode;
     private String jwt, name, id, pppName, admin_id, phone, informMessage;
@@ -101,15 +110,17 @@ public class ClientDetails extends AppCompatActivity {
         sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
         jwt = sharedPreferences.getString("jwt", null);
 
+
         /*
         Txn ID initialize
          */
-        expiredTagCard = findViewById(R.id.dateexpiredcard);
-        swipeRefreshLayout = findViewById(R.id.details_refresh);
 
+        swipeRefreshLayout = findViewById(R.id.details_refresh);
+        tvExpireText = findViewById(R.id.expireText);
         radioGroup = findViewById(R.id.radioGroup);
         radioGroup2 = findViewById(R.id.radioGroup2);
         editTextAmount = findViewById(R.id.edAmount);
+        linearLayoutPPswitch = findViewById(R.id.ppswitchlayout);
 
         Button btnPaymentHistory = findViewById(R.id.btnPaymentHistory);
         ImageView user_call = findViewById(R.id.user_direct_call);
@@ -145,7 +156,7 @@ public class ClientDetails extends AppCompatActivity {
 
         // -----------End-----------------------
 
-        expiredTagCard.setVisibility(View.GONE);
+
         progressDialog = new ProgressDialog(this);
 
         apiInterface = RetrofitApiClient.getClient().create(ApiInterface.class);
@@ -177,13 +188,13 @@ public class ClientDetails extends AppCompatActivity {
             public void onClick(View view) {
                 if (pppswitch.isChecked()){
                     client.setJwt(jwt);
-                    client.setAction("enable");
+                    client.setActionType("enable");
                     client.setPppName(pppName);
                     getPPPAction(client);
 
                 }else{
                     client.setJwt(jwt);
-                    client.setAction("disable");
+                    client.setActionType("disable");
                     client.setPppName(pppName);
                     getPPPAction(client);
                 }
@@ -337,8 +348,8 @@ public class ClientDetails extends AppCompatActivity {
                 DetailsWrapper detailsWrapper = response.body();
                 assert detailsWrapper != null;
 
-                if (detailsWrapper.getStatus() == 401) {
-                    //Go to phone verification step
+                if (detailsWrapper.getStatus() == 500) {
+
                     loginWarningShow(detailsWrapper.getMessage());
 
                 }else if (detailsWrapper.getStatus() == 200) {
@@ -367,6 +378,7 @@ public class ClientDetails extends AppCompatActivity {
         progressDialog.showDialog();
         Call<DetailsWrapper> call = apiInterface.getClientDetails(mClient);
         call.enqueue(new Callback<DetailsWrapper>() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @SuppressLint("ResourceType")
             @Override
             public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
@@ -413,6 +425,11 @@ public class ClientDetails extends AppCompatActivity {
                         tvactivity.setTextColor(Color.GREEN);
                     }
 
+                    if (currentMode.equals("Disable")){
+                        tvExpireText.setVisibility(View.GONE);
+                        linearLayoutPPswitch.setVisibility(View.GONE);
+                    }
+
                     tvactivity.setText(detailsWrapper.getPppActivity());
                     tvroutermac.setText(detailsWrapper.getRouterMac());
                     tvlastlogout.setText(detailsWrapper.getLastLogedOut());
@@ -428,14 +445,19 @@ public class ClientDetails extends AppCompatActivity {
 
                     try {
                         Calendar cal = Calendar.getInstance();
+                        cal.setTimeZone(TimeZone.getTimeZone("Asia/Dhaka"));
                         Date currentDate = cal.getTime();
                         Date expire_Date = sdf.parse(detailsWrapper.getExpireDate());
 
-                        int result = currentDate.compareTo(expire_Date);
-
-                        if (result >= 0){
-                            expiredTagCard.setVisibility(View.VISIBLE);
+                        if (currentDate.getTime() >= expire_Date.getTime()){
+                            cal.setTimeInMillis(currentDate.getTime() - expire_Date.getTime());
+                            int m = cal.get(Calendar.MONTH)+1;
+                            int d = cal.get(Calendar.DAY_OF_MONTH);
+                            tvExpireText.setText(m+" Month "+d +" Day expired (with current month)");
+                        }else{
+                            tvExpireText.setText("No expired");
                         }
+
 
                     } catch (ParseException e) {
                         //e.printStackTrace();

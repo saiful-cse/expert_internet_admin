@@ -11,13 +11,13 @@ import retrofit2.http.POST;
 
 public interface ApiInterface {
 
-    String base_url = "http://192.168.1.5/";
-    String second_path = "api/expert_internet_api/";
-    String api_version = "exp-v4.4/";
-
-//    String base_url = "https://creativesaif.com/";
-//    String second_path = "api/";
+//    String base_url = "http://192.168.1.5/";
+//    String second_path = "api/expert_internet_api/";
 //    String api_version = "exp-v4.4/";
+
+    String base_url = "https://creativesaif.com/";
+    String second_path = "api/";
+    String api_version = "exp-v4.4/";
 
     @POST(base_url+second_path+api_version+"client/registered_client.php")
     Call<ClientWrapper> getRegistered_client(@Body Client client);
@@ -58,7 +58,7 @@ public interface ApiInterface {
     @POST(base_url+second_path+api_version+"/sms/expired_client_disconnect_sms.php")
     Call<DetailsWrapper> expiredClientDisconnectSms(@Body Client client);
 
-    @POST(base_url+second_path+api_version+"/client/ppp_action.php")
+    @POST("http://mt.baycombd.com/expnet_api/pppAction.php")
     Call<DetailsWrapper> getPPPAction(@Body Client client);
 
 
