@@ -55,30 +55,46 @@ public class DetailsWrapper {
     @SerializedName("mode")
     @Expose
     private String mode;
+    @SerializedName("packages")
+    @Expose
+    private List<Package> packages = null;
+
+
+    //---- Router OS -----
+    @SerializedName("router_status")
+    @Expose
+    private Integer routerStatus;
+
     @SerializedName("ppp_status")
     @Expose
     private String pppStatus;
-    @SerializedName("last_loged_out")
-    @Expose
-    private String lastLogedOut;
+
     @SerializedName("ppp_activity")
     @Expose
     private String pppActivity;
-    @SerializedName("uptime")
-    @Expose
-    private String uptime;
+
     @SerializedName("router_mac")
     @Expose
     private String routerMac;
+
+    @SerializedName("last_log_out")
+    @Expose
+    private String last_log_out;
+
+    @SerializedName("uptime")
+    @Expose
+    private String uptime;
+
+    @SerializedName("last_loged_out")
+    @Expose
+    private String lastLogedOut;
+
     @SerializedName("download")
     @Expose
     private String download;
     @SerializedName("upload")
     @Expose
     private String upload;
-    @SerializedName("packages")
-    @Expose
-    private List<Package> packages = null;
 
     public Integer getStatus() {
         return status;
@@ -208,28 +224,43 @@ public class DetailsWrapper {
         this.mode = mode;
     }
 
+    public List<Package> getPackages() {
+        return packages;
+    }
+
+    public void setPackages(List<Package> packages) {
+        this.packages = packages;
+    }
+
+
+
+    // Router OS///
+    public Integer getRouterStatus() {
+        return routerStatus;
+    }
+    public void setRouterStatus(Integer routerStatus) {
+        this.routerStatus = routerStatus;
+    }
+
     public String getPppStatus() {
         return pppStatus;
     }
-
     public void setPppStatus(String pppStatus) {
         this.pppStatus = pppStatus;
-    }
-
-    public String getLastLogedOut() {
-        return lastLogedOut;
-    }
-
-    public void setLastLogedOut(String lastLogedOut) {
-        this.lastLogedOut = lastLogedOut;
     }
 
     public String getPppActivity() {
         return pppActivity;
     }
-
     public void setPppActivity(String pppActivity) {
         this.pppActivity = pppActivity;
+    }
+
+    public String getRouterMac() {
+        return routerMac;
+    }
+    public void setRouterMac(String routerMac) {
+        this.routerMac = routerMac;
     }
 
     public String getUptime() {
@@ -240,18 +271,16 @@ public class DetailsWrapper {
         this.uptime = uptime;
     }
 
-    public String getRouterMac() {
-        return routerMac;
+    public String getLastLogedOut() {
+        return lastLogedOut;
     }
-
-    public void setRouterMac(String routerMac) {
-        this.routerMac = routerMac;
+    public void setLastLogedOut(String lastLogedOut) {
+        this.lastLogedOut = lastLogedOut;
     }
 
     public String getDownload() {
         return download;
     }
-
     public void setDownload(String download) {
         this.download = download;
     }
@@ -259,18 +288,7 @@ public class DetailsWrapper {
     public String getUpload() {
         return upload;
     }
-
     public void setUpload(String upload) {
         this.upload = upload;
     }
-
-    public List<Package> getPackages() {
-        return packages;
-    }
-
-    public void setPackages(List<Package> packages) {
-        this.packages = packages;
-    }
-
-
 }

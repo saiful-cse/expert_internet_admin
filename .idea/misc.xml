@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/expert_internet_admin/app/src/main/res/layout/activity_client_details.xml" value="0.20416666666666666" />
+        <entry key="..\:/expert_internet_admin/app/src/main/res/drawable/ic_baseline_message_24.xml" value="0.1055" />
+        <entry key="..\:/expert_internet_admin/app/src/main/res/drawable/ic_baseline_warning_24.xml" value="0.1055" />
+        <entry key="..\:/expert_internet_admin/app/src/main/res/layout/activity_client_details.xml" value="0.2" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/activity_client_details_edit.xml" value="0.20416666666666666" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/activity_client_reg_update.xml" value="0.1693840579710145" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/activity_main.xml" value="0.20416666666666666" />

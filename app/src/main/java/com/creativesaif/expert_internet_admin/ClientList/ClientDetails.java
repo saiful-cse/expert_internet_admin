@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
@@ -68,10 +69,10 @@ import retrofit2.Callback;
 public class ClientDetails extends AppCompatActivity {
 
     private TextView tvname, tvphone, tvarea, tvzone,
-            tvppname, tvpppass, tvactivity, tvroutermac, tvlastlogout, tvuptime,
+            tvppname, tvpppass, tvpppstatus, tvactivity, tvroutermac, tvlastlogout, tvuptime,
             tvmode, tvpaymentmethod, tvpackgeid, tvregdate, tvexpiredate, tvdisabledate;
     private TextView tvExpireText;
-    private LinearLayout linearLayoutPPswitch;
+    private LinearLayout linearLayoutPPPStatus;
 
     String currentMode;
     private String jwt, name, id, pppName, admin_id, phone, informMessage;
@@ -93,6 +94,8 @@ public class ClientDetails extends AppCompatActivity {
     private String payment_type, payment_method, amount;
     private RadioGroup radioGroup, radioGroup2;
     Button buttonTxnSubmit;
+    private TextView tvGetStatus;
+    private ProgressBar pppStatusProgressbar;
     /*
    Progress dialog
     */
@@ -114,13 +117,15 @@ public class ClientDetails extends AppCompatActivity {
         /*
         Txn ID initialize
          */
-
         swipeRefreshLayout = findViewById(R.id.details_refresh);
         tvExpireText = findViewById(R.id.expireText);
         radioGroup = findViewById(R.id.radioGroup);
         radioGroup2 = findViewById(R.id.radioGroup2);
         editTextAmount = findViewById(R.id.edAmount);
-        linearLayoutPPswitch = findViewById(R.id.ppswitchlayout);
+
+        pppStatusProgressbar = findViewById(R.id.getPpStatusProgressBar);
+        tvGetStatus = findViewById(R.id.tvGetStatus);
+        linearLayoutPPPStatus = findViewById(R.id.pppStatusLayout);
 
         Button btnPaymentHistory = findViewById(R.id.btnPaymentHistory);
         ImageView user_call = findViewById(R.id.user_direct_call);
@@ -138,6 +143,7 @@ public class ClientDetails extends AppCompatActivity {
 
         //--------PPPoE Connection-------
         pppswitch = findViewById(R.id.pppswitch);
+        tvpppstatus = findViewById(R.id.tvppp_status);
         tvppname = findViewById(R.id.tvppp_name);
         tvpppass = findViewById(R.id.tvppp_pass);
 
@@ -197,6 +203,20 @@ public class ClientDetails extends AppCompatActivity {
                     client.setActionType("disable");
                     client.setPppName(pppName);
                     getPPPAction(client);
+                }
+            }
+        });
+
+        tvGetStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!isNetworkConnected()) {
+                    Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
+
+                }else{
+
+                    client.setPppName(pppName);
+                    getPPPStatus(client);
                 }
             }
         });
@@ -350,15 +370,16 @@ public class ClientDetails extends AppCompatActivity {
 
                 if (detailsWrapper.getStatus() == 500) {
 
-                    loginWarningShow(detailsWrapper.getMessage());
+                    linearLayoutPPPStatus.setVisibility(View.GONE);
+                    warningShow(detailsWrapper.getMessage());
 
                 }else if (detailsWrapper.getStatus() == 200) {
+                    linearLayoutPPPStatus.setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
                     warningShow(detailsWrapper.getMessage());
-                    //Details refresh
-                    //load_details(client);
 
                 }else{
+                    linearLayoutPPPStatus.setVisibility(View.GONE);
                     warningShow(detailsWrapper.getMessage());
                     //Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
                 }
@@ -368,6 +389,7 @@ public class ClientDetails extends AppCompatActivity {
             @Override
             public void onFailure(Call<DetailsWrapper> call, Throwable t) {
                 progressDialog.hideDialog();
+                linearLayoutPPPStatus.setVisibility(View.GONE);
                 Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
             }
         });
@@ -399,6 +421,11 @@ public class ClientDetails extends AppCompatActivity {
 
                 } else if (detailsWrapper.getStatus() == 200) {
 
+
+                    linearLayoutPPPStatus.setVisibility(View.GONE);
+                    tvGetStatus.setText("Get Status");
+                    tvGetStatus.setVisibility(View.VISIBLE);
+
                     id = detailsWrapper.getId();
                     phone = detailsWrapper.getPhone();
                     name = detailsWrapper.getName();
@@ -407,33 +434,20 @@ public class ClientDetails extends AppCompatActivity {
                     tvarea.setText(detailsWrapper.getArea());
                     tvzone.setText(detailsWrapper.getZone());
 
-                    if (detailsWrapper.getMode().equals("Disable")){
-                        tvmode.setTextColor(Color.RED);
-                    }else{
-                        tvmode.setTextColor(Color.GREEN);
-                    }
                     currentMode = detailsWrapper.getMode();
-                    tvmode.setText(detailsWrapper.getMode());
+                    tvmode.setText(currentMode);
 
                     pppName = detailsWrapper.getPppName();
                     tvppname.setText(detailsWrapper.getPppName());
                     tvpppass.setText(detailsWrapper.getPppPass());
 
-                    pppswitch.setChecked(detailsWrapper.getPppActivity().equals("Online"));
-
-                    if (detailsWrapper.getPppActivity().equals("Online")){
-                        tvactivity.setTextColor(Color.GREEN);
-                    }
-
                     if (currentMode.equals("Disable")){
+                        tvmode.setTextColor(Color.RED);
                         tvExpireText.setVisibility(View.GONE);
-                        linearLayoutPPswitch.setVisibility(View.GONE);
-                    }
 
-                    tvactivity.setText(detailsWrapper.getPppActivity());
-                    tvroutermac.setText(detailsWrapper.getRouterMac());
-                    tvlastlogout.setText(detailsWrapper.getLastLogedOut());
-                    tvuptime.setText(detailsWrapper.getUptime());
+                    }else{
+                        tvmode.setTextColor(Color.GREEN);
+                    }
 
                     tvpaymentmethod.setText(detailsWrapper.getPaymentMethod());
                     tvpackgeid.setText(detailsWrapper.getPkgId());
@@ -455,7 +469,7 @@ public class ClientDetails extends AppCompatActivity {
                             int d = cal.get(Calendar.DAY_OF_MONTH);
                             tvExpireText.setText(m+" Month "+d +" Day expired (with current month)");
                         }else{
-                            tvExpireText.setText("No expired");
+                            tvExpireText.setVisibility(View.GONE);
                         }
 
 
@@ -476,6 +490,61 @@ public class ClientDetails extends AppCompatActivity {
                 progressDialog.hideDialog();
                 Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
 
+            }
+        });
+    }
+
+
+    public void getPPPStatus(Client mClient) {
+
+        linearLayoutPPPStatus.setVisibility(View.GONE);
+        pppStatusProgressbar.setVisibility(View.VISIBLE);
+        tvGetStatus.setVisibility(View.GONE);
+
+        Call<DetailsWrapper> call = apiInterface.getPPPStatus(mClient);
+        call.enqueue(new Callback<DetailsWrapper>() {
+            @SuppressLint("ResourceType")
+            @Override
+            public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
+
+                pppStatusProgressbar.setVisibility(View.GONE);
+
+                DetailsWrapper detailsWrapper = response.body();
+
+                assert detailsWrapper != null;
+                if (detailsWrapper.getRouterStatus() == 500) {
+
+                    linearLayoutPPPStatus.setVisibility(View.GONE);
+                    tvGetStatus.setText("Refresh");
+                    tvGetStatus.setVisibility(View.VISIBLE);
+                    warningShow(detailsWrapper.getMessage());
+
+                }else if (detailsWrapper.getRouterStatus() == 200) {
+
+                    linearLayoutPPPStatus.setVisibility(View.VISIBLE);
+                    tvGetStatus.setText("Refresh");
+                    tvGetStatus.setVisibility(View.VISIBLE);
+
+                    pppswitch.setChecked(detailsWrapper.getPppStatus().equals("Enable"));
+                    tvpppstatus.setText(detailsWrapper.getPppStatus());
+                    tvactivity.setText(detailsWrapper.getPppActivity());
+                    tvroutermac.setText(detailsWrapper.getRouterMac());
+                    tvlastlogout.setText(detailsWrapper.getLastLogedOut());
+                    tvuptime.setText(detailsWrapper.getUptime());
+
+                }else{
+                    linearLayoutPPPStatus.setVisibility(View.GONE);
+                    tvGetStatus.setText("Refresh");
+                    tvGetStatus.setVisibility(View.VISIBLE);
+                    warningShow(detailsWrapper.getMessage());
+                }
+
+            }
+            @Override
+            public void onFailure(Call<DetailsWrapper> call, Throwable t) {
+                pppStatusProgressbar.setVisibility(View.GONE);
+                linearLayoutPPPStatus.setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -701,9 +770,9 @@ public class ClientDetails extends AppCompatActivity {
     public void warningShow(String message){
         android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
         alert.setCancelable(false);
-        alert.setTitle("Warning!!");
+        alert.setTitle("Message!!");
         alert.setMessage(message);
-        alert.setIcon(R.drawable.ic_baseline_warning_24);
+        alert.setIcon(R.drawable.ic_baseline_message_24);
 
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override

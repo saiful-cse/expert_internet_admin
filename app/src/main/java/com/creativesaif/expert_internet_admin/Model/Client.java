@@ -62,13 +62,6 @@ public class Client {
         @Expose
         private String searchKey;
 
-
-        //---- from router os -----
-
-        @SerializedName("last_log_out")
-        @Expose
-        private String last_log_out;
-
         @SerializedName("action_type")
         @Expose
         private String actionType;
@@ -222,16 +215,5 @@ public class Client {
 
         public void setSearchKey(String searchKey){
             this.searchKey = searchKey;
-        }
-
-        // --- From router OS ----
-
-
-        public String getLast_log_out() {
-            return last_log_out;
-        }
-
-        public void setLast_log_out(String last_log_out) {
-            this.last_log_out = last_log_out;
         }
 }
