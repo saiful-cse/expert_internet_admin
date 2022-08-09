@@ -77,9 +77,9 @@ public class DetailsWrapper {
     @Expose
     private String routerMac;
 
-    @SerializedName("last_log_out")
+    @SerializedName("last_log_in")
     @Expose
-    private String last_log_out;
+    private String lastLogIn;
 
     @SerializedName("uptime")
     @Expose
@@ -95,6 +95,10 @@ public class DetailsWrapper {
     @SerializedName("upload")
     @Expose
     private String upload;
+
+    @SerializedName("connected_ip")
+    @Expose
+    private String connectedIp;
 
     public Integer getStatus() {
         return status;
@@ -278,6 +282,10 @@ public class DetailsWrapper {
         this.lastLogedOut = lastLogedOut;
     }
 
+    public String getLastLogIn(){
+        return lastLogIn;
+    }
+
     public String getDownload() {
         return download;
     }
@@ -291,4 +299,9 @@ public class DetailsWrapper {
     public void setUpload(String upload) {
         this.upload = upload;
     }
+
+    public String getConnectedIp(){
+        return connectedIp;
+    }
 }
+

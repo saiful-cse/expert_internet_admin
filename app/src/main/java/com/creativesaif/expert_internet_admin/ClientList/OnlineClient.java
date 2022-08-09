@@ -40,7 +40,6 @@ public class OnlineClient extends Fragment {
     private ClientAdapter clientAdapter;
     private List<Client> clientList;
     private ApiInterface apiInterface;
-    private String jwt;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Client client;
     private ImageView errorImage;
@@ -66,29 +65,16 @@ public class OnlineClient extends Fragment {
         apiInterface = RetrofitApiClient.getClient().create(ApiInterface.class);
         client = new Client();
 
-        jwt = preferences.getString("jwt", null);
-
         //reload or refresh posts
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (jwt == null) {
-                    //Go to phone verification step
-                    Toast.makeText(getContext(), "Session expired!!", Toast.LENGTH_LONG).show();
-                    getActivity().finish();
-                    Intent intent = new Intent(getActivity(), Login.class);
-                    getActivity().startActivity(intent);
-
-                } else if (!isConnected()) {
+                if (!isConnected()) {
                     Toast.makeText(getContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
                     swipeRefreshLayout.setRefreshing(false);
 
                 } else {
-                    //sent value on client model class
-                    client.setJwt(jwt);
-
-                    //Network call to load client list
-                    load_client(client);
+                   load_client();
                 }
             }
         });
@@ -96,9 +82,9 @@ public class OnlineClient extends Fragment {
         return view;
     }
 
-    public void load_client(Client mClient) {
+    public void load_client() {
 
-        Call<ClientWrapper> call = apiInterface.getOnline_client(mClient);
+        Call<ClientWrapper> call = apiInterface.getOnline_client();
         call.enqueue(new Callback<ClientWrapper>() {
             @Override
             public void onResponse(Call<ClientWrapper> call, retrofit2.Response<ClientWrapper> response) {
@@ -109,12 +95,8 @@ public class OnlineClient extends Fragment {
                 ClientWrapper clientWrapper = response.body();
                 assert clientWrapper != null;
 
-                if (clientWrapper.getStatus() == 401) {
-                    //Go to phone verification step
-                    Toast.makeText(getActivity(), clientWrapper.getMessage(), Toast.LENGTH_LONG).show();
-                    getActivity().finish();
-                    Intent intent = new Intent(getActivity(), Login.class);
-                    startActivity(intent);
+                if (clientWrapper.getStatus() == 500) {
+                    errorText.setText(clientWrapper.getMessage());
 
                 }else if (clientWrapper.getStatus() == 404) {
                     //client not found then visible error
@@ -137,7 +119,6 @@ public class OnlineClient extends Fragment {
                 errorImage.setImageResource(R.drawable.ic_baseline_error_outline_24);
                 errorText.setText(t.toString());
                 swipeRefreshLayout.setRefreshing(false);
-
             }
         });
     }

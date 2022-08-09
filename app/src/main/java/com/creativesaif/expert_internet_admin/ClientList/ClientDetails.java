@@ -69,7 +69,7 @@ import retrofit2.Callback;
 public class ClientDetails extends AppCompatActivity {
 
     private TextView tvname, tvphone, tvarea, tvzone,
-            tvppname, tvpppass, tvpppstatus, tvactivity, tvroutermac, tvlastlogout, tvuptime,
+            tvppname, tvpppass, tvpppstatus, tvactivity, tvroutermac, tvlastlogout, tvlastlogin, tvuptime, tvdownload, tvupload, tvConnectedIp,
             tvmode, tvpaymentmethod, tvpackgeid, tvregdate, tvexpiredate, tvdisabledate;
     private TextView tvExpireText;
     private LinearLayout linearLayoutPPPStatus;
@@ -150,7 +150,11 @@ public class ClientDetails extends AppCompatActivity {
         tvactivity = findViewById(R.id.tvppp_activity);
         tvroutermac = findViewById(R.id.tvrouter_mac);
         tvlastlogout = findViewById(R.id.tvlogout_time);
+        tvlastlogin = findViewById(R.id.tvlogin);
         tvuptime = findViewById(R.id.tvuptime);
+        tvdownload = findViewById(R.id.tvdownload);
+        tvupload = findViewById(R.id.tvupload);
+        tvConnectedIp = findViewById(R.id.tvconnectedip);
 
         //------Service details--------
         tvpaymentmethod = findViewById(R.id.tvpaymentmethod);
@@ -530,7 +534,12 @@ public class ClientDetails extends AppCompatActivity {
                     tvactivity.setText(detailsWrapper.getPppActivity());
                     tvroutermac.setText(detailsWrapper.getRouterMac());
                     tvlastlogout.setText(detailsWrapper.getLastLogedOut());
+                    tvlastlogin.setText(detailsWrapper.getLastLogIn());
                     tvuptime.setText(detailsWrapper.getUptime());
+                    tvdownload.setText(detailsWrapper.getDownload());
+                    tvupload.setText(detailsWrapper.getUpload());
+                    tvConnectedIp.setTextColor(Color.BLUE);
+                    tvConnectedIp.setText(detailsWrapper.getConnectedIp());
 
                 }else{
                     linearLayoutPPPStatus.setVisibility(View.GONE);

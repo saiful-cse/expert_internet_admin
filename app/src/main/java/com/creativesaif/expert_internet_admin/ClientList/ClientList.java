@@ -24,7 +24,7 @@ public class ClientList extends AppCompatActivity {
         tabLayout = findViewById(R.id.tabLayout);
         adapter = new TabAdapter(getSupportFragmentManager());
         adapter.addFragment(new ExpiredClient(), "Expire");
-        adapter.addFragment(new OnlineClient(), "3Day");
+        adapter.addFragment(new OnlineClient(), "Online");
         adapter.addFragment(new RegisteredClient(), "Regs");
         adapter.addFragment(new UnRegisteredClient(), "Unreg");
 

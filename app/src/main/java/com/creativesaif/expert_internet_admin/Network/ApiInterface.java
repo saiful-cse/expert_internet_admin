@@ -28,8 +28,8 @@ public interface ApiInterface {
     @POST(base_url+second_path+api_version+"client/expired_client.php")
     Call<ClientWrapper> getExpired_client(@Body Client client);
 
-    @POST(base_url+second_path+api_version+"client/online_client.php")
-    Call<ClientWrapper> getOnline_client(@Body Client client);
+    @POST("http://mt.baycombd.com/expnet_api/pppActiveList.php")
+    Call<ClientWrapper> getOnline_client();
 
     @POST(base_url+second_path+api_version+"client/client_details.php")
     Call<DetailsWrapper> getClientDetails(@Body Client client);
