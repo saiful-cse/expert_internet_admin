@@ -108,15 +108,45 @@ public class NoticeCreate extends AppCompatActivity {
         // ----- sms service for alert client -----
 
         Button buttonActiveSmsSend = findViewById(R.id.btnActiveSmsSend);
-
+        Button buttonExpiredDisconnect = findViewById(R.id.btnbillexpirdisconnect);
         Button btnBillExpireWarning = findViewById(R.id.btnbillwarning);
+
+
         btnBillExpireWarning.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                warningBillExpire();
+
+                if (jwt == null ){
+                    finish();
+                    startActivity(new Intent(NoticeCreate.this, Login.class));
+
+                } else if(!isNetworkConnected()){
+                    Toast.makeText(NoticeCreate.this,"Check Internet Connection.",Toast.LENGTH_SHORT).show();
+
+                }else{
+                    //confirm dialog
+                    warningBillExpire();
+                }
             }
         });
 
+        buttonExpiredDisconnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (jwt == null ){
+                    finish();
+                    startActivity(new Intent(NoticeCreate.this, Login.class));
+
+                } else if(!isNetworkConnected()){
+                    Toast.makeText(NoticeCreate.this,"Check Internet Connection.",Toast.LENGTH_SHORT).show();
+
+                }else{
+                    //confirm dialog
+                    warningBillExpireDisconnect();
+                }
+            }
+        });
 
         editTextActiveClientMsg = findViewById(R.id.edActiveClientSMs);
         buttonActiveSmsSend.setOnClickListener(new View.OnClickListener() {
@@ -150,6 +180,42 @@ public class NoticeCreate extends AppCompatActivity {
     public void billExpireWarningSend(Client mClient) {
         progressDialog.showDialog();
         Call<DetailsWrapper> call = apiInterface.bilExpireWarningSend(mClient);
+        call.enqueue(new Callback<DetailsWrapper>() {
+            @SuppressLint("ResourceType")
+            @Override
+            public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
+
+                progressDialog.hideDialog();
+
+                DetailsWrapper detailsWrapper = response.body();
+                assert detailsWrapper != null;
+
+                if (detailsWrapper.getStatus() == 401) {
+                    //Go to phone verification step
+                    loginWarningShow(detailsWrapper.getMessage());
+
+                }if (detailsWrapper.getStatus() == 200) {
+                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                    finish();
+
+                }else{
+                    warningShow(detailsWrapper.getMessage());
+                    //Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<DetailsWrapper> call, Throwable t) {
+                progressDialog.hideDialog();
+                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void billExpireDisconnect(Client mClient) {
+        progressDialog.showDialog();
+        Call<DetailsWrapper> call = apiInterface.expiredClientDisconnect(mClient);
         call.enqueue(new Callback<DetailsWrapper>() {
             @SuppressLint("ResourceType")
             @Override
@@ -299,7 +365,7 @@ public class NoticeCreate extends AppCompatActivity {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setCancelable(true);
         alert.setTitle("সতর্কতা!!");
-        alert.setMessage("যে সব ক্লায়েন্টদের বিলের মেয়াদ শেষ তাদের ফোনে SMS যাবে।");
+        alert.setMessage("যে সব ক্লায়েন্টদের বিলের মেয়াদ শেষ হতে ৩দিন বাকী তাদের ফোনে SMS যাবে।");
         alert.setIcon(R.drawable.ic_baseline_warning_24);
 
         alert.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
@@ -319,6 +385,32 @@ public class NoticeCreate extends AppCompatActivity {
         AlertDialog dlg = alert.create();
         dlg.show();
     }
+
+    public void warningBillExpireDisconnect(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setCancelable(true);
+        alert.setTitle("সতর্কতা!!");
+        alert.setMessage("যে সব ক্লায়েন্টদের বিলের মেয়াদ শেষ তাদের লাইন বন্ধ হবে এবং ফোনে SMS যাবে।");
+        alert.setIcon(R.drawable.ic_baseline_warning_24);
+
+        alert.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                client.setJwt(jwt);
+                billExpireDisconnect(client);
+            }
+        });
+
+        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog dlg = alert.create();
+        dlg.show();
+    }
+
 
     public void warning_enabled_client_sms(){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -344,6 +436,7 @@ public class NoticeCreate extends AppCompatActivity {
         AlertDialog dlg = alert.create();
         dlg.show();
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
