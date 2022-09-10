@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#C31D43</color>
-    <color name="colorPrimaryDark">#A31032</color>
-    <color name="colorAccent">#C31D43</color>
-    <color name="activity_backround">#F3F6F3</color>
+    <color name="colorPrimary">#1C6758</color>
+    <color name="colorPrimaryDark">#125043</color>
+    <color name="colorAccent">#1C6758</color>
+    <color name="activity_backround">#E9EDEC</color>
     <color name="text_color">#FFFFFF</color>
 
-    <color name="table_background">#F6E2E6</color>
+    <color name="table_background">#D7EFEA</color>
 
     <color name="tabIndicator">#ffffff</color>
     <color name="tabTextcolor">#ffffff</color>

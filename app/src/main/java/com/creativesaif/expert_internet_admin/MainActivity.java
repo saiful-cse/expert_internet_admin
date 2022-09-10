@@ -71,8 +71,6 @@ public class MainActivity extends AppCompatActivity
     private String url;
     private LinearLayout linearLayoutError;
 
-
-
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -226,7 +224,12 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, Search_Page.class));
 
         } else if (id == R.id.nav_notice) {
-            startActivity(new Intent(MainActivity.this, NoticeCreate.class));
+            assert admin_id != null;
+            if (admin_id.equals("9161") || admin_id.equals("8991")){
+                startActivity(new Intent(MainActivity.this, NoticeCreate.class));
+            }else{
+                Toast.makeText(getApplicationContext(), "You are not permitted to access", Toast.LENGTH_LONG).show();
+            }
 
         } else if (id == R.id.nav_feedback) {
 
@@ -242,7 +245,7 @@ public class MainActivity extends AppCompatActivity
         }else if (id == R.id.nav_baysoft) {
 
             Intent intent = new Intent(MainActivity.this, Webviewpage.class);
-            intent.putExtra("url", "http://bay.robotispsoft.net/include/login.php");
+            intent.putExtra("url", "http://bay.robotispsoft.com");
             startActivity(intent);
 
         }

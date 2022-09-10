@@ -47,6 +47,9 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
         myViewHolder.tv2.setText("Phone: "+client.getPhone());
         myViewHolder.tv3.setText("PPP: "+client.getPppName()+", Zone: "+client.getZone());
         myViewHolder.tv4.setText("Area: "+client.getArea());
+        myViewHolder.tv5.setText(client.getExpireDate());
+        myViewHolder.tv6.setText("Payment: "+client.getPaymentMethod());
+        myViewHolder.tv7.setText(client.getTakeTime());
 
         myViewHolder.tv1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,7 +64,7 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
                 }
                 else{
                     i = new Intent(mContext, ClientDetails.class);
-                    i.putExtra("ppp_name", client.getPppName());
+                    i.putExtra("id", client.getId());
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 }
                 mContext.startActivity(i);
@@ -81,7 +84,7 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
-        TextView tv1, tv2, tv3, tv4;
+        TextView tv1, tv2, tv3, tv4, tv5, tv6, tv7;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -90,6 +93,9 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
             tv2 = itemView.findViewById(R.id.cardtv2);
             tv3 = itemView.findViewById(R.id.cardtv3);
             tv4 = itemView.findViewById(R.id.cardtv4);
+            tv5 = itemView.findViewById(R.id.cardExpdate);
+            tv6 = itemView.findViewById(R.id.cardMethod);
+            tv7 = itemView.findViewById(R.id.cardTaketime);
         }
     }
 }

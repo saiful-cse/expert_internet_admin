@@ -52,6 +52,9 @@ public class DetailsWrapper {
     @SerializedName("disable_date")
     @Expose
     private String disableDate;
+    @SerializedName("take_time")
+    @Expose
+    private String takeTime;
     @SerializedName("mode")
     @Expose
     private String mode;
@@ -220,6 +223,15 @@ public class DetailsWrapper {
         this.expireDate = expireDate;
     }
 
+
+    public String getTakeTime() {
+        return takeTime;
+    }
+
+    public void setTakeTime(String takeTime) {
+        this.takeTime = takeTime;
+    }
+
     public String getMode() {
         return mode;
     }
@@ -235,8 +247,6 @@ public class DetailsWrapper {
     public void setPackages(List<Package> packages) {
         this.packages = packages;
     }
-
-
 
     // Router OS///
     public Integer getRouterStatus() {

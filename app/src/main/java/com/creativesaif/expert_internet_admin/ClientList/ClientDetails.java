@@ -70,12 +70,12 @@ public class ClientDetails extends AppCompatActivity {
 
     private TextView tvname, tvphone, tvarea, tvzone,
             tvppname, tvpppass, tvpppstatus, tvactivity, tvroutermac, tvlastlogout, tvlastlogin, tvuptime, tvdownload, tvupload, tvConnectedIp,
-            tvmode, tvpaymentmethod, tvpackgeid, tvregdate, tvexpiredate, tvdisabledate;
-    private TextView tvExpireText;
+            tvmode, tvpaymentmethod, tvpackgeid, tvregdate, tvexpiredate, tvdisabledate, tvtaketime;
+    private TextView tvExpireText, tvdiconnecttemp, tvpppinfotemp, tvpaybilltemp;
     private LinearLayout linearLayoutPPPStatus;
 
     String currentMode;
-    private String jwt, name, id, pppName, admin_id, phone, informMessage;
+    private String jwt, name, id, pppName, ppppass, admin_id, phone, informMessage;
     private SharedPreferences sharedPreferences;
     private ApiInterface apiInterface;
     private Client client;
@@ -109,7 +109,7 @@ public class ClientDetails extends AppCompatActivity {
         setContentView(R.layout.activity_client_details);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        pppName = getIntent().getStringExtra("ppp_name");
+        id = getIntent().getStringExtra("id");
         sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
         jwt = sharedPreferences.getString("jwt", null);
 
@@ -162,10 +162,15 @@ public class ClientDetails extends AppCompatActivity {
         tvregdate = findViewById(R.id.tvregdate);
         tvexpiredate = findViewById(R.id.tvexpiredate);
         tvdisabledate = findViewById(R.id.tvdisabledate);
+        tvtaketime = findViewById(R.id.tvtaketime);
+
+        tvdiconnecttemp = findViewById(R.id.templateDisconnect);
+        tvpppinfotemp = findViewById(R.id.templatePppinfo);
+        tvpaybilltemp = findViewById(R.id.templatePaybill);
+
         tvmode = findViewById(R.id.tvmode);
 
         // -----------End-----------------------
-
 
         progressDialog = new ProgressDialog(this);
 
@@ -179,7 +184,7 @@ public class ClientDetails extends AppCompatActivity {
 
         }else{
             client.setJwt(jwt);
-            client.setPppName(pppName);
+            client.setId(id);
             load_details(client);
         }
 
@@ -286,6 +291,30 @@ public class ClientDetails extends AppCompatActivity {
         //Make inform
         Button btnSmsSend = findViewById(R.id.btnInformSend);
         editTextInformSms = findViewById(R.id.edInformSms);
+
+        tvdiconnecttemp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editTextInformSms.setText("বকেয়া বিলের জন্য আপনার WiFi সংযোগটি অটো বন্ধ হয়েছে, পুনরায় চালু করতে বিল পরিশোধ করুন https://expert-internet.net/paybill \n01975-559161 (bKash Payment). Reference: "+pppName);
+            }
+        });
+
+        tvpppinfotemp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editTextInformSms.setText("Your connection type is PPPoE\n" +
+                        "Username: " +pppName+
+                        "\nPassword: " +ppppass+
+                        "\nDon't share anyone.");
+            }
+        });
+
+        tvpaybilltemp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editTextInformSms.setText("Your payment link is:\nhttps://expert-internet.net/paybill/info.php?mobile_no="+phone);
+            }
+        });
 
         btnSmsSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -394,7 +423,7 @@ public class ClientDetails extends AppCompatActivity {
     public void load_details(Client mClient) {
 
         progressDialog.showDialog();
-        Call<DetailsWrapper> call = apiInterface.getClientDetails(mClient);
+        Call<DetailsWrapper> call = apiInterface.getClientDetailsId(mClient);
         call.enqueue(new Callback<DetailsWrapper>() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @SuppressLint("ResourceType")
@@ -445,6 +474,7 @@ public class ClientDetails extends AppCompatActivity {
                     }
 
                     pppName = detailsWrapper.getPppName();
+                    ppppass = detailsWrapper.getPppPass();
                     tvppname.setText(detailsWrapper.getPppName());
                     tvpppass.setText(detailsWrapper.getPppPass());
 
@@ -453,6 +483,7 @@ public class ClientDetails extends AppCompatActivity {
                     tvregdate.setText(detailsWrapper.getRegDate());
                     tvexpiredate.setText(detailsWrapper.getExpireDate());
                     tvdisabledate.setText(detailsWrapper.getDisableDate());
+                    tvtaketime.setText(detailsWrapper.getTakeTime()+" Days");
 
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 

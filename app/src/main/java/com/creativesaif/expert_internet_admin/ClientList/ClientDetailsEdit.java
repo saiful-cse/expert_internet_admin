@@ -55,7 +55,7 @@ import retrofit2.Callback;
 public class ClientDetailsEdit extends AppCompatActivity{
 
     //Declaring EditText
-    private EditText edclientname, edclientphone, edExpiredate, edpppusername, edpppassword;
+    private EditText edclientname, edclientphone, edExpiredate, edpppusername, edpppassword, edtaketime;
 
     //Declaring RadioButton
     private RadioGroup radioGroupPaymentMethod, radioGroupClientMode;
@@ -68,6 +68,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
     private String selectedArea, expire_date, disable_date;
     private String pppname;
     private String pppassword;
+    private String takeTime;
     private String selectedPackage, selectedZone;
 
     //Declaring progress dialog
@@ -114,6 +115,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
         edExpiredate = findViewById(R.id.edexpdateedit);
         edpppusername = findViewById(R.id.edpppusername);
         edpppassword = findViewById(R.id.edppppassword);
+        edtaketime = findViewById(R.id.edtaketime);
 
         DatePickerDialog.OnDateSetListener date =new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -167,6 +169,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                 phone = edclientphone.getText().toString().trim();
                 pppname = edpppusername.getText().toString().trim();
                 pppassword = edpppassword.getText().toString().trim();
+                takeTime = edtaketime.getText().toString().trim();
 
                 if (name.isEmpty()){
                     Toast.makeText(getApplicationContext(), "Enter client name", Toast.LENGTH_SHORT).show();
@@ -224,6 +227,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                         client.setZone(selectedZone);
                         client.setExpireDate(expire_date);
                         client.setDisableDate(disable_date);
+                        client.setTakeTime(takeTime);
                         client.setPppName(pppname);
                         client.setPppPass(pppassword);
                         client.setPkgId(selectedPackage);
@@ -302,6 +306,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                 if (detailsWrapper.getStatus() == 200) {
                     edclientname.setText(detailsWrapper.getName());
                     edclientphone.setText(detailsWrapper.getPhone());
+                    edtaketime.setText(detailsWrapper.getTakeTime());
                     existArea = detailsWrapper.getArea();
 
                     if (detailsWrapper.getPaymentMethod().equals("Cash")) {

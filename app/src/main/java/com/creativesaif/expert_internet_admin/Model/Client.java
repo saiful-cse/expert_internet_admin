@@ -54,9 +54,6 @@ public class Client {
         @SerializedName("payment_method")
         @Expose
         private String paymentMethod;
-        @SerializedName("ex_pppname")
-        @Expose
-        private String exPppname;
 
         @SerializedName("search_key")
         @Expose
@@ -65,6 +62,18 @@ public class Client {
         @SerializedName("action_type")
         @Expose
         private String actionType;
+
+        @SerializedName("take_time")
+        @Expose
+        private String takeTime;
+
+        public String getTakeTime() {
+            return takeTime;
+        }
+
+        public void setTakeTime(String takeTime) {
+            this.takeTime = takeTime;
+        }
 
         public String getActionType(){
             return actionType;
@@ -193,14 +202,6 @@ public class Client {
             this.paymentMethod = paymentMethod;
         }
 
-        public String getExPppname() {
-            return exPppname;
-        }
-
-        public void setExPppname(String exPppname) {
-            this.exPppname = exPppname;
-        }
-
         public String getMode() {
             return mode;
         }
@@ -216,4 +217,7 @@ public class Client {
         public void setSearchKey(String searchKey){
             this.searchKey = searchKey;
         }
+
+
+
 }
