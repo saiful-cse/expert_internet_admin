@@ -43,7 +43,6 @@ import com.creativesaif.expert_internet_admin.ClientList.ClientList;
 import com.creativesaif.expert_internet_admin.ClientList.ClientReg;
 import com.creativesaif.expert_internet_admin.ClientList.ClientRegUpdate;
 import com.creativesaif.expert_internet_admin.Dashboard.Dashboard;
-import com.creativesaif.expert_internet_admin.Feedback.FeedbackList;
 
 import com.creativesaif.expert_internet_admin.Notice.NoticeCreate;
 import com.creativesaif.expert_internet_admin.Notice.NoticeRead;
@@ -230,10 +229,6 @@ public class MainActivity extends AppCompatActivity
             }else{
                 Toast.makeText(getApplicationContext(), "You are not permitted to access", Toast.LENGTH_LONG).show();
             }
-
-        } else if (id == R.id.nav_feedback) {
-
-            startActivity(new Intent(MainActivity.this, FeedbackList.class));
 
         } else if (id == R.id.nav_txnlist) {
 

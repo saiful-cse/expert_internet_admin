@@ -1,9 +1,11 @@
 package com.creativesaif.expert_internet_admin.TransactionList;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -50,12 +52,17 @@ public class TransactionList extends AppCompatActivity {
 
     ProgressDialog progressDialog;
 
+    SharedPreferences sharedPreferences;
+
     Button buttonDatePicker1,buttonDatePicker2, buttonTxnView;
 
     String first_date, last_date, summary;
 
+    FloatingActionButton fab1, fab3;
+
     final Calendar myCalendar= Calendar.getInstance();
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +71,7 @@ public class TransactionList extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+        sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
 
         /*
         Initialize here
@@ -84,6 +92,21 @@ public class TransactionList extends AppCompatActivity {
         //now set adapter to recyclerView
         recyclerView.setAdapter(transactionMonthlyAdapter);
 
+        fab1 = findViewById(R.id.total);
+        fab3 = findViewById(R.id.txn_edit);
+
+        String admin_id = sharedPreferences.getString("admin_id", null);
+        assert admin_id != null;
+
+        if(admin_id.equals("8991")){
+            fab1.setVisibility(View.VISIBLE);
+            fab3.setVisibility(View.GONE);
+        }
+
+        if(admin_id.equals("0713") || admin_id.equals("9588")){
+            fab1.setVisibility(View.GONE);
+            fab3.setVisibility(View.GONE);
+        }
 
         DatePickerDialog.OnDateSetListener date1 =new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -99,7 +122,7 @@ public class TransactionList extends AppCompatActivity {
             }
         };
 
-        DatePickerDialog.OnDateSetListener date2 =new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog.OnDateSetListener date2 = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
                 myCalendar.set(Calendar.YEAR, year);
@@ -149,7 +172,6 @@ public class TransactionList extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab1 = findViewById(R.id.total);
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -158,7 +180,6 @@ public class TransactionList extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab3 = findViewById(R.id.txn_edit);
         fab3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
