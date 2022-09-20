@@ -64,10 +64,7 @@
     <string name="dashboard_data">dashboard/read.php</string>
 
     <!-- Notice -->
-    <string name="notice_create">notice/create.php</string>
-    <string name="all_notice_read">notice/read.php</string>
-    <string name="notice_delete">notice/delete.php</string>
-    <string name="notice_update">notice/update.php</string>
+    <string name="area_sms">sms/areawise_sms_service.php</string>
 
     <!-- Feedback -->
     <string name="feedback_read">feedback/read.php</string>

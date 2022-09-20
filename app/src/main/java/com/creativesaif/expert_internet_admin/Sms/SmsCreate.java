@@ -1,4 +1,4 @@
-package com.creativesaif.expert_internet_admin.Notice;
+package com.creativesaif.expert_internet_admin.Sms;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -10,16 +10,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
-import android.widget.TextView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -28,8 +25,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.creativesaif.expert_internet_admin.ClientList.ClientDetails;
-import com.creativesaif.expert_internet_admin.ClientList.ClientDetailsEdit;
 import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.Model.Client;
 import com.creativesaif.expert_internet_admin.Model.DetailsWrapper;
@@ -45,35 +40,28 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class NoticeCreate extends AppCompatActivity {
+public class SmsCreate extends AppCompatActivity {
 
-    private EditText editTextActiveClientMsg, editTextNotice;
+    private EditText editTextActiveClientMsg, editTextAreaMessage;
     private ProgressDialog progressDialog;
-    private String jwt, activeClientMessage, notice;
+    private String jwt, activeClientMessage, areaMessage, selectedArea;
     private SharedPreferences preferences;
-
+    private Spinner areaSpinner;
     private ApiInterface apiInterface;
     private Client client;
     private String admin_id;
-
-    /*
-    Area load from server
-     */
-    private RecyclerView mRecyclerView;
-
-    private Button btnSelection;
-
+    //Declaring Array List
+    private ArrayList<String> areaList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_notice_create);
+        setContentView(R.layout.activity_sms_create);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
@@ -83,23 +71,45 @@ public class NoticeCreate extends AppCompatActivity {
         client = new Client();
         jwt = preferences.getString("jwt", null);
 
-        editTextNotice = findViewById(R.id.edNotice);
+        editTextAreaMessage = findViewById(R.id.edAreaSms);
         progressDialog = new ProgressDialog(this);
-        Button notice_Post = findViewById(R.id.btnNoticePost);
+        Button areaSmsSend = findViewById(R.id.btnareasms);
         admin_id = preferences.getString("admin_id", null);
 
-        notice_Post.setOnClickListener(new View.OnClickListener() {
+        areaSpinner = findViewById(R.id.areaListSpinner);
+        areaList = new ArrayList<>();
+
+
+        //Spinner item choice and click event
+        areaSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // On selecting a spinner item
+                selectedArea = parentView.getItemAtPosition(position).toString();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+
+        area_load();
+        areaSmsSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notice = editTextNotice.getText().toString().trim();
+                areaMessage = editTextAreaMessage.getText().toString().trim();
 
-                if (notice.isEmpty()){
-                    Snackbar.make(findViewById(android.R.id.content),"Write a notice",Snackbar.LENGTH_LONG).show();
+                if (areaMessage.isEmpty()){
+                    Snackbar.make(findViewById(android.R.id.content),"Write a SMS",Snackbar.LENGTH_LONG).show();
 
-                }else if(!isNetworkConnected()){
+                }else if(selectedArea.equals("---") || selectedArea.isEmpty()){
+                    Snackbar.make(findViewById(android.R.id.content),"Select an area",Snackbar.LENGTH_LONG).show();
+                }
+                else if(!isNetworkConnected()){
                     Snackbar.make(findViewById(android.R.id.content),"Please check internet connection.",Snackbar.LENGTH_LONG).show();
                 }else {
-                    notice_create();
+                    areWiseMessage();
                 }
             }
         });
@@ -118,10 +128,10 @@ public class NoticeCreate extends AppCompatActivity {
 
                 if (jwt == null ){
                     finish();
-                    startActivity(new Intent(NoticeCreate.this, Login.class));
+                    startActivity(new Intent(SmsCreate.this, Login.class));
 
                 } else if(!isNetworkConnected()){
-                    Toast.makeText(NoticeCreate.this,"Check Internet Connection.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SmsCreate.this,"Check Internet Connection.",Toast.LENGTH_SHORT).show();
 
                 }else{
                     //confirm dialog
@@ -136,10 +146,10 @@ public class NoticeCreate extends AppCompatActivity {
 
                 if (jwt == null ){
                     finish();
-                    startActivity(new Intent(NoticeCreate.this, Login.class));
+                    startActivity(new Intent(SmsCreate.this, Login.class));
 
                 } else if(!isNetworkConnected()){
-                    Toast.makeText(NoticeCreate.this,"Check Internet Connection.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SmsCreate.this,"Check Internet Connection.",Toast.LENGTH_SHORT).show();
 
                 }else{
                     //confirm dialog
@@ -160,13 +170,13 @@ public class NoticeCreate extends AppCompatActivity {
 
                 } else if (jwt == null ){
                     finish();
-                    startActivity(new Intent(NoticeCreate.this, Login.class));
+                    startActivity(new Intent(SmsCreate.this, Login.class));
 
                 } else if(activeClientMessage.isEmpty()){
-                    Toast.makeText(NoticeCreate.this,"Write SMS",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SmsCreate.this,"Write SMS",Toast.LENGTH_SHORT).show();
 
                 }else if(!isNetworkConnected()){
-                    Toast.makeText(NoticeCreate.this,"Check Internet Connection.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SmsCreate.this,"Check Internet Connection.",Toast.LENGTH_SHORT).show();
 
                 }else{
                     //confirm dialog
@@ -266,7 +276,7 @@ public class NoticeCreate extends AppCompatActivity {
                     String message = jsonObject.getString("message");
 
                     if (status.equals("200")){
-                        Toast.makeText(NoticeCreate.this, message,Toast.LENGTH_LONG).show();
+                        Toast.makeText(SmsCreate.this, message,Toast.LENGTH_LONG).show();
                         finish();
 
                     }else if(status.equals("401")){
@@ -274,7 +284,7 @@ public class NoticeCreate extends AppCompatActivity {
                         warningShow(message);
 
                     }else{
-                        Toast.makeText(NoticeCreate.this, message,Toast.LENGTH_LONG).show();
+                        Toast.makeText(SmsCreate.this, message,Toast.LENGTH_LONG).show();
                     }
 
                 }catch (JSONException e){
@@ -286,7 +296,7 @@ public class NoticeCreate extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressDialog.hideDialog();
-                Toast.makeText(NoticeCreate.this,error.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(SmsCreate.this,error.toString(),Toast.LENGTH_LONG).show();
             }
         }){
             @Override
@@ -311,30 +321,32 @@ public class NoticeCreate extends AppCompatActivity {
         return cm.getActiveNetworkInfo() != null;
     }
 
-    public void notice_create()
+    public void areWiseMessage()
     {
         progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.notice_create);
+        String url = getString(R.string.base_url)+getString(R.string.area_sms);
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-                //Toast.makeText(NoticeEdit.this,response,Toast.LENGTH_SHORT).show();
-
                 progressDialog.hideDialog();
 
                 try{
-
                     JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("status");
+                    String message = jsonObject.getString("message");
 
-                    boolean m = jsonObject.has("message");
-                    if (m)
-                    {
-                        String message = jsonObject.getString("message");
-                        Toast.makeText(NoticeCreate.this,message,Toast.LENGTH_SHORT).show();
+                    if (status.equals("200")){
+                        Toast.makeText(SmsCreate.this, message,Toast.LENGTH_LONG).show();
                         finish();
 
+                    }else if(status.equals("401")){
+
+                        warningShow(message);
+
+                    }else{
+                        Toast.makeText(SmsCreate.this, message,Toast.LENGTH_LONG).show();
                     }
 
                 }catch (JSONException e){
@@ -346,17 +358,22 @@ public class NoticeCreate extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressDialog.hideDialog();
-                Toast.makeText(NoticeCreate.this,error.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(SmsCreate.this,error.toString(),Toast.LENGTH_LONG).show();
             }
         }){
             @Override
             protected Map<String, String> getParams()throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
 
-                map.put("notice", notice);
+                map.put("jwt", jwt);
+                map.put("message", areaMessage);
+                map.put("area", selectedArea);
                 return map;
+
             }
         };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         MySingleton.getInstance().addToRequestQueue(stringRequest);
     }
 
@@ -448,6 +465,41 @@ public class NoticeCreate extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void area_load()
+    {
+        String url = getString(R.string.base_url)+getString(R.string.area_load);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+
+                    JSONArray jsonArray = new JSONArray(response);
+
+                    for(int i=0; i<jsonArray.length(); i++) {
+                        areaList.add(jsonArray.getString(i));
+                    }
+
+                    ArrayAdapter<String> AreaArrayAdapter = new ArrayAdapter<>(SmsCreate.this,
+                            android.R.layout.simple_spinner_dropdown_item, areaList);
+                    areaSpinner.setAdapter(AreaArrayAdapter);
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(SmsCreate.this,error.toString(),Toast.LENGTH_LONG).show();
+                finish();
+            }
+        });
+        MySingleton.getInstance().addToRequestQueue(stringRequest);
+
+    }
+
     public void loginWarningShow(String message){
         android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
         alert.setCancelable(false);
@@ -459,7 +511,7 @@ public class NoticeCreate extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 finish();
-                startActivity(new Intent(NoticeCreate.this, Login.class));
+                startActivity(new Intent(SmsCreate.this, Login.class));
             }
         });
 

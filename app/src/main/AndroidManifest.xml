@@ -59,16 +59,8 @@
             android:name=".Dashboard.Dashboard"
             android:label="@string/title_dashboard" />
         <activity
-            android:name=".Notice.NoticeRead"
-            android:label="@string/title_notice"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".Notice.NoticeCreate"
+            android:name=".Sms.SmsCreate"
             android:label="@string/title_notice_create"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
-            android:name=".Notice.NoticeEdit"
-            android:label="@string/title_notice_edit_delete"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".Feedback.FeedbackList"

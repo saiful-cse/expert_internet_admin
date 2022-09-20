@@ -10,7 +10,7 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 public interface ApiInterface {
-
+//
 //    String base_url = "http://192.168.1.5/";
 //    String second_path = "api/expert_internet_api/";
 //    String api_version = "exp-v5.0/";
