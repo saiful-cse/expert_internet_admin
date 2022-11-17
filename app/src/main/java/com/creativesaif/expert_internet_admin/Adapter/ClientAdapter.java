@@ -44,7 +44,7 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
 
         final Client client = clientList.get(i);
         myViewHolder.tv1.setText(client.getName());
-        myViewHolder.tv2.setText("Phone: "+client.getPhone());
+        myViewHolder.tv2.setText("Phone: "+client.getPhone()+", Mode: "+client.getMode());
         myViewHolder.tv3.setText("PPP: "+client.getPppName()+", Zone: "+client.getZone());
         myViewHolder.tv4.setText("Area: "+client.getArea());
         myViewHolder.tv5.setText(client.getExpireDate());

@@ -6,14 +6,20 @@
         <entry key="..\:/expert_internet_admin/app/src/main/res/drawable/cardborder.xml" value="0.12" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/drawable/ic_add_circle_outline_black_24dp.xml" value="0.1685" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/drawable/ic_baseline_access_time_24.xml" value="0.1685" />
+        <entry key="..\:/expert_internet_admin/app/src/main/res/drawable/ic_baseline_arrow_forward_ios_24.xml" value="0.1795" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/drawable/ic_baseline_calendar_today_24.xml" value="0.1685" />
+        <entry key="..\:/expert_internet_admin/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.1795" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/drawable/ic_baseline_message_24.xml" value="0.1055" />
+        <entry key="..\:/expert_internet_admin/app/src/main/res/drawable/ic_baseline_payment_24.xml" value="0.1735" />
+        <entry key="..\:/expert_internet_admin/app/src/main/res/drawable/ic_baseline_payments_24.xml" value="0.1735" />
+        <entry key="..\:/expert_internet_admin/app/src/main/res/drawable/ic_baseline_remove_red_eye_24.xml" value="0.1795" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/drawable/ic_baseline_warning_24.xml" value="0.1055" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout-v28/activity_sms_create.xml" value="0.25416666666666665" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/activity_client_details.xml" value="0.2" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/activity_client_details_edit.xml" value="0.20416666666666666" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/activity_client_list.xml" value="0.25025641025641027" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/activity_client_reg_update.xml" value="0.1693840579710145" />
+        <entry key="..\:/expert_internet_admin/app/src/main/res/layout/activity_dashboard.xml" value="0.2" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/activity_login.xml" value="0.24010416666666667" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/activity_main.xml" value="0.20416666666666666" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/activity_notice_create.xml" value="0.25416666666666665" />
@@ -21,13 +27,14 @@
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/activity_transaction_edit.xml" value="0.20416666666666666" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/activity_webview.xml" value="0.1787037037037037" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/app_bar_main.xml" value="0.20416666666666666" />
-        <entry key="..\:/expert_internet_admin/app/src/main/res/layout/card_each_client.xml" value="0.25416666666666665" />
+        <entry key="..\:/expert_internet_admin/app/src/main/res/layout/card_each_client.xml" value="0.264" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/card_each_txn_admin_monthly.xml" value="0.20416666666666666" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/content_main.xml" value="0.20416666666666666" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/content_transaction_list.xml" value="0.20416666666666666" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/nav_header_main.xml" value="0.20416666666666666" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/layout/progress_dialog.xml" value="0.18425925925925926" />
         <entry key="..\:/expert_internet_admin/app/src/main/res/menu/activity_main_drawer.xml" value="0.33" />
+        <entry key="..\:/expert_internet_admin/app/src/main/res/menu/main.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>

@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             MainActivity.super.onBackPressed();
-                            sharedPreferences.edit().clear().apply();
+                            //sharedPreferences.edit().clear().apply();
                         }
                     })
                     .setNegativeButton("No", null)
@@ -182,14 +182,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_dashboard) {
 
-            assert admin_id != null;
-            if(admin_id.equals("9161") || admin_id.equals("8991")) {
-
-                startActivity(new Intent(MainActivity.this, Dashboard.class));
-
-            }else {
-                Toast.makeText(getApplicationContext(), "You are not permitted to view", Toast.LENGTH_LONG).show();
-            }
+            startActivity(new Intent(MainActivity.this, Dashboard.class));
 
         }else if (id == R.id.nav_client_reg) {
 
@@ -224,6 +217,12 @@ public class MainActivity extends AppCompatActivity
             intent.putExtra("url", "http://bay.robotispsoft.com");
             startActivity(intent);
 
+        }else if (id == R.id.nav_txn_search) {
+
+            Intent intent = new Intent(MainActivity.this, Webviewpage.class);
+            intent.putExtra("url", "https://expert-internet.net/paybill/bkash-payment/search_txn/");
+            startActivity(intent);
+
         }
         else if (id == R.id.nav_olt7) {
 
@@ -255,7 +254,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
-                Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("https://103.134.39.146:"+port+"/action/login.html"));
+                Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("https://103.132.248.128/:"+port+"/action/login.html"));
                 startActivity(in);
             }
         });

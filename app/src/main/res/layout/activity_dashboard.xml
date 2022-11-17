@@ -8,6 +8,7 @@
     tools:context=".Dashboard.Dashboard">
 
     <LinearLayout
+        android:id="@+id/dashinfolayout"
         android:layout_marginTop="20dp"
         android:layout_margin="10dp"
         android:layout_width="match_parent"

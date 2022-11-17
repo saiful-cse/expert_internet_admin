@@ -75,7 +75,7 @@ public class ClientDetails extends AppCompatActivity {
     private LinearLayout linearLayoutPPPStatus;
 
     String currentMode;
-    private String jwt, name, id, pppName, ppppass, admin_id, phone, informMessage;
+    private String jwt, name, id, pppName, ppppass, admin_id, phone, informMessage, take_time;
     private SharedPreferences sharedPreferences;
     private ApiInterface apiInterface;
     private Client client;
@@ -274,7 +274,10 @@ public class ClientDetails extends AppCompatActivity {
                 }else if(!isNetworkConnected()){
                     Snackbar.make(findViewById(android.R.id.content),"Please!! Check Internet Connection or Try again later.",Snackbar.LENGTH_LONG).show();
 
-                }else{
+                }else if(!take_time.equals("0")){
+                    warningShowTakeTime();
+                }
+                else{
 
                     int selectedId = radioGroup.getCheckedRadioButtonId();
                     int selectedMethod = radioGroup2.getCheckedRadioButtonId();
@@ -483,7 +486,8 @@ public class ClientDetails extends AppCompatActivity {
                     tvregdate.setText(detailsWrapper.getRegDate());
                     tvexpiredate.setText(detailsWrapper.getExpireDate());
                     tvdisabledate.setText(detailsWrapper.getDisableDate());
-                    tvtaketime.setText(detailsWrapper.getTakeTime()+" Days");
+                    take_time = detailsWrapper.getTakeTime();
+                    tvtaketime.setText(take_time+" Days");
 
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -649,11 +653,11 @@ public class ClientDetails extends AppCompatActivity {
     public void txn_confirm_diaglog(){
         AlertDialog.Builder aleart1 = new AlertDialog.Builder(this);
         aleart1.setCancelable(false);
-        aleart1.setTitle("Please Confirm your transaction!!");
-        aleart1.setMessage("Your payment submit to \n"+"Name: "+name+"\n"+"Type: "+payment_type+"\n"+"Amount: "+amount);
+        aleart1.setTitle("পেমেন্টটি কনফার্ম করুন।");
+        aleart1.setMessage("নাম: "+name+"\n"+"পেমেন্টের ধরন: "+payment_type+"\n"+"পরিমান: "+amount+"\n এই মুহুর্থে এই পেমেন্টটি সাবমিট করতে চান?");
         aleart1.setIcon(R.drawable.warning_icon);
 
-        aleart1.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
+        aleart1.setPositiveButton("সব ঠিক আছে", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -671,7 +675,7 @@ public class ClientDetails extends AppCompatActivity {
             }
         });
 
-        aleart1.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+        aleart1.setNegativeButton("না", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
@@ -719,8 +723,8 @@ public class ClientDetails extends AppCompatActivity {
     public void inform_confirm_dialog(){
         AlertDialog.Builder aleart1 = new AlertDialog.Builder(this);
         aleart1.setCancelable(false);
-        aleart1.setTitle("Please Confirm your message!!");
-        aleart1.setMessage("This message will be send to "+name);
+        aleart1.setTitle("মেসেজটি কনফার্ম করুন।");
+        aleart1.setMessage("এই মেসেজটি "+name+" এর কাছে পাঠাতে চান?");
         aleart1.setIcon(R.drawable.warning_icon);
 
         aleart1.setPositiveButton("Ok, Sure", new DialogInterface.OnClickListener() {
@@ -811,6 +815,30 @@ public class ClientDetails extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
+            }
+        });
+        android.app.AlertDialog dlg = alert.create();
+        dlg.show();
+    }
+
+    public void warningShowTakeTime(){
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
+        alert.setCancelable(false);
+        alert.setTitle("Warning!!");
+        alert.setMessage("এই ক্লায়েন্টটি বিল পেমেন্টের জন্য সময় নিয়েছিল। সমস্ত বিল পেমেন্ট করে থাকলে take time অপশনটি 0 করে আপডেট দিন। অন্যথায় প্রতি মাসে লাইন অটো অফ হবেনা।");
+        alert.setIcon(R.drawable.ic_baseline_warning_24);
+
+        alert.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                int selectedId = radioGroup.getCheckedRadioButtonId();
+                int selectedMethod = radioGroup2.getCheckedRadioButtonId();
+                RadioButton radioButton = findViewById(selectedId);
+                RadioButton radioButton2 = findViewById(selectedMethod);
+                payment_type = radioButton.getText().toString();
+                payment_method = radioButton2.getText().toString().trim();
+
+                txn_confirm_diaglog();
             }
         });
         android.app.AlertDialog dlg = alert.create();

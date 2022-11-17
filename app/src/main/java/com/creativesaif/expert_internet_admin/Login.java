@@ -38,6 +38,7 @@ public class Login extends AppCompatActivity {
     ProgressBar progressBar;
     TextView viewversionname;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,9 +59,11 @@ public class Login extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        editTextUserId.setText(sharedPreferences.getString("admin_id", null));
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 if (editTextUserId.getText().toString().trim().isEmpty()){
 
                     Toast.makeText(Login.this,"Enter user ID",Toast.LENGTH_LONG).show();
