@@ -64,7 +64,7 @@ public interface ApiInterface {
     @POST("http://mt.baycombd.com/expnet_api/pppAction.php")
     Call<DetailsWrapper> getPPPAction(@Body Client client);
 
-    @POST("http://mt.baycombd.com/expnet_api/pppStatus.php")
+    @POST("http://3.110.131.92/expnet_api/pppStatus.php")
     Call<DetailsWrapper> getPPPStatus(@Body Client client);
 
 }

@@ -75,11 +75,12 @@ public class ClientDetails extends AppCompatActivity {
     private LinearLayout linearLayoutPPPStatus;
 
     String currentMode;
-    private String jwt, name, id, pppName, ppppass, admin_id, phone, informMessage, take_time;
+    private String jwt, name, id, pppName, ppppass, admin_id, phone, informMessage, take_time, connected_ip, mobile_payment_reference;
     private SharedPreferences sharedPreferences;
     private ApiInterface apiInterface;
     private Client client;
     private Trns trns;
+
 
     /*
     Payment Details
@@ -113,6 +114,7 @@ public class ClientDetails extends AppCompatActivity {
         sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
         jwt = sharedPreferences.getString("jwt", null);
 
+        mobile_payment_reference = "";
 
         /*
         Txn ID initialize
@@ -197,6 +199,14 @@ public class ClientDetails extends AppCompatActivity {
             }
         });
 
+        tvConnectedIp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("http://"+connected_ip+":8080"));
+                startActivity(in);
+            }
+        });
+
         pppswitch = findViewById(R.id.pppswitch); // initiate Switch
         pppswitch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -276,8 +286,8 @@ public class ClientDetails extends AppCompatActivity {
 
                 }else if(!take_time.equals("0")){
                     warningShowTakeTime();
-                }
-                else{
+
+                } else{
 
                     int selectedId = radioGroup.getCheckedRadioButtonId();
                     int selectedMethod = radioGroup2.getCheckedRadioButtonId();
@@ -286,7 +296,12 @@ public class ClientDetails extends AppCompatActivity {
                     payment_type = radioButton.getText().toString();
                     payment_method = radioButton2.getText().toString().trim();
 
-                    txn_confirm_diaglog();
+                    if (!payment_method.equals("Cash")){
+                        getMobilePaymentRefInputDialog();
+                    }else{
+                        txn_confirm_diaglog();
+                    }
+
                 }
             }
         });
@@ -569,7 +584,8 @@ public class ClientDetails extends AppCompatActivity {
                     tvdownload.setText(detailsWrapper.getDownload());
                     tvupload.setText(detailsWrapper.getUpload());
                     tvConnectedIp.setTextColor(Color.BLUE);
-                    tvConnectedIp.setText(detailsWrapper.getConnectedIp());
+                    connected_ip = detailsWrapper.getConnectedIp();
+                    tvConnectedIp.setText(connected_ip);
 
                 }else{
                     linearLayoutPPPStatus.setVisibility(View.GONE);
@@ -654,7 +670,7 @@ public class ClientDetails extends AppCompatActivity {
         AlertDialog.Builder aleart1 = new AlertDialog.Builder(this);
         aleart1.setCancelable(false);
         aleart1.setTitle("পেমেন্টটি কনফার্ম করুন।");
-        aleart1.setMessage("নাম: "+name+"\n"+"পেমেন্টের ধরন: "+payment_type+"\n"+"পরিমান: "+amount+"\n এই মুহুর্থে এই পেমেন্টটি সাবমিট করতে চান?");
+        aleart1.setMessage("নাম: "+name+"\n"+"পেমেন্টের ধরন: "+payment_type+"\n"+"পরিমান: "+amount+"\nএই মুহুর্থে এই পেমেন্টটি সাবমিট করতে চান?");
         aleart1.setIcon(R.drawable.warning_icon);
 
         aleart1.setPositiveButton("সব ঠিক আছে", new DialogInterface.OnClickListener() {
@@ -667,7 +683,7 @@ public class ClientDetails extends AppCompatActivity {
                 trns.setAdminId(admin_id);
                 trns.setTxnType(payment_type);
                 trns.setMethod(payment_method);
-                trns.setDetails(""+name+", "+payment_type+", "+payment_method+"");
+                trns.setDetails(name+", "+payment_type+", "+payment_method+"-"+mobile_payment_reference);
                 trns.setAmount(amount);
 
                 //Toast.makeText(getApplicationContext(), client_id+"\n"+admin_id+"\n"+payment_type+"\n"+payment_method+"\n"+amount,Toast.LENGTH_LONG).show();
@@ -844,5 +860,40 @@ public class ClientDetails extends AppCompatActivity {
         android.app.AlertDialog dlg = alert.create();
         dlg.show();
     }
+
+    public void getMobilePaymentRefInputDialog(){
+        AlertDialog.Builder aleart1 = new AlertDialog.Builder(this);
+        final EditText input = new EditText(ClientDetails.this);
+        input.setSingleLine();
+        aleart1.setCancelable(false);
+        aleart1.setTitle("Enter any reference");
+        aleart1.setView(input);
+        aleart1.setPositiveButton("Continue...", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                mobile_payment_reference = input.getText().toString().trim();
+
+                // ensure that user input bar is not empty
+                if (mobile_payment_reference.equals("")){
+                    Toast.makeText(getBaseContext(), "Enter any reference", Toast.LENGTH_LONG).show();
+                }else{
+                    txn_confirm_diaglog();
+                }
+            }
+        });
+
+        aleart1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog dlg = aleart1.create();
+        dlg.show();
+
+    }
+
+
 
 }
