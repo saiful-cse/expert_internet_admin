@@ -854,7 +854,11 @@ public class ClientDetails extends AppCompatActivity {
                 payment_type = radioButton.getText().toString();
                 payment_method = radioButton2.getText().toString().trim();
 
-                txn_confirm_diaglog();
+                if (!payment_method.equals("Cash")){
+                    getMobilePaymentRefInputDialog();
+                }else{
+                    txn_confirm_diaglog();
+                }
             }
         });
         android.app.AlertDialog dlg = alert.create();
