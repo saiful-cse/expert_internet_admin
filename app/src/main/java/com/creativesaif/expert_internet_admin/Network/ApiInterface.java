@@ -52,7 +52,7 @@ public interface ApiInterface {
     @POST(base_url+second_path+api_version+"/sms/expired_clients_sms.php")
     Call<DetailsWrapper> bilExpireWarningSend(@Body Client client);
 
-    @POST(base_url+second_path+api_version+"search/search.php")
+    @POST(base_url+second_path+api_version+"client/search.php")
     Call<ClientWrapper> search_data(@Body Client client);
 
     @POST(base_url+second_path+api_version+"/client/expired_client_disconnect.php")

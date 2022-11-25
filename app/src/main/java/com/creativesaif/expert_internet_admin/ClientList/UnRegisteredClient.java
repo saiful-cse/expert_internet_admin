@@ -39,7 +39,7 @@ public class UnRegisteredClient extends Fragment {
 
     private RecyclerView recyclerView;
     private ClientAdapter clientAdapter;
-    private List<Client> clientList;
+    private ArrayList<Client> clientArrayList;
     private ApiInterface apiInterface;
     private SharedPreferences preferences;
     private String jwt;
@@ -57,8 +57,8 @@ public class UnRegisteredClient extends Fragment {
         errorText = view.findViewById(R.id.error_text);
         preferences = view.getContext().getSharedPreferences("users", MODE_PRIVATE);
         swipeRefreshLayout = view.findViewById(R.id.layout_refresh);
-        clientList = new ArrayList<>();
-        clientAdapter = new ClientAdapter(getActivity(), clientList);
+        clientArrayList = new ArrayList<>();
+        clientAdapter = new ClientAdapter(getActivity(), clientArrayList);
 
         recyclerView = view.findViewById(R.id.recyclerViewClient);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -106,7 +106,7 @@ public class UnRegisteredClient extends Fragment {
             public void onResponse(Call<ClientWrapper> call, retrofit2.Response<ClientWrapper> response) {
 
                 swipeRefreshLayout.setRefreshing(false);
-                clientList.clear();
+                clientArrayList.clear();
 
                 ClientWrapper clientWrapper = response.body();
                 assert clientWrapper != null;

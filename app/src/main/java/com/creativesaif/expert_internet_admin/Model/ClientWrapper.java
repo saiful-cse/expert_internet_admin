@@ -3,6 +3,7 @@ package com.creativesaif.expert_internet_admin.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClientWrapper {
@@ -16,7 +17,7 @@ public class ClientWrapper {
 
     @SerializedName("clients")
     @Expose
-    private List<Client> clients = null;
+    private ArrayList<Client> clients = null;
 
     public Integer getStatus() {
         return status;
@@ -34,11 +35,11 @@ public class ClientWrapper {
         this.message = message;
     }
 
-    public List<Client> getClients() {
+    public ArrayList<Client> getClients() {
         return clients;
     }
 
-    public void setClients(List<Client> clients) {
+    public void setClients(ArrayList<Client> clients) {
         this.clients = clients;
     }
 }

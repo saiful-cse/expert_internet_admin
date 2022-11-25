@@ -1,43 +1,31 @@
 package com.creativesaif.expert_internet_admin.Search;
 
-import android.app.SearchManager;
+
 import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.creativesaif.expert_internet_admin.Adapter.ClientAdapter;
-import com.creativesaif.expert_internet_admin.Login;
+import com.creativesaif.expert_internet_admin.Adapter.SearchAdapter;
 import com.creativesaif.expert_internet_admin.Model.Client;
 import com.creativesaif.expert_internet_admin.Model.ClientWrapper;
-import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.Network.ApiInterface;
 import com.creativesaif.expert_internet_admin.Network.RetrofitApiClient;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -45,14 +33,21 @@ public class Search_Page extends AppCompatActivity {
 
 
     ProgressDialog progressDialog;
-    RecyclerView recyclerView;
+
+    // creating variables for
+    // our ui components.
+    private RecyclerView recyclerView;
+
     Context context;
-
-    private ClientAdapter clientAdapter;
-    private List<Client> clientList;
-    private ApiInterface apiInterface;
-
     private Client client;
+    private SharedPreferences preferences;
+
+    // variable for our adapter
+    // class and array list
+    private SearchAdapter searchAdapter;
+    private ArrayList<Client> clientArrayList;
+
+    private ApiInterface apiInterface;
     private ImageView errorImage;
     private TextView errorText;
     @Override
@@ -63,62 +58,60 @@ public class Search_Page extends AppCompatActivity {
 
         errorImage = findViewById(R.id.error_icon);
         errorText = findViewById(R.id.error_text);
-
+        preferences = this.getSharedPreferences("users", MODE_PRIVATE);
         progressDialog = new ProgressDialog(this);
-        clientList = new ArrayList<>();
-        clientAdapter = new ClientAdapter(getApplicationContext(), clientList);
-
-        recyclerView = findViewById(R.id.searchRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(clientAdapter);
+        clientArrayList = new ArrayList<>();
+        setupRecyclerView();
 
         apiInterface = RetrofitApiClient.getClient().create(ApiInterface.class);
         client = new Client();
+
+        if (!isNetworkConnected()) {
+            Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
+        }else{
+            client.setJwt(preferences.getString("jwt", null));
+            load_client(client);
+        }
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.search_menu, menu);
 
-        // Associate searchable configuration with the SearchView
-        SearchManager searchManager = (SearchManager) getSystemService(context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setMaxWidth(Integer.MAX_VALUE);
-        searchView.setQueryHint("Type PPPoE, area, name, phone etc.");
+        // below line is to get our inflater
+        MenuInflater inflater = getMenuInflater();
+
+        // inside inflater we are inflating our menu file.
+        inflater.inflate(R.menu.search_menu, menu);
+
+        // below line is to get our menu item.
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+
+        // getting search view of our item.
+        SearchView searchView = (SearchView) searchItem.getActionView();
 
         // listening to search query text change
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // filter recycler view when query submitted
-                //Toast.makeText(Search.this, "You have search "+query,Toast.LENGTH_LONG).show();
-
-                if(isNetworkConnected()) {
-
-                    client.setSearchKey(query.trim());
-                    load_client(client);
-                }
-                else{
-
-                    Snackbar.make(findViewById(android.R.id.content),"Please! Check Internet Connection.",Snackbar.LENGTH_LONG).show();
-
-                }
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String tag) {
-                // filter recycler view when text is changed
-                //Toast.makeText(MainActivity.this, "You have search "+newText,Toast.LENGTH_LONG).show();
-
+            public boolean onQueryTextChange(String newtext) {
+                searchAdapter.getFilter().filter(newtext.trim());
                 return false;
             }
         });
         return true;
     }
 
+
+    private void setupRecyclerView(){
+        recyclerView = findViewById(R.id.searchRecyclerView);
+        recyclerView.setHasFixedSize(true);
+        searchAdapter = new SearchAdapter(this, clientArrayList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(searchAdapter);
+    }
 
     public void load_client(Client mClient) {
 
@@ -129,7 +122,7 @@ public class Search_Page extends AppCompatActivity {
             public void onResponse(Call<ClientWrapper> call, retrofit2.Response<ClientWrapper> response) {
 
                 progressDialog.hideDialog();
-                clientList.clear();
+                clientArrayList.clear();
 
                 ClientWrapper clientWrapper = response.body();
                 assert clientWrapper != null;
@@ -144,7 +137,7 @@ public class Search_Page extends AppCompatActivity {
                 }else if (clientWrapper.getStatus() == 200) {
                     errorImage.setVisibility(View.GONE);
                     errorText.setVisibility(View.GONE);
-                    clientAdapter.setClientList(clientWrapper.getClients());
+                    searchAdapter.setClientList(clientWrapper.getClients());
 
                 }else {
                     Toast.makeText(getApplicationContext(), clientWrapper.getMessage(), Toast.LENGTH_LONG).show();

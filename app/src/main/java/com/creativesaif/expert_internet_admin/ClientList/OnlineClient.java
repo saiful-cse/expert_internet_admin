@@ -38,7 +38,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class OnlineClient extends Fragment {
 
     private ClientAdapter clientAdapter;
-    private List<Client> clientList;
+    private ArrayList<Client> clientArrayList;
     private ApiInterface apiInterface;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Client client;
@@ -54,8 +54,8 @@ public class OnlineClient extends Fragment {
         errorText = view.findViewById(R.id.error_text);
         SharedPreferences preferences = view.getContext().getSharedPreferences("users", MODE_PRIVATE);
         swipeRefreshLayout = view.findViewById(R.id.layout_refresh);
-        clientList = new ArrayList<>();
-        clientAdapter = new ClientAdapter(getActivity(), clientList);
+        clientArrayList = new ArrayList<>();
+        clientAdapter = new ClientAdapter(getActivity(), clientArrayList);
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerViewClient);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -90,7 +90,7 @@ public class OnlineClient extends Fragment {
             public void onResponse(Call<ClientWrapper> call, retrofit2.Response<ClientWrapper> response) {
 
                 swipeRefreshLayout.setRefreshing(false);
-                clientList.clear();
+                clientArrayList.clear();
 
                 ClientWrapper clientWrapper = response.body();
                 assert clientWrapper != null;

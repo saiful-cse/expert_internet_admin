@@ -1,5 +1,6 @@
 package com.creativesaif.expert_internet_admin.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,20 +16,24 @@ import com.creativesaif.expert_internet_admin.ClientList.ClientRegUpdate;
 import com.creativesaif.expert_internet_admin.Model.Client;
 import com.creativesaif.expert_internet_admin.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHolder>{
 
+    // creating a variable for array list and context.
     private final Context mContext;
-    private List<Client> clientList;
+    private ArrayList<Client> clientArrayList;
 
-    public ClientAdapter(Context mContext, List<Client> clientList) {
+    // creating a constructor for our variables.
+    public ClientAdapter(Context mContext, ArrayList<Client> clientArrayList) {
         this.mContext = mContext;
-        this.clientList = clientList;
+        this.clientArrayList = clientArrayList;
     }
 
-    public void setClientList(List<Client> clientList){
-        this.clientList = clientList;
+    @SuppressLint("NotifyDataSetChanged")
+    public void setClientList(ArrayList<Client> clientArrayList){
+        this.clientArrayList = clientArrayList;
         notifyDataSetChanged();
     }
 
@@ -42,7 +47,7 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull ClientAdapter.MyViewHolder myViewHolder, int i) {
 
-        final Client client = clientList.get(i);
+        final Client client = clientArrayList.get(i);
         myViewHolder.tv1.setText(client.getName());
         myViewHolder.tv2.setText("Phone: "+client.getPhone()+", Mode: "+client.getMode());
         myViewHolder.tv3.setText("PPP: "+client.getPppName()+", Zone: "+client.getZone());
@@ -68,18 +73,13 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 }
                 mContext.startActivity(i);
-
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        if (clientList !=null & clientList.size() > 0){
-            return clientList.size();
-        }else{
-            return 0;
-        }
+        return clientArrayList.size();
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
