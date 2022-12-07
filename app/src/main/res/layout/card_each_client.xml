@@ -29,13 +29,26 @@
                 android:textSize="17sp"
                 android:textColor="@color/colorPrimary"
                 android:textAlignment="textStart"/>
-            <TextView
-                android:id="@+id/cardtv2"
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="+8801835559161"
-                android:textSize="15sp"
-                android:textAlignment="textStart"/>
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_alignParentStart="true"
+                    android:id="@+id/cardtv2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+8801835559161"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_alignParentEnd="true"
+                    android:id="@+id/cardtvmode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Enable"
+                    android:textSize="15sp" />
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/cardtv3"

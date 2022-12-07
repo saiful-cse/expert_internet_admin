@@ -124,16 +124,16 @@ public class ClientRegUpdate extends AppCompatActivity {
                 }else if(phone.isEmpty() || phone.length() < 11){
                     Toast.makeText(getApplicationContext(), "Enter correct phone number", Toast.LENGTH_SHORT).show();
 
-                }else if(phone.length() > 11){
-                    Toast.makeText(getApplicationContext(), "Enter correct phone number", Toast.LENGTH_SHORT).show();
+                }else if(selectedArea.equals("---")){
+                    Toast.makeText(getApplicationContext(), "Select Area", Toast.LENGTH_SHORT).show();
 
-                }else if(pppname.isEmpty() || pppname.equals("---")){
-                    Toast.makeText(getApplicationContext(), "Enter PPP name", Toast.LENGTH_SHORT).show();
+                } else if(pppname.isEmpty() || pppname.equals("ss-expnet-")){
+                    Toast.makeText(getApplicationContext(), "Enter Correct PPP Serial", Toast.LENGTH_SHORT).show();
 
-                }else if(pppassword.isEmpty()){
-                    Toast.makeText(getApplicationContext(), "Enter PPP password", Toast.LENGTH_SHORT).show();
+                }else if(pppassword.isEmpty() || pppassword.length() < 8){
+                    Toast.makeText(getApplicationContext(), "Enter Correct PPP Password", Toast.LENGTH_SHORT).show();
 
-                } else if (!isNetworkConnected()){
+                }else if (!isNetworkConnected()){
                     Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
 
                 }else {

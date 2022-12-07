@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -49,7 +50,13 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
 
         final Client client = clientArrayList.get(i);
         myViewHolder.tv1.setText(client.getName());
-        myViewHolder.tv2.setText("Phone: "+client.getPhone()+", Mode: "+client.getMode());
+        if (client.getMode().equals("Disable")){
+            myViewHolder.tvmode.setTextColor(Color.RED);
+        }else{
+            myViewHolder.tvmode.setTextColor(Color.GREEN);
+        }
+        myViewHolder.tvmode.setText(client.getMode());
+        myViewHolder.tv2.setText("Phone: "+client.getPhone());
         myViewHolder.tv3.setText("PPP: "+client.getPppName()+", Zone: "+client.getZone());
         myViewHolder.tv4.setText("Area: "+client.getArea());
         myViewHolder.tv5.setText(client.getExpireDate());
@@ -84,13 +91,14 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
-        TextView tv1, tv2, tv3, tv4, tv5, tv6, tv7;
+        TextView tv1, tv2, tvmode, tv3, tv4, tv5, tv6, tv7;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
             tv1 = itemView.findViewById(R.id.cardtv1);
             tv2 = itemView.findViewById(R.id.cardtv2);
+            tvmode = itemView.findViewById(R.id.cardtvmode);
             tv3 = itemView.findViewById(R.id.cardtv3);
             tv4 = itemView.findViewById(R.id.cardtv4);
             tv5 = itemView.findViewById(R.id.cardExpdate);
