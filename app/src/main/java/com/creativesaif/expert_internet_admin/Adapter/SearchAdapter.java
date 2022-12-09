@@ -57,7 +57,9 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MyViewHold
         }
         myViewHolder.tvmode.setText(client.getMode());
         myViewHolder.tv2.setText("Phone: "+client.getPhone());
-        myViewHolder.tv3.setText("PPP: "+client.getPppName()+", Zone: "+client.getZone());
+        myViewHolder.tv3.setText("PPP: "+client.getPppName());
+        myViewHolder.tvzone.setText("Zone: "+client.getZone());
+        myViewHolder.tvpkgid.setText("Package: "+client.getPkgId());
         myViewHolder.tv4.setText("Area: "+client.getArea());
         myViewHolder.tv5.setText(client.getExpireDate());
         myViewHolder.tv6.setText("Payment: "+client.getPaymentMethod());
@@ -108,7 +110,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MyViewHold
                                 || client.getMode().toLowerCase().contains(searchString)
                                 || client.getZone().toLowerCase().contains(searchString)
                                 || client.getPaymentMethod().toLowerCase().contains(searchString)
-                                || client.getPhone().toLowerCase().contains(searchString)){
+                                || client.getPhone().toLowerCase().contains(searchString)
+                                || client.getPkgId().toLowerCase().contains(searchString)){
                             tempFilteredClientList.add(client);
                         }
                     }
@@ -130,7 +133,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MyViewHold
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
-        TextView tv1, tv2, tvmode, tv3, tv4, tv5, tv6, tv7;
+        TextView tv1, tv2, tvmode, tv3,tvzone, tvpkgid, tv4, tv5, tv6, tv7;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -139,6 +142,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MyViewHold
             tv2 = itemView.findViewById(R.id.cardtv2);
             tvmode = itemView.findViewById(R.id.cardtvmode);
             tv3 = itemView.findViewById(R.id.cardtv3);
+            tvzone = itemView.findViewById(R.id.cardtvzone);
+            tvpkgid = itemView.findViewById(R.id.cardtvpkgid);
             tv4 = itemView.findViewById(R.id.cardtv4);
             tv5 = itemView.findViewById(R.id.cardExpdate);
             tv6 = itemView.findViewById(R.id.cardMethod);
