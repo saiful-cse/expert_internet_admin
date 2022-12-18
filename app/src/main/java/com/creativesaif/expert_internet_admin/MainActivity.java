@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_notice) {
             assert admin_id != null;
-            if (admin_id.equals("9161") || admin_id.equals("8991")){
+            if (admin_id.equals("9161") || admin_id.equals("8991") || admin_id.equals("9588")){
                 startActivity(new Intent(MainActivity.this, SmsCreate.class));
             }else{
                 Toast.makeText(getApplicationContext(), "You are not permitted to access", Toast.LENGTH_LONG).show();
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity
         }else if (id == R.id.nav_baysoft) {
 
             Intent intent = new Intent(MainActivity.this, Webviewpage.class);
-            intent.putExtra("url", "http://bay.robotispsoft.com");
+            intent.putExtra("url", "http://bay.bsdbdisp.com/include/login.php");
             startActivity(intent);
 
         }else if (id == R.id.nav_txn_search) {
