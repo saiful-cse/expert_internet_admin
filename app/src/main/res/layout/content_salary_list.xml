@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".Salary.SalaryList"
+    tools:showIn="@layout/activity_salary_list">
+
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="Employee ID:"
+            android:textAlignment="center"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/adminidListSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:textAlignment="center"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TableLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:showDividers="middle"
+                        android:dividerPadding="3dp">
+
+                        <TableRow android:background="@color/colorAccent">
+
+                            <TextView
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:text="Date"
+                                android:textAlignment="center"
+                                android:textColor="#ffffff"
+                                android:textSize="15sp" />
+
+                            <View style="@style/Divider" />
+
+                            <TextView
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:text="Emp. ID"
+                                android:textAlignment="center"
+                                android:textColor="#ffffff"
+                                android:textSize="15sp" />
+
+                            <View style="@style/Divider" />
+
+                            <TextView
+                                android:layout_width="150dp"
+                                android:layout_height="wrap_content"
+                                android:text="Month"
+                                android:textAlignment="center"
+                                android:textColor="#ffffff"
+                                android:textSize="15sp" />
+
+                            <View style="@style/Divider" />
+
+                            <TextView
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:text="Amount"
+                                android:textAlignment="center"
+                                android:textColor="#ffffff"
+                                android:textSize="15sp" />
+
+                        </TableRow>
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/recyclerViewSalaryRow"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            />
+<!--                        android:layout_marginBottom="80dp"-->
+                    </TableLayout>
+                </HorizontalScrollView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

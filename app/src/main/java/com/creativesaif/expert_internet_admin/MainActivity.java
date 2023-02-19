@@ -32,6 +32,7 @@ import com.creativesaif.expert_internet_admin.ClientList.ClientList;
 import com.creativesaif.expert_internet_admin.ClientList.ClientReg;
 import com.creativesaif.expert_internet_admin.Dashboard.Dashboard;
 
+import com.creativesaif.expert_internet_admin.Salary.SalaryList;
 import com.creativesaif.expert_internet_admin.Sms.SmsCreate;
 
 import com.creativesaif.expert_internet_admin.Search.Search_Page;
@@ -198,7 +199,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_notice) {
             assert admin_id != null;
-            if (admin_id.equals("9161") || admin_id.equals("8991") || admin_id.equals("9588")){
+            if (admin_id.equals("9161") || admin_id.equals("8991")){
                 startActivity(new Intent(MainActivity.this, SmsCreate.class));
             }else{
                 Toast.makeText(getApplicationContext(), "You are not permitted to access", Toast.LENGTH_LONG).show();
@@ -211,19 +212,33 @@ public class MainActivity extends AppCompatActivity
 
             startActivity(new Intent(MainActivity.this, SmsHistory.class));
 
-        }else if (id == R.id.nav_baysoft) {
+        }else if (id == R.id.nav_salarylist) {
+
+            startActivity(new Intent(MainActivity.this, SalaryList.class));
+
+        }
+        else if (id == R.id.nav_baysoft) {
 
             Intent intent = new Intent(MainActivity.this, Webviewpage.class);
             intent.putExtra("url", "http://bay.bsdbdisp.com/include/login.php");
             startActivity(intent);
 
-        }else if (id == R.id.nav_txn_search) {
+        }else if (id == R.id.nav_upstrimtxn) {
+
+            Intent intent = new Intent(MainActivity.this, Webviewpage.class);
+            intent.putExtra("url", "https://creativesaif.com/api/exp-v5.0/client/upstream_txn.php");
+            startActivity(intent);
+
+        }
+        else if (id == R.id.nav_txn_search) {
 
             Intent intent = new Intent(MainActivity.this, Webviewpage.class);
             intent.putExtra("url", "https://expert-internet.net/paybill/bkash-payment/search_txn/");
             startActivity(intent);
 
         }
+
+
         else if (id == R.id.nav_olt7) {
 
             selectLoginUrlDialog(7777);

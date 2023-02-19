@@ -85,7 +85,6 @@ public class ClientDetailsEdit extends AppCompatActivity{
     final Calendar myCalendar= Calendar.getInstance();
     private String admin_id;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -46,6 +46,16 @@
             android:title="@string/menu_txnlist"/>
 
         <item
+            android:id="@+id/nav_upstrimtxn"
+            android:icon="@drawable/ic_txn_list_black_24dp"
+            android:title="Upstream Txn"/>
+
+        <item
+            android:id="@+id/nav_salarylist"
+            android:icon="@drawable/ic_txn_list_black_24dp"
+            android:title="Salary"/>
+
+        <item
             android:id="@+id/nav_baysoft"
             android:icon="@drawable/ic_baseline_supervised_user_circle_24"
             android:title="Mikrotik Users"/>

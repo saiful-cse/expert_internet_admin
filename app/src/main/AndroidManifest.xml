@@ -16,7 +16,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Webview.Webviewpage"></activity>
+        <activity
+            android:name=".AddSalary"
+            android:exported="false" />
+        <activity android:name=".Webview.Webviewpage" />
         <activity android:name=".Search.Search_Page" />
         <activity android:name=".ClientList.ClientReg" />
         <activity
@@ -63,12 +66,17 @@
             android:label="@string/title_notice_create"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name=".Feedback.FeedbackList"
-            android:label="@string/title_feedback" />
-        <activity
             android:name=".TransactionList.TransactionList"
             android:label="@string/title_txn_list"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Salary.SalaryList"
+            android:label="Salary List"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Salary.AddSalary"
+            android:label="Add Salary"
+            />
         <activity
             android:name=".TransactionList.MakeTransaction"
             android:label="@string/title_txn_create" />

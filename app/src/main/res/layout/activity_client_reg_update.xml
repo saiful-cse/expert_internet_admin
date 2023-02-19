@@ -333,8 +333,6 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
                             android:textAlignment="center"
-                            android:maxLength="8"
-                            android:inputType="numberDecimal"
                             android:textSize="15sp" />
                     </LinearLayout>
 

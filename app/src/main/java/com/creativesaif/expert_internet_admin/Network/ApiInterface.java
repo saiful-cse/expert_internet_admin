@@ -3,6 +3,8 @@ package com.creativesaif.expert_internet_admin.Network;
 import com.creativesaif.expert_internet_admin.Model.Client;
 import com.creativesaif.expert_internet_admin.Model.ClientWrapper;
 import com.creativesaif.expert_internet_admin.Model.DetailsWrapper;
+import com.creativesaif.expert_internet_admin.Model.Salary;
+import com.creativesaif.expert_internet_admin.Model.SalaryWrapper;
 import com.creativesaif.expert_internet_admin.Model.Trns;
 
 import retrofit2.Call;
@@ -51,6 +53,12 @@ public interface ApiInterface {
 
     @POST(base_url+second_path+api_version+"/sms/expired_clients_sms.php")
     Call<DetailsWrapper> bilExpireWarningSend(@Body Client client);
+
+    @POST(base_url+second_path+api_version+"txn/salary_list.php")
+    Call<SalaryWrapper> getSalary(@Body Salary salary);
+
+    @POST(base_url+second_path+api_version+"txn/add_salary.php")
+    Call<SalaryWrapper> addSalary(@Body Salary salary);
 
     @POST(base_url+second_path+api_version+"client/search.php")
     Call<ClientWrapper> search_data(@Body Client client);
