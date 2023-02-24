@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity
         }else if (id == R.id.nav_upstrimtxn) {
 
             Intent intent = new Intent(MainActivity.this, Webviewpage.class);
-            intent.putExtra("url", "https://creativesaif.com/api/exp-v5.0/client/upstream_txn.php");
+            intent.putExtra("url", "https://creativesaif.com/api/exp-v5.0/txn/upstream_bill_list.php?admin_id="+admin_id);
             startActivity(intent);
 
         }
