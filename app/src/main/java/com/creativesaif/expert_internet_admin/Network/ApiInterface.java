@@ -17,7 +17,7 @@ public interface ApiInterface {
 //    String second_path = "api/expert_internet_api/";
 //    String api_version = "exp-v5.0/";
 
-    String base_url = "https://creativesaif.com/";
+    String base_url = "https://expert-internet.net/";
     String second_path = "api/";
     String api_version = "exp-v5.0/";
 
