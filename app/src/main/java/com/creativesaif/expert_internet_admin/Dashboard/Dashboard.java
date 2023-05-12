@@ -42,8 +42,6 @@ import java.util.Map;
 
 public class Dashboard extends AppCompatActivity {
 
-    LinearLayout dashboardInfoLyaout;
-
     TextView textViewTotalExpiredClient, textViewActive, textViewInactive, textViewMonthCredit, textViewMonthDebit,
             textViewOverCredit, textViewOverDebit, textViewTotalInvest,
             textViewSaifuPercent, textViewMisbaPercent, textViewSaifulProfit, textViewMisbaProfit;
@@ -78,25 +76,16 @@ public class Dashboard extends AppCompatActivity {
         textViewSaifulProfit = findViewById(R.id.dashboard_saifulprofit);
         textViewMisbaProfit = findViewById(R.id.dashboard_misbaprofit);
         progressDialog = new ProgressDialog(this);
-        dashboardInfoLyaout = findViewById(R.id.dashinfolayout);
+
         chart = findViewById(R.id.barchart);
         noOfClient = new ArrayList();
         month = new ArrayList();
         preferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
         jwt = preferences.getString("jwt", null);
-        String admin_id = preferences.getString("admin_id", null);
-
-        assert admin_id != null;
-        if(admin_id.equals("9161") || admin_id.equals("8991")){
-            dashboardInfoLyaout.setVisibility(View.VISIBLE);
-        }else{
-            dashboardInfoLyaout.setVisibility(View.GONE);
-        }
 
         if(jwt == null){
             finish();
             startActivity(new Intent(Dashboard.this, Login.class));
-
         }
         else if (isNetworkConnected()){
 

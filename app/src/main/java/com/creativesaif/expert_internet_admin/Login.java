@@ -53,7 +53,7 @@ public class Login extends AppCompatActivity {
         try{
 
             PackageInfo info = manager.getPackageInfo(this.getPackageName(), PackageManager.GET_ACTIVITIES);
-            viewversionname.setText("App Version: "+info.versionName+"\n"+"Web API version: exp-v5.0\nRelease date: 11/09/2020");
+            viewversionname.setText("App Version: "+info.versionName+"\n"+"Web API version: exp-v5.0\nRelease date: 12/05/2023");
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -117,14 +117,19 @@ public class Login extends AppCompatActivity {
                     String status = jsonObject.getString("status");
                     String message = jsonObject.getString("message");
 
-
                     if (status.equals("200")) {
 
-                        String jwt = jsonObject.getString("jwt");
-
                         //store jwt and userid
-                        sharedPreferences.edit().putString("admin_id", editTextUserId.getText().toString().trim()).apply();
-                        sharedPreferences.edit().putString("jwt", jwt).apply();
+                        sharedPreferences.edit().putString("admin_id", jsonObject.getString("admin_id")).apply();
+                        sharedPreferences.edit().putString("jwt", jsonObject.getString("jwt")).apply();
+                        sharedPreferences.edit().putString("dashboard", jsonObject.getString("dashboard")).apply();
+                        sharedPreferences.edit().putString("client_add", jsonObject.getString("client_add")).apply();
+                        sharedPreferences.edit().putString("client_details_update", jsonObject.getString("client_details_update")).apply();
+                        sharedPreferences.edit().putString("sms", jsonObject.getString("sms")).apply();
+                        sharedPreferences.edit().putString("txn_summary", jsonObject.getString("txn_summary")).apply();
+                        sharedPreferences.edit().putString("txn_edit", jsonObject.getString("txn_edit")).apply();
+                        sharedPreferences.edit().putString("upstream_bill", jsonObject.getString("upstream_bill")).apply();
+                        sharedPreferences.edit().putString("salary_add", jsonObject.getString("salary_add")).apply();
 
                         Intent intent = new Intent(Login.this, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

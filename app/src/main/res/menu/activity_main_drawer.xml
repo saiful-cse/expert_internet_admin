@@ -4,10 +4,7 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_timeline"
-            android:icon="@drawable/ic_timeline_black_24dp"
-            android:title="@string/menu_timeline"/>
+
         <item
             android:id="@+id/nav_dashboard"
             android:icon="@drawable/ic_dashboard_black_24dp"
@@ -34,7 +31,7 @@
         <item
             android:id="@+id/nav_notice"
             android:icon="@drawable/ic_baseline_sms_24"
-            android:title="SMS"/>
+            android:title="SMS Notify"/>
         <item
             android:id="@+id/nav_smsHistory"
             android:icon="@drawable/ic_baseline_sms_24"
@@ -54,26 +51,6 @@
             android:id="@+id/nav_salarylist"
             android:icon="@drawable/ic_txn_list_black_24dp"
             android:title="Salary"/>
-
-        <item
-            android:id="@+id/nav_baysoft"
-            android:icon="@drawable/ic_baseline_supervised_user_circle_24"
-            android:title="Mikrotik Users"/>
-
-        <item
-            android:id="@+id/nav_olt7"
-            android:icon="@drawable/ic_baseline_storage_24"
-            android:title="OLT-7"/>
-
-        <item
-            android:id="@+id/nav_olt8"
-            android:icon="@drawable/ic_baseline_storage_24"
-            android:title="OLT-8"/>
-
-        <item
-            android:id="@+id/nav_olt9"
-            android:icon="@drawable/ic_baseline_storage_24"
-            android:title="OLT-9"/>
     </group>
 
 </menu>

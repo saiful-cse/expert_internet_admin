@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitApiClient
 {
-    //private static final String BASE_URL = "http://192.168.1.5/";
+    //private static final String BASE_URL = "http://192.168.1.4/";
 
     private static final String BASE_URL = "https://expert-internet.net/";
 

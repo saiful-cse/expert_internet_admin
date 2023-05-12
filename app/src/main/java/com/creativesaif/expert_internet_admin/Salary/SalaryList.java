@@ -93,11 +93,9 @@ public class SalaryList extends AppCompatActivity {
             employeeList.add(adminId);
         }
 
-
         ArrayAdapter<String> employeeArrayAdapter = new ArrayAdapter<>(SalaryList.this,
                 android.R.layout.simple_spinner_dropdown_item, employeeList);
         adminSpinner.setAdapter(employeeArrayAdapter);
-
 
         //Spinner item choice and click event
         adminSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

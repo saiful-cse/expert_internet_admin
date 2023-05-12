@@ -16,9 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".AddSalary"
-            android:exported="false" />
+
         <activity android:name=".Webview.Webviewpage" />
         <activity android:name=".Search.Search_Page" />
         <activity android:name=".ClientList.ClientReg" />

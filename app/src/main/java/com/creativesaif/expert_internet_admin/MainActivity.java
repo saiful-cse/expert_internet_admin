@@ -40,6 +40,8 @@ import com.creativesaif.expert_internet_admin.Sms.SmsHistory;
 import com.creativesaif.expert_internet_admin.TransactionList.TransactionList;
 import com.creativesaif.expert_internet_admin.Webview.Webviewpage;
 
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -180,14 +182,17 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         String admin_id = sharedPreferences.getString("admin_id", null);
 
-
         if (id == R.id.nav_dashboard) {
 
-            startActivity(new Intent(MainActivity.this, Dashboard.class));
+            if(Objects.equals(sharedPreferences.getString("dashboard", null), "1")){
+                startActivity(new Intent(MainActivity.this, Dashboard.class));
+            }
 
         }else if (id == R.id.nav_client_reg) {
 
-            startActivity(new Intent(MainActivity.this, ClientReg.class));
+            if(Objects.equals(sharedPreferences.getString("client_add", null), "1")){
+                startActivity(new Intent(MainActivity.this, ClientReg.class));
+            }
 
         } else if (id == R.id.nav_clientlist) {
 
@@ -198,11 +203,9 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, Search_Page.class));
 
         } else if (id == R.id.nav_notice) {
-            assert admin_id != null;
-            if (admin_id.equals("9161") || admin_id.equals("8991")){
+
+            if (Objects.equals(sharedPreferences.getString("sms", null), "1")){
                 startActivity(new Intent(MainActivity.this, SmsCreate.class));
-            }else{
-                Toast.makeText(getApplicationContext(), "You are not permitted to access", Toast.LENGTH_LONG).show();
             }
 
         } else if (id == R.id.nav_txnlist) {
@@ -217,42 +220,20 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, SalaryList.class));
 
         }
-        else if (id == R.id.nav_baysoft) {
+        else if (id == R.id.nav_upstrimtxn) {
 
-            Intent intent = new Intent(MainActivity.this, Webviewpage.class);
-            intent.putExtra("url", "http://bay.bsdbdisp.com/include/login.php");
-            startActivity(intent);
-
-        }else if (id == R.id.nav_upstrimtxn) {
-
-            Intent intent = new Intent(MainActivity.this, Webviewpage.class);
-            intent.putExtra("url", getString(R.string.base_url)+"txn/upstream_bill_list.php?admin_id="+admin_id);
-            startActivity(intent);
-
+            if (Objects.equals(sharedPreferences.getString("upstream_bill", null), "1")){
+                Intent intent = new Intent(MainActivity.this, Webviewpage.class);
+                intent.putExtra("url", getString(R.string.base_url)+"txn/upstream_bill_list.php?admin_id="+sharedPreferences.getString("admin_id", null)+"&jwt="+sharedPreferences.getString("jwt", null));
+                startActivity(intent);
+            }
         }
         else if (id == R.id.nav_txn_search) {
 
             Intent intent = new Intent(MainActivity.this, Webviewpage.class);
             intent.putExtra("url", "https://expert-internet.net/paybill/bkash-payment/search_txn/");
             startActivity(intent);
-
         }
-
-
-        else if (id == R.id.nav_olt7) {
-
-            selectLoginUrlDialog(7777);
-
-        }else if (id == R.id.nav_olt8) {
-
-            selectLoginUrlDialog(8888);
-
-        }else if (id == R.id.nav_olt9) {
-
-            selectLoginUrlDialog(9999);
-        }
-
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

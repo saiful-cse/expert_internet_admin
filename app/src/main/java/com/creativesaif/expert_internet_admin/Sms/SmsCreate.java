@@ -121,7 +121,6 @@ public class SmsCreate extends AppCompatActivity {
         Button buttonExpiredDisconnect = findViewById(R.id.btnbillexpirdisconnect);
         Button btnBillExpireWarning = findViewById(R.id.btnbillwarning);
 
-
         btnBillExpireWarning.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

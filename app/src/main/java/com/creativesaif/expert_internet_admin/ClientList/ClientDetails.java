@@ -61,6 +61,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import retrofit2.Call;
@@ -266,11 +267,7 @@ public class ClientDetails extends AppCompatActivity {
                 if (currentMode.equals("Disable")){
                     warningShowDisablePayment();
 
-                } else if (jwt == null){
-                    finish();
-                    startActivity(new Intent(ClientDetails.this, Login.class));
-
-                } else if(radioGroup.getCheckedRadioButtonId() == -1)
+                }else if(radioGroup.getCheckedRadioButtonId() == -1)
                 {
                     Snackbar.make(findViewById(android.R.id.content),"Select payment type",Snackbar.LENGTH_LONG).show();
 
@@ -313,7 +310,7 @@ public class ClientDetails extends AppCompatActivity {
         tvdiconnecttemp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editTextInformSms.setText("বকেয়া বিলের জন্য আপনার WiFi সংযোগটি অটো বন্ধ হয়েছে, পুনরায় চালু করতে বিল পরিশোধ করুন https://expert-internet.net/paybill \n01975-559161 (bKash Payment). Reference: "+pppName);
+                editTextInformSms.setText("আপনার WiFi সংযোগের মেয়াদ শেষ, পুনরায় চালু করতে বিল পরিশোধ করুন।\nhttps://baycombd.com/paybill\n01975-559161(bKash Payment) Reference: "+pppName);
             }
         });
 
@@ -323,7 +320,7 @@ public class ClientDetails extends AppCompatActivity {
                 editTextInformSms.setText("Your connection type is PPPoE\n" +
                         "Username: " +pppName+
                         "\nPassword: " +ppppass+
-                        "\nDon't share anyone.");
+                        "\nDon't share with anyone.");
             }
         });
 
@@ -366,9 +363,12 @@ public class ClientDetails extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent i = new Intent(ClientDetails.this,ClientDetailsEdit.class);
-                i.putExtra("id", id);
-                startActivity(i);
+                if(Objects.equals(sharedPreferences.getString("client_details_update", null), "1")){
+                    Intent i = new Intent(ClientDetails.this,ClientDetailsEdit.class);
+                    i.putExtra("id", id);
+                    startActivity(i);
+                }
+
             }
         });
 
@@ -683,7 +683,7 @@ public class ClientDetails extends AppCompatActivity {
                 trns.setAdminId(admin_id);
                 trns.setTxnType(payment_type);
                 trns.setMethod(payment_method);
-                trns.setDetails(name+", "+payment_type+", "+payment_method+"-"+mobile_payment_reference);
+                trns.setDetails(name+", "+pppName+", "+payment_type+", "+payment_method+"-"+mobile_payment_reference);
                 trns.setAmount(amount);
 
                 //Toast.makeText(getApplicationContext(), client_id+"\n"+admin_id+"\n"+payment_type+"\n"+payment_method+"\n"+amount,Toast.LENGTH_LONG).show();

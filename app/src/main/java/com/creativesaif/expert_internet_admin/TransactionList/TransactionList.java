@@ -43,6 +43,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 
 public class TransactionList extends AppCompatActivity {
 
@@ -98,13 +99,15 @@ public class TransactionList extends AppCompatActivity {
         String admin_id = sharedPreferences.getString("admin_id", null);
         assert admin_id != null;
 
-        if(admin_id.equals("8991")){
+        if (Objects.equals(sharedPreferences.getString("txn_summary", null), "1")){
             fab1.setVisibility(View.VISIBLE);
-            fab3.setVisibility(View.GONE);
+        }else{
+            fab1.setVisibility(View.GONE);
         }
 
-        if(admin_id.equals("0713") || admin_id.equals("9588")){
-            fab1.setVisibility(View.GONE);
+        if (Objects.equals(sharedPreferences.getString("txn_edit", null), "1")){
+            fab3.setVisibility(View.VISIBLE);
+        }else{
             fab3.setVisibility(View.GONE);
         }
 
@@ -209,6 +212,7 @@ public class TransactionList extends AppCompatActivity {
         String url = getString(R.string.base_url)+getString(R.string.all_txn)+"?first_date="+first_date+"&last_date="+last_date;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onResponse(String response) {
 
