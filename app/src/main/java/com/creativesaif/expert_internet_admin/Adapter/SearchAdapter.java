@@ -59,11 +59,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MyViewHold
         myViewHolder.tv2.setText("Phone: "+client.getPhone());
         myViewHolder.tv3.setText("PPP: "+client.getPppName());
         myViewHolder.tvzone.setText("Zone: "+client.getZone());
-        myViewHolder.tvpkgid.setText("Package: "+client.getPkgId());
+        myViewHolder.tvpkgid.setText("Pack id: "+client.getPkgId());
         myViewHolder.tv4.setText("Area: "+client.getArea());
         myViewHolder.tv5.setText(client.getExpireDate());
-        myViewHolder.tv6.setText("Payment: "+client.getPaymentMethod());
-        myViewHolder.tv7.setText(client.getTakeTime());
+        myViewHolder.tv7.setText("Taken time: "+client.getTakeTime()+" day");
+
+        myViewHolder.paymentmethod.setText("Payment: "+client.getPaymentMethod());
 
         myViewHolder.tv1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,7 +134,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MyViewHold
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
-        TextView tv1, tv2, tvmode, tv3,tvzone, tvpkgid, tv4, tv5, tv6, tv7;
+        TextView tv1, tv2, tvmode, tv3,tvzone, tvpkgid, tv4, tv5, paymentmethod, tv7;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -146,8 +147,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MyViewHold
             tvpkgid = itemView.findViewById(R.id.cardtvpkgid);
             tv4 = itemView.findViewById(R.id.cardtv4);
             tv5 = itemView.findViewById(R.id.cardExpdate);
-            tv6 = itemView.findViewById(R.id.cardMethod);
             tv7 = itemView.findViewById(R.id.cardTaketime);
+            paymentmethod = itemView.findViewById(R.id.cardtvpmethod);
         }
     }
 }

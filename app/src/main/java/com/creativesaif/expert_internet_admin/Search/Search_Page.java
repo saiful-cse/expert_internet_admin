@@ -2,6 +2,7 @@ package com.creativesaif.expert_internet_admin.Search;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.creativesaif.expert_internet_admin.Adapter.SearchAdapter;
+import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.Model.Client;
 import com.creativesaif.expert_internet_admin.Model.ClientWrapper;
 import com.creativesaif.expert_internet_admin.Network.ApiInterface;
@@ -139,7 +141,14 @@ public class Search_Page extends AppCompatActivity {
                     errorText.setVisibility(View.GONE);
                     searchAdapter.setClientList(clientWrapper.getClients());
 
-                }else {
+                } else if (clientWrapper.getStatus() == 401) {
+                    //Go to phone verification step
+                    Toast.makeText(getApplicationContext(), clientWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(Search_Page.this, Login.class);
+                    startActivity(intent);
+
+                }
+                else {
                     Toast.makeText(getApplicationContext(), clientWrapper.getMessage(), Toast.LENGTH_LONG).show();
                 }
 

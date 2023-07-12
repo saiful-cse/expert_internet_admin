@@ -21,6 +21,7 @@
             android:layout_margin="10dp">
 
             <TextView
+
                 android:id="@+id/cardtv1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -29,23 +30,31 @@
                 android:textSize="17sp"
                 android:textColor="@color/colorPrimary"
                 android:textAlignment="textStart"/>
+            <TextView
+                android:id="@+id/cardtv4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="KHARULIA"
+                android:textSize="15sp"
+                android:textAlignment="textStart"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <TextView
-                    android:layout_alignParentStart="true"
                     android:id="@+id/cardtv2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
                     android:text="+8801835559161"
                     android:textSize="15sp" />
 
                 <TextView
-                    android:layout_alignParentEnd="true"
                     android:id="@+id/cardtvmode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
                     android:text="Enable"
                     android:textSize="15sp" />
             </RelativeLayout>
@@ -55,38 +64,24 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:layout_alignParentStart="true"
                     android:id="@+id/cardtv3"
+                    android:layout_alignParentStart="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textStyle="bold"
                     android:text="ss-expnet-"
                     android:textSize="15sp" />
 
                 <TextView
-                    android:layout_centerInParent="true"
-                    android:id="@+id/cardtvzone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Main"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:layout_alignParentEnd="true"
                     android:id="@+id/cardtvpkgid"
+                    android:layout_alignParentEnd="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="102"
                     android:textSize="15sp" />
-
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/cardtv4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="KHARULIA"
-                android:textSize="15sp"
-                android:textAlignment="textStart"/>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -110,40 +105,36 @@
                         android:textAlignment="textStart"
                         android:textColor="@color/colorPrimary"
                         android:textSize="15sp" />
-
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:id="@+id/cardMethod"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Enable"
-                        android:textAlignment="textStart"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="15sp" />
                 </LinearLayout>
 
-
-
-                <LinearLayout
+                <TextView
+                    android:id="@+id/cardtvzone"
+                    android:layout_alignParentEnd="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_alignParentEnd="true">
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_baseline_access_time_24"/>
-                    <TextView
-                        android:layout_marginStart="5dp"
-                        android:id="@+id/cardTaketime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Take Time"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorPrimary"
-                        android:textAlignment="textStart"/>
-                </LinearLayout>
+                    android:text="Main"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/cardtvpmethod"
+                    android:layout_alignParentStart="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="Payment: Mobile"
+                    android:textSize="15sp" />
+                <TextView
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="5dp"
+                    android:id="@+id/cardTaketime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Taken time 3 day by 9588"
+                    android:textSize="15sp" />
             </RelativeLayout>
 
         </LinearLayout>

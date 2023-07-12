@@ -128,8 +128,6 @@ public class SalaryList extends AppCompatActivity {
 
                 if (Objects.equals(sharedPreferences.getString("admin_id", null), "9161") || Objects.equals(sharedPreferences.getString("admin_id", null), "8991")){
                     startActivity(new Intent(SalaryList.this, AddSalary.class));
-                }else{
-                    Toast.makeText(getApplicationContext(), "You are not permitted to access", Toast.LENGTH_LONG).show();
                 }
             }
         });
