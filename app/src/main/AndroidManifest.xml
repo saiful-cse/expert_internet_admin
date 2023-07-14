@@ -72,6 +72,14 @@
             android:label="Salary List"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".Note.NoteView"
+            android:label="Note"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Note.NoteEdit"
+            android:label="Note Edit"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
             android:name=".Salary.AddSalary"
             android:label="Add Salary"
             />

@@ -29,6 +29,11 @@
             android:title="bKash Txn Search"/>
 
         <item
+            android:id="@+id/nav_note"
+            android:icon="@drawable/baseline_event_note_24"
+            android:title="Note"/>
+
+        <item
             android:id="@+id/nav_notice"
             android:icon="@drawable/ic_baseline_sms_24"
             android:title="SMS Notify"/>

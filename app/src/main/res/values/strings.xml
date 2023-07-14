@@ -59,6 +59,8 @@
     <string name="txn_details">txn/txn_details.php</string>
     <string name="txn_delete">txn/txn_delete.php</string>
     <string name="txn_update">txn/txn_update.php</string>
+    <string name="note_view">note/note_view.php</string>
+    <string name="note_edit">note/note_edit.php</string>
 
     <!-- Dashboard -->
     <string name="dashboard_data">dashboard/read.php</string>

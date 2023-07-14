@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -32,6 +33,7 @@ import com.creativesaif.expert_internet_admin.ClientList.ClientList;
 import com.creativesaif.expert_internet_admin.ClientList.ClientReg;
 import com.creativesaif.expert_internet_admin.Dashboard.Dashboard;
 
+import com.creativesaif.expert_internet_admin.Note.NoteView;
 import com.creativesaif.expert_internet_admin.Salary.SalaryList;
 import com.creativesaif.expert_internet_admin.Sms.SmsCreate;
 
@@ -211,7 +213,11 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_txnlist) {
 
             startActivity(new Intent(MainActivity.this, TransactionList.class));
-        }else if (id == R.id.nav_smsHistory) {
+        }else if (id == R.id.nav_note) {
+
+            startActivity(new Intent(MainActivity.this, NoteView.class));
+        }
+        else if (id == R.id.nav_smsHistory) {
 
             startActivity(new Intent(MainActivity.this, SmsHistory.class));
 
