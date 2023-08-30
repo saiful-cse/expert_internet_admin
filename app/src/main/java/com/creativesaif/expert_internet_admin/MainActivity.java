@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -27,8 +26,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
+import com.creativesaif.expert_internet_admin.DeviceUrl.DeviceUrl;
+import com.creativesaif.expert_internet_admin.Employees.Employee;
 import com.creativesaif.expert_internet_admin.ClientList.ClientList;
 import com.creativesaif.expert_internet_admin.ClientList.ClientReg;
 import com.creativesaif.expert_internet_admin.Dashboard.Dashboard;
@@ -76,16 +76,16 @@ public class MainActivity extends AppCompatActivity
         linearLayoutError = findViewById(R.id.connection_error_layout);
         progressBar = findViewById(R.id.progressbar);
         swipeRefreshLayout = findViewById(R.id.viewRefresh);
-        url = getString(R.string.base_url)+"dashboard/view.php";
+        url = URL_config.BASE_URL + URL_config.DASHBOARD_VIEW;
 
         webview = findViewById(R.id.webView);
         webview.getSettings().setJavaScriptEnabled(true);
         webview.setWebViewClient(new myWebClient());
 
-        if (!isNetworkConnected()){
+        if (!isNetworkConnected()) {
             progressBar.setVisibility(View.GONE);
             linearLayoutError.setVisibility(View.VISIBLE);
-        }else{
+        } else {
 
             webview.loadUrl(url);
         }
@@ -182,17 +182,22 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        String admin_id = sharedPreferences.getString("admin_id", null);
 
-        if (id == R.id.nav_dashboard) {
+        if (id == R.id.nav_access_control) {
 
-            if(Objects.equals(sharedPreferences.getString("dashboard", null), "1")){
+            if (Objects.equals(sharedPreferences.getString("super_admin", null), "1")) {
+                startActivity(new Intent(MainActivity.this, Employee.class));
+            }
+
+        } else if (id == R.id.nav_dashboard) {
+
+            if (Objects.equals(sharedPreferences.getString("dashboard", null), "1")) {
                 startActivity(new Intent(MainActivity.this, Dashboard.class));
             }
 
-        }else if (id == R.id.nav_client_reg) {
+        } else if (id == R.id.nav_client_reg) {
 
-            if(Objects.equals(sharedPreferences.getString("client_add", null), "1")){
+            if (Objects.equals(sharedPreferences.getString("client_add", null), "1")) {
                 startActivity(new Intent(MainActivity.this, ClientReg.class));
             }
 
@@ -206,82 +211,43 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_notice) {
 
-            if (Objects.equals(sharedPreferences.getString("sms", null), "1")){
+            if (Objects.equals(sharedPreferences.getString("sms", null), "1")) {
                 startActivity(new Intent(MainActivity.this, SmsCreate.class));
             }
 
         } else if (id == R.id.nav_txnlist) {
 
             startActivity(new Intent(MainActivity.this, TransactionList.class));
-        }else if (id == R.id.nav_note) {
+        } else if (id == R.id.nav_note) {
 
-            startActivity(new Intent(MainActivity.this, NoteView.class));
-        }
-        else if (id == R.id.nav_smsHistory) {
+            if (Objects.equals(sharedPreferences.getString("note", null), "1")) {
+                startActivity(new Intent(MainActivity.this, NoteView.class));
+            }
+
+        } else if (id == R.id.nav_smsHistory) {
 
             startActivity(new Intent(MainActivity.this, SmsHistory.class));
 
-        }else if (id == R.id.nav_salarylist) {
+        } else if (id == R.id.nav_salarylist) {
 
             startActivity(new Intent(MainActivity.this, SalaryList.class));
 
-        }
-        else if (id == R.id.nav_upstrimtxn) {
+        } else if (id == R.id.nav_device) {
 
-            if (Objects.equals(sharedPreferences.getString("upstream_bill", null), "1")){
+            if (Objects.equals(sharedPreferences.getString("device", null), "1")) {
+                startActivity(new Intent(MainActivity.this, DeviceUrl.class));
+            }
+
+        } else if (id == R.id.nav_upstrimtxn) {
+
+            if (Objects.equals(sharedPreferences.getString("upstream_bill", null), "1")) {
                 Intent intent = new Intent(MainActivity.this, Webviewpage.class);
-                intent.putExtra("url", getString(R.string.base_url)+"txn/upstream_bill_list.php?admin_id="+sharedPreferences.getString("admin_id", null)+"&jwt="+sharedPreferences.getString("jwt", null));
+                intent.putExtra("url", URL_config.BASE_URL + URL_config.UPSTREAM_BILL_LIST + sharedPreferences.getString("employee_id", null) + "&jwt=" + sharedPreferences.getString("jwt", null));
                 startActivity(intent);
             }
-        }
-        else if (id == R.id.nav_txn_search) {
-
-            Intent intent = new Intent(MainActivity.this, Webviewpage.class);
-            intent.putExtra("url", "https://expert-internet.net/paybill/bkash-payment/search_txn/");
-            startActivity(intent);
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    public void selectLoginUrlDialog(int port){
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setCancelable(true);
-        alert.setTitle("Warning");
-        alert.setMessage("Select your network connection");
-        alert.setIcon(R.drawable.ic_baseline_warning_24);
-
-        alert.setPositiveButton("Mobile Data/Other WiFi", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("https://103.132.248.128/:"+port+"/action/login.html"));
-                startActivity(in);
-            }
-        });
-
-        alert.setNegativeButton("Self WiFi", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                if (port == 7777){
-
-                    Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("https://77.77.77.2/action/login.html"));
-                    startActivity(in);
-
-                }else if(port == 8888){
-                    Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("https://88.88.88.2/action/login.html"));
-                    startActivity(in);
-
-                }else{
-                    Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("https://99.99.99.2/action/login.html"));
-                    startActivity(in);
-                }
-
-            }
-        });
-        AlertDialog dlg = alert.create();
-        dlg.show();
     }
 }

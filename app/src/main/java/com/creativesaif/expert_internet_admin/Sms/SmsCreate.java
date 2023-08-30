@@ -33,17 +33,20 @@ import com.creativesaif.expert_internet_admin.Network.ApiInterface;
 import com.creativesaif.expert_internet_admin.Network.RetrofitApiClient;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
+import com.creativesaif.expert_internet_admin.URL_config;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.http.Url;
 
 public class SmsCreate extends AppCompatActivity {
 
@@ -188,7 +191,7 @@ public class SmsCreate extends AppCompatActivity {
 
     public void billExpireWarningSend(Client mClient) {
         progressDialog.showDialog();
-        Call<DetailsWrapper> call = apiInterface.bilExpireWarningSend(mClient);
+        Call<DetailsWrapper> call = apiInterface.bilExpiringWarningSms(mClient);
         call.enqueue(new Callback<DetailsWrapper>() {
             @SuppressLint("ResourceType")
             @Override
@@ -201,7 +204,9 @@ public class SmsCreate extends AppCompatActivity {
 
                 if (detailsWrapper.getStatus() == 401) {
                     //Go to phone verification step
-                    loginWarningShow(detailsWrapper.getMessage());
+                    Intent intent = new Intent(SmsCreate.this, Login.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
 
                 }if (detailsWrapper.getStatus() == 200) {
                     Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
@@ -237,7 +242,9 @@ public class SmsCreate extends AppCompatActivity {
 
                 if (detailsWrapper.getStatus() == 401) {
                     //Go to phone verification step
-                    loginWarningShow(detailsWrapper.getMessage());
+                    Intent intent = new Intent(SmsCreate.this, Login.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
 
                 }if (detailsWrapper.getStatus() == 200) {
                     Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
@@ -261,7 +268,7 @@ public class SmsCreate extends AppCompatActivity {
     public void enabledClientSmsSend()
     {
         progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.enabled_client_sms);
+        String url = URL_config.BASE_URL+URL_config.ENABLE_CLIENT_SMS;
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -280,7 +287,10 @@ public class SmsCreate extends AppCompatActivity {
 
                     }else if(status.equals("401")){
 
-                        warningShow(message);
+                        Toast.makeText(SmsCreate.this, message,Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(SmsCreate.this, Login.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
 
                     }else{
                         Toast.makeText(SmsCreate.this, message,Toast.LENGTH_LONG).show();
@@ -323,7 +333,7 @@ public class SmsCreate extends AppCompatActivity {
     public void areWiseMessage()
     {
         progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.area_sms);
+        String url = URL_config.BASE_URL+ URL_config.AREAWISE_SMS;
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -342,7 +352,10 @@ public class SmsCreate extends AppCompatActivity {
 
                     }else if(status.equals("401")){
 
-                        warningShow(message);
+                        Toast.makeText(SmsCreate.this, message,Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(SmsCreate.this, Login.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
 
                     }else{
                         Toast.makeText(SmsCreate.this, message,Toast.LENGTH_LONG).show();
@@ -466,7 +479,7 @@ public class SmsCreate extends AppCompatActivity {
 
     public void area_load()
     {
-        String url = getString(R.string.base_url)+getString(R.string.area_load);
+        String url = URL_config.BASE_URL+URL_config.AREA_LOAD;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override

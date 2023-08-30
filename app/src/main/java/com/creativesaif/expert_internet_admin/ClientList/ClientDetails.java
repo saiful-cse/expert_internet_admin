@@ -1,6 +1,6 @@
 package com.creativesaif.expert_internet_admin.ClientList;
 
-import static java.util.Calendar.MONTH;
+
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -17,7 +17,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -48,6 +47,7 @@ import com.creativesaif.expert_internet_admin.Network.RetrofitApiClient;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
 import com.creativesaif.expert_internet_admin.TransactionList.PaymentHistory;
+import com.creativesaif.expert_internet_admin.URL_config;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,7 +76,7 @@ public class ClientDetails extends AppCompatActivity {
     private LinearLayout linearLayoutPPPStatus;
 
     String currentMode;
-    private String jwt, name, id, pppName, ppppass, admin_id, phone, informMessage, take_time, connected_ip, mobile_payment_reference;
+    private String jwt, name, id, pppName, ppppass, emp_id, phone, informMessage, take_time, connected_ip, mobile_payment_reference;
     private SharedPreferences sharedPreferences;
     private ApiInterface apiInterface;
     private Client client;
@@ -213,16 +213,9 @@ public class ClientDetails extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (pppswitch.isChecked()){
-                    client.setJwt(jwt);
-                    client.setActionType("enable");
-                    client.setPppName(pppName);
-                    getPPPAction(client);
-
+                    getPPPAction("enable");
                 }else{
-                    client.setJwt(jwt);
-                    client.setActionType("disable");
-                    client.setPppName(pppName);
-                    getPPPAction(client);
+                    getPPPAction("disable");
                 }
             }
         });
@@ -234,9 +227,7 @@ public class ClientDetails extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
 
                 }else{
-
-                    client.setPppName(pppName);
-                    getPPPStatus(client);
+                    getPPPStatus();
                 }
             }
         });
@@ -262,7 +253,7 @@ public class ClientDetails extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 amount = editTextAmount.getText().toString().trim();
-                admin_id = sharedPreferences.getString("admin_id", null);
+                emp_id = sharedPreferences.getString("employee_id", null);
 
                 if (currentMode.equals("Disable")){
                     warningShowDisablePayment();
@@ -397,47 +388,6 @@ public class ClientDetails extends AppCompatActivity {
         return cm.getActiveNetworkInfo() != null;
     }
 
-    public void getPPPAction(Client mClient) {
-
-        progressDialog.showDialog();
-        Call<DetailsWrapper> call = apiInterface.getPPPAction(mClient);
-        call.enqueue(new Callback<DetailsWrapper>() {
-            @SuppressLint("ResourceType")
-            @Override
-            public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
-
-                progressDialog.hideDialog();
-
-                DetailsWrapper detailsWrapper = response.body();
-                assert detailsWrapper != null;
-
-                if (detailsWrapper.getStatus() == 500) {
-
-                    linearLayoutPPPStatus.setVisibility(View.GONE);
-                    warningShow(detailsWrapper.getMessage());
-
-                }else if (detailsWrapper.getStatus() == 200) {
-                    linearLayoutPPPStatus.setVisibility(View.GONE);
-                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
-                    warningShow(detailsWrapper.getMessage());
-
-                }else{
-                    linearLayoutPPPStatus.setVisibility(View.GONE);
-                    warningShow(detailsWrapper.getMessage());
-                    //Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<DetailsWrapper> call, Throwable t) {
-                progressDialog.hideDialog();
-                linearLayoutPPPStatus.setVisibility(View.GONE);
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
     public void load_details(Client mClient) {
 
         progressDialog.showDialog();
@@ -543,72 +493,141 @@ public class ClientDetails extends AppCompatActivity {
         });
     }
 
-
-    public void getPPPStatus(Client mClient) {
+    public void getPPPStatus()
+    {
+        String url = sharedPreferences.getString("api_base", null)+"pppStatus.php";
 
         linearLayoutPPPStatus.setVisibility(View.GONE);
         pppStatusProgressbar.setVisibility(View.VISIBLE);
         tvGetStatus.setVisibility(View.GONE);
-
-        Call<DetailsWrapper> call = apiInterface.getPPPStatus(mClient);
-        call.enqueue(new Callback<DetailsWrapper>() {
-            @SuppressLint("ResourceType")
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
-            public void onResponse(Call<DetailsWrapper> call, retrofit2.Response<DetailsWrapper> response) {
+            public void onResponse(String response) {
 
                 pppStatusProgressbar.setVisibility(View.GONE);
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
 
-                DetailsWrapper detailsWrapper = response.body();
+                    if (jsonObject.getString("status").equals("500"))
+                    {
+                        linearLayoutPPPStatus.setVisibility(View.GONE);
+                        tvGetStatus.setText("Refresh");
+                        tvGetStatus.setVisibility(View.VISIBLE);
+                        warningShow(jsonObject.getString("message"));
 
-                assert detailsWrapper != null;
-                if (detailsWrapper.getRouterStatus() == 500) {
+                    }else if(jsonObject.getString("status").equals("200")){
 
-                    linearLayoutPPPStatus.setVisibility(View.GONE);
-                    tvGetStatus.setText("Refresh");
-                    tvGetStatus.setVisibility(View.VISIBLE);
-                    warningShow(detailsWrapper.getMessage());
+                        linearLayoutPPPStatus.setVisibility(View.VISIBLE);
+                        tvGetStatus.setText("Refresh");
+                        tvGetStatus.setVisibility(View.VISIBLE);
 
-                }else if (detailsWrapper.getRouterStatus() == 200) {
-
-                    linearLayoutPPPStatus.setVisibility(View.VISIBLE);
-                    tvGetStatus.setText("Refresh");
-                    tvGetStatus.setVisibility(View.VISIBLE);
-
-                    pppswitch.setChecked(detailsWrapper.getPppStatus().equals("Enable"));
-                    tvpppstatus.setText(detailsWrapper.getPppStatus());
-                    tvactivity.setText(detailsWrapper.getPppActivity());
-                    tvroutermac.setText(detailsWrapper.getRouterMac());
-                    tvlastlogout.setText(detailsWrapper.getLastLogedOut());
-                    tvlastlogin.setText(detailsWrapper.getLastLogIn());
-                    tvuptime.setText(detailsWrapper.getUptime());
-                    tvdownload.setText(detailsWrapper.getDownload());
-                    tvupload.setText(detailsWrapper.getUpload());
-                    tvConnectedIp.setTextColor(Color.BLUE);
-                    connected_ip = detailsWrapper.getConnectedIp();
-                    tvConnectedIp.setText(connected_ip);
-
-                }else{
-                    linearLayoutPPPStatus.setVisibility(View.GONE);
-                    tvGetStatus.setText("Refresh");
-                    tvGetStatus.setVisibility(View.VISIBLE);
-                    warningShow(detailsWrapper.getMessage());
+                        pppswitch.setChecked(jsonObject.getString("ppp_status").equals("Enable"));
+                        tvpppstatus.setText(jsonObject.getString("ppp_status"));
+                        tvactivity.setText(jsonObject.getString("ppp_activity"));
+                        tvroutermac.setText(jsonObject.getString("router_mac"));
+                        tvlastlogout.setText(jsonObject.getString("last_loged_out"));
+                        tvlastlogin.setText(jsonObject.getString("last_log_in"));
+                        tvuptime.setText(jsonObject.getString("uptime"));
+                        tvdownload.setText(jsonObject.getString("download"));
+                        tvupload.setText(jsonObject.getString("upload"));
+                        tvConnectedIp.setTextColor(Color.BLUE);
+                        connected_ip = jsonObject.getString("connected_ip");
+                        tvConnectedIp.setText(connected_ip);
+                    }else{
+                        linearLayoutPPPStatus.setVisibility(View.GONE);
+                        tvGetStatus.setText("Refresh");
+                        tvGetStatus.setVisibility(View.VISIBLE);
+                        warningShow(jsonObject.getString("message"));
+                    }
+                }catch (JSONException e){
+                    e.printStackTrace();
                 }
-
             }
+        }, new Response.ErrorListener() {
             @Override
-            public void onFailure(Call<DetailsWrapper> call, Throwable t) {
+            public void onErrorResponse(VolleyError error) {
                 pppStatusProgressbar.setVisibility(View.GONE);
                 linearLayoutPPPStatus.setVisibility(View.GONE);
-                Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
+                warningShow(error.toString());
             }
-        });
+        }){
+            @Override
+            protected Map<String, String> getParams()throws AuthFailureError {
+                Map<String,String> map = new HashMap<>();
+
+                map.put("ppp_name", pppName);
+                map.put("login_ip", Objects.requireNonNull(sharedPreferences.getString("login_ip", null)));
+                map.put("username", Objects.requireNonNull(sharedPreferences.getString("username", null)));
+                map.put("password", Objects.requireNonNull(sharedPreferences.getString("password", null)));
+                return map;
+
+            }
+        };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance().addToRequestQueue(stringRequest);;
+    }
+
+    public void getPPPAction(String actionType)
+    {
+        String url = sharedPreferences.getString("api_base", null)+"pppAction.php";
+
+        progressDialog.showDialog();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                progressDialog.hideDialog();
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.getString("status").equals("500")){
+                        linearLayoutPPPStatus.setVisibility(View.GONE);
+                        warningShow(jsonObject.getString("message"));
+
+                    }else if(jsonObject.getString("status").equals("200")){
+                        linearLayoutPPPStatus.setVisibility(View.GONE);
+                        warningShow(jsonObject.getString("message"));
+                    }else{
+                        linearLayoutPPPStatus.setVisibility(View.GONE);
+                        warningShow(jsonObject.getString("message"));
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.hideDialog();
+                linearLayoutPPPStatus.setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams()throws AuthFailureError {
+                Map<String,String> map = new HashMap<>();
+
+                map.put("ppp_name", pppName);
+                map.put("action_type", actionType);
+                map.put("login_ip", Objects.requireNonNull(sharedPreferences.getString("login_ip", null)));
+                map.put("username", Objects.requireNonNull(sharedPreferences.getString("username", null)));
+                map.put("password", Objects.requireNonNull(sharedPreferences.getString("password", null)));
+                return map;
+
+            }
+        };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance().addToRequestQueue(stringRequest);;
+
     }
 
     public void informSmsSend()
     {
         progressDialog.showDialog();
 
-        String url = getString(R.string.base_url)+getString(R.string.idwise_sms_service);
+        String url = URL_config.BASE_URL+URL_config.IDWISE_CLIENT_SMS;
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -680,14 +699,14 @@ public class ClientDetails extends AppCompatActivity {
                 trns.setJwt(jwt);
                 trns.setClientId(id);
                 trns.setName(name);
-                trns.setAdminId(admin_id);
+                trns.setEmpId(emp_id);
                 trns.setTxnType(payment_type);
                 trns.setMethod(payment_method);
                 trns.setDetails(name+", "+pppName+", "+payment_type+", "+payment_method+"-"+mobile_payment_reference);
                 trns.setAmount(amount);
 
                 //Toast.makeText(getApplicationContext(), client_id+"\n"+admin_id+"\n"+payment_type+"\n"+payment_method+"\n"+amount,Toast.LENGTH_LONG).show();
-                admin_make_payment(trns);
+                employee_make_payment(trns);
             }
         });
 
@@ -701,10 +720,10 @@ public class ClientDetails extends AppCompatActivity {
         dlg.show();
     }
 
-    public void admin_make_payment(Trns mTrns)
+    public void employee_make_payment(Trns mTrns)
     {
         progressDialog.showDialog();
-        Call<Trns> call = apiInterface.adminMakePayment(mTrns);
+        Call<Trns> call = apiInterface.employeeMakePayment(mTrns);
         call.enqueue(new Callback<Trns>() {
             @SuppressLint("ResourceType")
             @Override
@@ -897,7 +916,5 @@ public class ClientDetails extends AppCompatActivity {
         dlg.show();
 
     }
-
-
 
 }

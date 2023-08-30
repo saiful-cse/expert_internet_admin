@@ -84,39 +84,10 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:background="@color/activity_backround"
-        android:layout_marginTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:id="@+id/dashboard_over_credit"
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textColor="@color/colorPrimaryDark"
-            />
-
-        <TextView
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:id="@+id/dashboard_over_debit"
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textColor="@color/colorPrimaryDark"
-            />
-
-    </LinearLayout>
-
     <TextView
         android:textSize="15sp"
         android:textStyle="bold"
-        android:id="@+id/dashboard_total_invest"
+        android:id="@+id/dashboard_profit"
         android:background="@color/activity_backround"
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
@@ -124,65 +95,6 @@
         android:textAlignment="center"
         android:textColor="@color/colorPrimaryDark"
         />
-
-    <LinearLayout
-        android:background="@color/activity_backround"
-        android:layout_marginTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:id="@+id/dashboard_saifulpercent"
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textColor="@color/colorPrimaryDark" />
-
-        <TextView
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:id="@+id/dashboard_misbapercent"
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textColor="@color/colorPrimaryDark"
-            />
-
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:background="@color/activity_backround"
-        android:layout_marginTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-
-        <TextView
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:id="@+id/dashboard_saifulprofit"
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textColor="@color/colorPrimaryDark" />
-
-        <TextView
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:id="@+id/dashboard_misbaprofit"
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textColor="@color/colorPrimaryDark" />
-
-    </LinearLayout>
-
     </LinearLayout>
 
     <com.github.mikephil.charting.charts.BarChart

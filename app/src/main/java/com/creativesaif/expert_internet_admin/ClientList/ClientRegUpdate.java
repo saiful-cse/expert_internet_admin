@@ -33,6 +33,7 @@ import com.creativesaif.expert_internet_admin.Network.ApiInterface;
 import com.creativesaif.expert_internet_admin.Network.RetrofitApiClient;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
+import com.creativesaif.expert_internet_admin.URL_config;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -225,7 +226,10 @@ public class ClientRegUpdate extends AppCompatActivity {
 
                 if (detailsWrapper.getStatus() == 401) {
                     //Go to phone verification step
-                    loginWarningShow(detailsWrapper.getMessage());
+                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(ClientRegUpdate.this, Login.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                 }
 
                 if (detailsWrapper.getStatus() == 200) {
@@ -314,7 +318,7 @@ public class ClientRegUpdate extends AppCompatActivity {
     public void area_load()
     {
         areaLoader.setVisibility(View.VISIBLE);
-        String url = getString(R.string.base_url)+getString(R.string.area_load);
+        String url = URL_config.BASE_URL+URL_config.AREA_LOAD;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -366,7 +370,10 @@ public class ClientRegUpdate extends AppCompatActivity {
 
                 if (detailsWrapper.getStatus() == 401) {
                     //Go to phone verification step
-                    loginWarningShow(detailsWrapper.getMessage());
+                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(ClientRegUpdate.this, Login.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
 
                 } else if (detailsWrapper.getStatus() == 200) {
                     Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
@@ -385,31 +392,6 @@ public class ClientRegUpdate extends AppCompatActivity {
 
             }
         });
-    }
-
-    public void loginWarningShow(String message){
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setCancelable(false);
-        alert.setTitle("Warning!!");
-        alert.setMessage(message);
-        alert.setIcon(R.drawable.ic_baseline_warning_24);
-
-        alert.setPositiveButton("Login", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                finish();
-                startActivity(new Intent(ClientRegUpdate.this, Login.class));
-            }
-        });
-
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-        AlertDialog dlg = alert.create();
-        dlg.show();
     }
 
     public void warningShow(String message){

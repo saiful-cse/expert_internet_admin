@@ -37,7 +37,7 @@ public class TransactionMonthlyAdapter extends RecyclerView.Adapter<TransactionM
 
         eachTransactionView.tvDate.setText(transaction.getDate());
         eachTransactionView.tvTxnId.setText(transaction.getTxn_id());
-        eachTransactionView.tvuserid.setText(transaction.getUserid());
+        eachTransactionView.tvempid.setText(transaction.getEmpid());
         eachTransactionView.tvMethod.setText(transaction.getMethod());
         eachTransactionView.tvDetails.setText(transaction.getDetails());
         eachTransactionView.tvCredit.setText(transaction.getCredit());
@@ -51,7 +51,7 @@ public class TransactionMonthlyAdapter extends RecyclerView.Adapter<TransactionM
 
     class EachTransactionView extends RecyclerView.ViewHolder {
 
-        TextView tvDate, tvTxnId, tvDetails, tvCredit, tvDebit, tvuserid, tvMethod;
+        TextView tvDate, tvTxnId, tvDetails, tvCredit, tvDebit, tvempid, tvMethod;
 
         public EachTransactionView(@NonNull View itemView) {
             super(itemView);
@@ -61,7 +61,7 @@ public class TransactionMonthlyAdapter extends RecyclerView.Adapter<TransactionM
             tvDetails = itemView.findViewById(R.id.tvtxnDetails);
             tvCredit = itemView.findViewById(R.id.tvtxnCredit);
             tvDebit = itemView.findViewById(R.id.tvtxnDebit);
-            tvuserid = itemView.findViewById(R.id.tvuserid);
+            tvempid = itemView.findViewById(R.id.tvempid);
             tvMethod = itemView.findViewById(R.id.tvmethod);
         }
     }

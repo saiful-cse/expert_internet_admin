@@ -136,7 +136,7 @@
 
                     <TextView
                         android:layout_marginTop="10dp"
-                        android:text="Admin ID"
+                        android:text="Emp ID"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="15sp"
@@ -144,9 +144,9 @@
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="datetime"
+                        android:inputType="number"
                         android:textSize="17sp"
-                        android:id="@+id/edAdminId" />
+                        android:id="@+id/edEmpid" />
 
                     <TextView
                         android:layout_width="match_parent"

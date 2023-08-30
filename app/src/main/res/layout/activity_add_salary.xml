@@ -73,13 +73,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Employee ID: "
+                    android:text="Employee Name"
                     android:textAlignment="center"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <Spinner
-                    android:id="@+id/employeeListSpinner"
+                    android:id="@+id/employee_spinner"
                     android:textAlignment="textEnd"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

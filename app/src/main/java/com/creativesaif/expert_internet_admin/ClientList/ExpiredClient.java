@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.creativesaif.expert_internet_admin.Adapter.ClientAdapter;
+import com.creativesaif.expert_internet_admin.Dashboard.Dashboard;
 import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.Model.Client;
 import com.creativesaif.expert_internet_admin.Model.ClientWrapper;
@@ -114,8 +115,8 @@ public class ExpiredClient extends Fragment {
                 if (clientWrapper.getStatus() == 401) {
                     //Go to phone verification step
                     Toast.makeText(getActivity(), clientWrapper.getMessage(), Toast.LENGTH_LONG).show();
-                    getActivity().finish();
                     Intent intent = new Intent(getActivity(), Login.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
 
                 }else if (clientWrapper.getStatus() == 404) {

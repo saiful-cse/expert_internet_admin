@@ -36,6 +36,7 @@ import com.creativesaif.expert_internet_admin.Network.ApiInterface;
 import com.creativesaif.expert_internet_admin.Network.RetrofitApiClient;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
+import com.creativesaif.expert_internet_admin.URL_config;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -93,7 +94,7 @@ public class NoteEdit extends AppCompatActivity {
     public void loadNote() {
 
         progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.note_view);
+        String url = URL_config.BASE_URL+URL_config.NOTE_VIEW;
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -142,7 +143,7 @@ public class NoteEdit extends AppCompatActivity {
     public void updateNote(String note) {
 
         progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.note_edit);
+        String url = URL_config.BASE_URL+URL_config.NOTE_EDIT;
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override

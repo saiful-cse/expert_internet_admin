@@ -27,6 +27,7 @@ import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
+import com.creativesaif.expert_internet_admin.URL_config;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +44,7 @@ public class MakeTransaction extends AppCompatActivity {
     String txn_type, txn_method, amount, details;
     Button buttonSubmmit;
     SharedPreferences sharedPreferences;
-    private String jwt, admin_id;
+    private String jwt, emp_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,7 @@ public class MakeTransaction extends AppCompatActivity {
                 amount = editTextAmount.getText().toString().trim();
                 details = editTextDetails.getText().toString().trim();
                 jwt = sharedPreferences.getString("jwt", null);
-                admin_id = sharedPreferences.getString("admin_id", null);
+                emp_id = sharedPreferences.getString("employee_id", null);
 
                 if (jwt == null){
                     finish();
@@ -120,7 +121,7 @@ public class MakeTransaction extends AppCompatActivity {
     {
         progressDialog.showDialog();
 
-        String url = getString(R.string.base_url)+getString(R.string.admin_txn);
+        String url = URL_config.BASE_URL+URL_config.EMPLOYEE_MAKE_TXN;
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
 
@@ -170,7 +171,7 @@ public class MakeTransaction extends AppCompatActivity {
                 map.put("method", txn_method);
                 map.put("amount", amount);
                 map.put("details", details);
-                map.put("admin_id", admin_id);
+                map.put("emp_id", emp_id);
                 return map;
 
             }

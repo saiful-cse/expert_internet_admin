@@ -40,6 +40,7 @@ import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
 import com.creativesaif.expert_internet_admin.Salary.AddSalary;
 import com.creativesaif.expert_internet_admin.Salary.SalaryList;
+import com.creativesaif.expert_internet_admin.URL_config;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,7 +85,7 @@ public class NoteView extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if (Objects.equals(sharedPreferences.getString("admin_id", null), "9161")){
+                if (Objects.equals(sharedPreferences.getString("super_admin", null), "1")){
                     startActivity(new Intent(NoteView.this, NoteEdit.class));
                 }
             }
@@ -94,7 +95,7 @@ public class NoteView extends AppCompatActivity {
     public void loadNote() {
 
         progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.note_view);
+        String url = URL_config.BASE_URL+URL_config.NOTE_VIEW;
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override

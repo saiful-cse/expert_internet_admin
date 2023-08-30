@@ -25,18 +25,30 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.creativesaif.expert_internet_admin.Adapter.SalaryAdapter;
+import com.creativesaif.expert_internet_admin.Employees.Employee;
 import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.MainActivity;
 import com.creativesaif.expert_internet_admin.Model.Client;
 import com.creativesaif.expert_internet_admin.Model.ClientWrapper;
 import com.creativesaif.expert_internet_admin.Model.Salary;
 import com.creativesaif.expert_internet_admin.Model.SalaryWrapper;
+import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.Network.ApiInterface;
 import com.creativesaif.expert_internet_admin.Network.RetrofitApiClient;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
 import com.creativesaif.expert_internet_admin.Sms.SmsCreate;
+import com.creativesaif.expert_internet_admin.URL_config;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -50,8 +62,9 @@ import retrofit2.Callback;
 public class SalaryList extends AppCompatActivity {
     public SharedPreferences sharedPreferences;
     public String jwt;
-    public Spinner adminSpinner;
-    public String adminId;
+    public Spinner employee_spinner;
+    public String empId;
+    private JSONArray jsonArrayEmployee;
     public ProgressDialog progressDialog;
 
     RecyclerView recyclerView;
@@ -72,9 +85,9 @@ public class SalaryList extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
 
 
-        adminSpinner = findViewById(R.id.adminidListSpinner);
+        employee_spinner = findViewById(R.id.employee_spinner);
         jwt = sharedPreferences.getString("jwt", null);
-        adminId = sharedPreferences.getString("admin_id", null);
+        empId = sharedPreferences.getString("employee_id", null);
 
         salaryArrayList = new ArrayList<>();
         salaryAdapter = new SalaryAdapter(this, salaryArrayList);
@@ -85,34 +98,36 @@ public class SalaryList extends AppCompatActivity {
         apiInterface = RetrofitApiClient.getClient().create(ApiInterface.class);
         salary = new Salary();
 
-        List<String> employeeList = new ArrayList<>();
-        if (adminId.equals("9161") || adminId.equals("8991")){
-            employeeList.add("9588");
-            employeeList.add("0713");
+        if(Objects.equals(sharedPreferences.getString("super_admin", null), "1")){
+            employee_load();
         }else{
-            employeeList.add(adminId);
+            salary.setJwt(jwt);
+            salary.setEmployee_id(empId);
+            loadSalary(salary);
         }
 
-        ArrayAdapter<String> employeeArrayAdapter = new ArrayAdapter<>(SalaryList.this,
-                android.R.layout.simple_spinner_dropdown_item, employeeList);
-        adminSpinner.setAdapter(employeeArrayAdapter);
-
         //Spinner item choice and click event
-        adminSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        employee_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // On selecting a spinner item
-                adminId = parentView.getItemAtPosition(position).toString();
-                if (!isConnected()) {
-                    Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
 
-                } else {
-                    //sent value on client model class
+                if (Objects.equals(sharedPreferences.getString("super_admin", null), "1")){
+                    try {
+                        JSONObject json = jsonArrayEmployee.getJSONObject(position);
+
+                        salary.setJwt(jwt);
+                        salary.setEmployee_id(json.getString("employee_id"));
+                        loadSalary(salary);
+
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }else{
                     salary.setJwt(jwt);
-                    salary.setEmployee_id(adminId);
+                    salary.setEmployee_id(empId);
                     loadSalary(salary);
                 }
-
             }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
@@ -126,11 +141,52 @@ public class SalaryList extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if (Objects.equals(sharedPreferences.getString("admin_id", null), "9161") || Objects.equals(sharedPreferences.getString("admin_id", null), "8991")){
+                if (Objects.equals(sharedPreferences.getString("super_admin", null), "1")){
                     startActivity(new Intent(SalaryList.this, AddSalary.class));
                 }
             }
         });
+    }
+
+    public void employee_load()
+    {
+        String url = URL_config.BASE_URL+URL_config.EMPLOYEE_LIST;
+
+        progressDialog.showDialog();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                progressDialog.hideDialog();
+                ArrayList<String> employee_list = new ArrayList<>();
+                try {
+
+                    jsonArrayEmployee = new JSONArray(response);
+
+                    for(int i=0; i<jsonArrayEmployee.length(); i++) {
+                        JSONObject jsonObjectItem = jsonArrayEmployee.getJSONObject(i);
+                        employee_list.add(jsonObjectItem.getString("name"));
+                    }
+
+                    ArrayAdapter<String> AreaArrayAdapter = new ArrayAdapter<>(SalaryList.this,
+                            android.R.layout.simple_spinner_dropdown_item, employee_list);
+                    employee_spinner.setAdapter(AreaArrayAdapter);
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.hideDialog();
+                Toast.makeText(SalaryList.this,error.toString(),Toast.LENGTH_LONG).show();
+                finish();
+            }
+        });
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance().addToRequestQueue(stringRequest);;
     }
 
     public void loadSalary(Salary mSalary) {
@@ -189,10 +245,9 @@ public class SalaryList extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

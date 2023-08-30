@@ -6,73 +6,62 @@ import com.creativesaif.expert_internet_admin.Model.DetailsWrapper;
 import com.creativesaif.expert_internet_admin.Model.Salary;
 import com.creativesaif.expert_internet_admin.Model.SalaryWrapper;
 import com.creativesaif.expert_internet_admin.Model.Trns;
+import com.creativesaif.expert_internet_admin.URL_config;
+
+import java.net.URL;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 
-public interface ApiInterface {
+public interface ApiInterface{
 //
-//    String base_url = "http://192.168.1.4/";
-//    String second_path = "api/expert_internet_api/";
-//    String api_version = "exp-v5.0/";
+    String DOMAIN_URL = "http://192.168.1.8/";
+//    String DOMAIN_URL = "https://expert-internet.net/";
 
-    String base_url = "https://expert-internet.net/";
-    String second_path = "api/";
-    String api_version = "exp-v5.0/";
-
-    @POST(base_url+second_path+api_version+"client/registered_client.php")
+    @POST(URL_config.BASE_URL+URL_config.REGISTER_CLIENT)
     Call<ClientWrapper> getRegistered_client(@Body Client client);
 
-    @POST(base_url+second_path+api_version+"client/unregistered_client.php")
+    @POST(URL_config.BASE_URL+URL_config.UNREGISTER_CLIENT)
     Call<ClientWrapper> getUnRegistered_client(@Body Client client);
 
-    @POST(base_url+second_path+api_version+"client/expired_client.php")
+    @POST(URL_config.BASE_URL+URL_config.EXPIRED_CLIENT)
     Call<ClientWrapper> getExpired_client(@Body Client client);
 
-    @POST("http://mt.baycombd.com/expnet_api/pppActiveList.php")
+    @POST("---")
     Call<ClientWrapper> getOnline_client();
 
-    @POST(base_url+second_path+api_version+"client/client_details.php")
-    Call<DetailsWrapper> getClientDetails(@Body Client client);
-
-    @POST(base_url+second_path+api_version+"client/client_details_id.php")
+    @POST(URL_config.BASE_URL+URL_config.CLIENT_DETAILS_ID)
     Call<DetailsWrapper> getClientDetailsId(@Body Client client);
 
-    @POST(base_url+second_path+api_version+"txn/admin_make_payment.php")
-    Call<Trns> adminMakePayment(@Body Trns trns);
+    @POST(URL_config.BASE_URL+URL_config.EMPLOYEE_MAKE_PAYMENT)
+    Call<Trns> employeeMakePayment(@Body Trns trns);
 
-    @POST(base_url+second_path+api_version+"client/client_details_update.php")
+    @POST(URL_config.BASE_URL+URL_config.CLIENT_DETAILS_UPDATE)
     Call<DetailsWrapper> updateDetails(@Body Client client);
 
-    @POST(base_url+second_path+api_version+"client/client_registration_update.php")
+    @POST(URL_config.BASE_URL+URL_config.CLIENT_REG_UPDATE)
     Call<DetailsWrapper> updateRegistration(@Body Client client);
 
-    @POST(base_url+second_path+api_version+"client/client_registration.php")
+    @POST(URL_config.BASE_URL+URL_config.CLIENT_REG)
     Call<DetailsWrapper> clientRegistration(@Body Client client);
 
-    @POST(base_url+second_path+api_version+"/sms/expired_clients_sms.php")
-    Call<DetailsWrapper> bilExpireWarningSend(@Body Client client);
+    @POST(URL_config.BASE_URL+URL_config.EXPIRING_WARNING_SMS)
+    Call<DetailsWrapper> bilExpiringWarningSms(@Body Client client);
 
-    @POST(base_url+second_path+api_version+"txn/salary_list.php")
+    @POST(URL_config.BASE_URL+URL_config.SALARY_LIST)
     Call<SalaryWrapper> getSalary(@Body Salary salary);
 
-    @POST(base_url+second_path+api_version+"txn/add_salary.php")
+    @POST(URL_config.BASE_URL+URL_config.SALARY_ADD)
     Call<SalaryWrapper> addSalary(@Body Salary salary);
 
-    @POST(base_url+second_path+api_version+"client/search.php")
+    @POST(URL_config.BASE_URL + URL_config.SEARCH)
     Call<ClientWrapper> search_data(@Body Client client);
 
-    @POST(base_url+second_path+api_version+"/client/expired_client_disconnect.php")
+    @POST(URL_config.BASE_URL+URL_config.EXPIRED_CLIENT_DISCONNECT)
     Call<DetailsWrapper> expiredClientDisconnect(@Body Client client);
 
-    @POST(base_url+second_path+api_version+"/sms/expired_client_disconnect_sms.php")
-    Call<DetailsWrapper> expiredClientDisconnectSms(@Body Client client);
-
-    @POST("http://103.134.39.238/pppAction.php")
+    @POST("http://103.134.39.218/expnet_api/pppAction.php")
     Call<DetailsWrapper> getPPPAction(@Body Client client);
-
-    @POST("http://103.134.39.238/pppStatus.php")
-    Call<DetailsWrapper> getPPPStatus(@Body Client client);
 
 }

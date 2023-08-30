@@ -36,6 +36,7 @@ import com.creativesaif.expert_internet_admin.Network.ApiInterface;
 import com.creativesaif.expert_internet_admin.Network.RetrofitApiClient;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
+import com.creativesaif.expert_internet_admin.URL_config;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,6 +48,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import retrofit2.Call;
@@ -74,6 +76,8 @@ public class ClientDetailsEdit extends AppCompatActivity{
     //Declaring progress dialog
     private ProgressDialog progressDialog;
 
+    private SharedPreferences sharedPreferences;
+
     //Declaring spinner
     private Spinner areaSpinner,zoneSpinner, packageSpinner;
 
@@ -83,7 +87,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
     private ApiInterface apiInterface;
     private Client client;
     final Calendar myCalendar= Calendar.getInstance();
-    private String admin_id;
+    private String employee_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,9 +100,11 @@ public class ClientDetailsEdit extends AppCompatActivity{
         SharedPreferences preferences = this.getSharedPreferences("users", MODE_PRIVATE);
         jwt = preferences.getString("jwt", null);
 
+        sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
+
         apiInterface = RetrofitApiClient.getClient().create(ApiInterface.class);
         client = new Client();
-        admin_id = preferences.getString("admin_id", null);
+        employee_id = preferences.getString("employee_id", null);
         /*
         Id initialize
          */
@@ -136,7 +142,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
             @Override
             public void onClick(View view) {
 
-                if (admin_id.equals("9161")){
+                if (employee_id.equals("9161")){
                     new DatePickerDialog(ClientDetailsEdit.this,date,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
                 }else{
                    warningShow("You don't have permission to edit. In case you need to edit, contact with Super Admin");
@@ -147,10 +153,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
         //Declaring Button
         Button buttonUpdate = findViewById(R.id.update_button);
 
-        if (id == null ){
-            loginWarningShow("Session expired!!");
-
-        }else if (!isNetworkConnected()) {
+        if (!isNetworkConnected()) {
             Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
 
         }else{
@@ -211,11 +214,10 @@ public class ClientDetailsEdit extends AppCompatActivity{
                         disable_date = df.format(c);
                     }
 
-                    if(client_mode.equals("Disable") && !admin_id.equals("9161")){
+                    if(client_mode.equals("Disable") && !employee_id.equals("9161")){
                         warningShow("You don't have permission to Disable. In case you need to disable, contact with Super Admin");
 
                     } else{
-
                         client.setJwt(jwt);
                         client.setId(id);
                         client.setMode(client_mode);
@@ -272,7 +274,6 @@ public class ClientDetailsEdit extends AppCompatActivity{
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // On selecting a spinner item
                 selectedPackage = parentView.getItemAtPosition(position).toString();
-
             }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
@@ -299,7 +300,10 @@ public class ClientDetailsEdit extends AppCompatActivity{
 
                 if (detailsWrapper.getStatus() == 401) {
                     //Go to phone verification step
-                    loginWarningShow(detailsWrapper.getMessage());
+                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(ClientDetailsEdit.this, Login.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                 }
 
                 if (detailsWrapper.getStatus() == 200) {
@@ -350,6 +354,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                     ArrayAdapter<String> packageArrayAdapter = new ArrayAdapter<>(ClientDetailsEdit.this,
                          android.R.layout.simple_spinner_dropdown_item, packageList);
                     packageSpinner.setAdapter(packageArrayAdapter);
+
                     int spinnerPosition = packageArrayAdapter.getPosition(detailsWrapper.getPkgId());
                     packageSpinner.setSelection(spinnerPosition);
 
@@ -389,7 +394,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
     //Area load
     public void area_load()
     {
-        String url = getString(R.string.base_url)+getString(R.string.area_load);
+        String url = URL_config.BASE_URL+URL_config.AREA_LOAD;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
@@ -406,6 +411,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                     ArrayAdapter<String> AreaArrayAdapter = new ArrayAdapter<>(ClientDetailsEdit.this,
                             android.R.layout.simple_spinner_dropdown_item, areaList);
                     areaSpinner.setAdapter(AreaArrayAdapter);
+
                     int spinnerPosition2 = AreaArrayAdapter.getPosition(existArea);
                     areaSpinner.setSelection(spinnerPosition2);
 
@@ -422,7 +428,6 @@ public class ClientDetailsEdit extends AppCompatActivity{
             }
         });
         MySingleton.getInstance().addToRequestQueue(stringRequest);
-
     }
 
     public void updateDetails(Client client) {
@@ -443,7 +448,10 @@ public class ClientDetailsEdit extends AppCompatActivity{
 
                 if (detailsWrapper.getStatus() == 401) {
                     //Go to phone verification step
-                    loginWarningShow(detailsWrapper.getMessage());
+                    Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(ClientDetailsEdit.this, Login.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
 
                 } else if (detailsWrapper.getStatus() == 200) {
                     Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
@@ -459,34 +467,8 @@ public class ClientDetailsEdit extends AppCompatActivity{
             public void onFailure(Call<DetailsWrapper> call, Throwable t) {
                 progressDialog.hideDialog();
                 Toast.makeText(getApplicationContext(), "Failure: "+t.toString(), Toast.LENGTH_LONG).show();
-
             }
         });
-    }
-
-    public void loginWarningShow(String message){
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setCancelable(false);
-        alert.setTitle("Warning!!");
-        alert.setMessage(message);
-        alert.setIcon(R.drawable.ic_baseline_warning_24);
-
-        alert.setPositiveButton("Login", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                finish();
-                startActivity(new Intent(ClientDetailsEdit.this, Login.class));
-            }
-        });
-
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-        AlertDialog dlg = alert.create();
-        dlg.show();
     }
 
     public void warningShow(String message){

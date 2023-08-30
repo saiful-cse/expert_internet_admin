@@ -77,9 +77,9 @@ public class UnRegisteredClient extends Fragment {
                 if (jwt == null) {
                     //Go to phone verification step
                     Toast.makeText(getContext(), "Session expired!!", Toast.LENGTH_LONG).show();
-                    getActivity().finish();
                     Intent intent = new Intent(getActivity(), Login.class);
-                    getActivity().startActivity(intent);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
 
                 } else if (!isConnected()) {
                     Toast.makeText(getContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();

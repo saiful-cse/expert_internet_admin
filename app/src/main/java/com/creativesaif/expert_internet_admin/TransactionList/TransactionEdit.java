@@ -28,6 +28,8 @@ import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
+import com.creativesaif.expert_internet_admin.Sms.SmsCreate;
+import com.creativesaif.expert_internet_admin.URL_config;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,8 +45,8 @@ import java.util.Map;
 
 public class TransactionEdit extends AppCompatActivity {
 
-    EditText edTxnId, edDate, edAdmnid, edDetails, edCredit, edDebit;
-    String jwt, txnId, date, adminid, details, credit, debit;
+    EditText edTxnId, edDate, edEmpId, edDetails, edCredit, edDebit;
+    String jwt, txnId, date, empId, details, credit, debit;
     Button btnSearch, btnDelete, btnUpdate;
     TextView tvClientId, tvClientName, tvtype;
     private SharedPreferences sharedPreferences;
@@ -71,7 +73,7 @@ public class TransactionEdit extends AppCompatActivity {
         //edit text
         edTxnId = findViewById(R.id.input_txn_id);
         edDate = findViewById(R.id.edDate);
-        edAdmnid = findViewById(R.id.edAdminId);
+        edEmpId = findViewById(R.id.edEmpid);
         edDetails = findViewById(R.id.editDetails);
         edCredit = findViewById(R.id.editAmountofCredit);
         edDebit = findViewById(R.id.editAmountofDebit);
@@ -91,7 +93,7 @@ public class TransactionEdit extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 txnId = edTxnId.getText().toString().trim();
-                String admin_id = sharedPreferences.getString("admin_id", null);
+                String admin_id = sharedPreferences.getString("employee_id", null);
 
                 if(!isNetworkConnected())
                 {
@@ -170,7 +172,7 @@ public class TransactionEdit extends AppCompatActivity {
                 date = edDate.getText().toString().trim();
 
                 details = edDetails.getText().toString().trim();
-                adminid = edAdmnid.getText().toString().trim();
+                empId = edEmpId.getText().toString().trim();
                 credit = edCredit.getText().toString().trim();
                 debit = edDebit.getText().toString().trim();
                 jwt = sharedPreferences.getString("jwt", null);
@@ -185,7 +187,7 @@ public class TransactionEdit extends AppCompatActivity {
                 }else if(date.isEmpty()){
                     Snackbar.make(findViewById(android.R.id.content),"Date cannot empty",Snackbar.LENGTH_LONG).show();
 
-                }else if(adminid.isEmpty()){
+                }else if(empId.isEmpty()){
                     Snackbar.make(findViewById(android.R.id.content),"Admin ID cannot empty",Snackbar.LENGTH_LONG).show();
 
                 }else if(details.isEmpty()){
@@ -237,7 +239,7 @@ public class TransactionEdit extends AppCompatActivity {
     public void txn_load(String txnId)
     {
         progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.txn_details)+"?txn_id="+txnId;
+        String url = URL_config.BASE_URL+URL_config.TXN_DETAILS +"?txn_id="+txnId;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
@@ -270,7 +272,7 @@ public class TransactionEdit extends AppCompatActivity {
                             tvtype.setText(jsonObject1.getString("type"));
 
                             edDate.setText(jsonObject1.getString("date"));
-                            edAdmnid.setText(jsonObject1.getString("admin_id"));
+                            edEmpId.setText(jsonObject1.getString("emp_id"));
                             edDetails.setText(jsonObject1.getString("details"));
                             edCredit.setText(jsonObject1.getString("credit"));
                             edDebit.setText(jsonObject1.getString("debit"));
@@ -301,7 +303,7 @@ public class TransactionEdit extends AppCompatActivity {
     public void txn_delete(final String txnId)
     {
         progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.txn_delete);
+        String url = URL_config.BASE_URL+URL_config.TXN_DELETE;
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -358,7 +360,7 @@ public class TransactionEdit extends AppCompatActivity {
     public void txn_update()
     {
         progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.txn_update);
+        String url = URL_config.BASE_URL+URL_config.TXN_UPDATE;
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
 
@@ -368,7 +370,6 @@ public class TransactionEdit extends AppCompatActivity {
                 progressDialog.hideDialog();
 
                 try{
-
                     JSONObject jsonObject = new JSONObject(response);
                     String status = jsonObject.getString("status");
                     String message = jsonObject.getString("message");
@@ -379,7 +380,10 @@ public class TransactionEdit extends AppCompatActivity {
 
                     }else if(status.equals("401")){
 
-                        warningShow(message);
+                        Toast.makeText(TransactionEdit.this, message,Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(TransactionEdit.this, Login.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
 
                     }else{
                         Toast.makeText(TransactionEdit.this, message,Toast.LENGTH_LONG).show();
@@ -404,7 +408,7 @@ public class TransactionEdit extends AppCompatActivity {
                 map.put("jwt", jwt);
                 map.put("txn_id", txnId);
                 map.put("date", date);
-                map.put("admin_id", adminid);
+                map.put("emp_id", empId);
                 map.put("details", details);
                 map.put("credit", credit);
                 map.put("debit", debit);

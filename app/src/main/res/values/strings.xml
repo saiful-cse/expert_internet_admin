@@ -8,7 +8,6 @@
     <string name="action_settings">Settings</string>
 
     <!-- navigation drawer item name -->
-    <string name="menu_timeline">News Feed</string>
     <string name="menu_dashboard">Dashboard</string>
     <string name="menu_clientlist">Client List</string>
     <string name="menu_search">Search</string>
@@ -39,51 +38,7 @@
     <string name="title_txn_create">Transaction Create</string>
     <string name="title_sms_history">SMS History</string>
 
-    <!--                server URL              -->
-
-    <!-- base url -->
-<!--    <string name="base_url">http://192.168.1.4/API/expert_internet_api/exp-v5.0/</string>-->
-
-    <string name="base_url">https://expert-internet.net/api/exp-v5.0/</string>
-
-    <!-- news script directory -->
-    <!-- Search -->
-    <string name="search">search/search.php?q=</string>
-
-    <!-- Client txn -->
-    <string name="payment_details">txn/payment_details.php</string>
-    <string name="client_txn">txn/make_txn.php</string>
-    <string name="all_txn">txn/all_txn.php</string>
-    <string name="total_credit_debit">txn/total_credit_debit.php</string>
-    <string name="admin_txn">txn/admin_make_txn.php</string>
-    <string name="txn_details">txn/txn_details.php</string>
-    <string name="txn_delete">txn/txn_delete.php</string>
-    <string name="txn_update">txn/txn_update.php</string>
-    <string name="note_view">note/note_view.php</string>
-    <string name="note_edit">note/note_edit.php</string>
-
-    <!-- Dashboard -->
-    <string name="dashboard_data">dashboard/read.php</string>
-
-    <!-- Notice -->
-    <string name="area_sms">sms/areawise_sms_service.php</string>
-
-    <!-- Feedback -->
-    <string name="feedback_read">feedback/read.php</string>
-
-    <!-- Sms service -->
-    <string name="enabled_client_sms">sms/enabled_clients_sms.php</string>
-    <string name="idwise_sms_service">sms/idwise_sms_service.php</string>
-    <string name="sms_history">sms/sms_history.php</string>
-
-
-    <!-- Area -->
-    <string name="area_load">area/area.php</string>
     <string name="title_activity_login">LoginActivity</string>
-
-
-    <!-- Login -->
-    <string name="login">admin/login.php</string>
 
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>

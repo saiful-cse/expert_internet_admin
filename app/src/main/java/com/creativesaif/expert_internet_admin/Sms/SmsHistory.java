@@ -18,6 +18,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.R;
+import com.creativesaif.expert_internet_admin.URL_config;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import org.json.JSONArray;
@@ -96,7 +97,7 @@ public class SmsHistory extends AppCompatActivity {
 
         mShimmerViewContainer.startShimmer();
         isLoading = false;
-        String url = getString(R.string.base_url)+getString(R.string.sms_history);
+        String url = URL_config.BASE_URL+URL_config.SMS_HISTORY;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
@@ -166,7 +167,7 @@ public class SmsHistory extends AppCompatActivity {
 
         progressBarMore.setVisibility(View.VISIBLE);
         isLoading = false;
-        String url = getString(R.string.base_url)+getString(R.string.sms_history)+"?last_id="+last_id;
+        String url = URL_config.BASE_URL+URL_config.SMS_HISTORY+"?last_id="+last_id;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override

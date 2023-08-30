@@ -2,13 +2,13 @@ package com.creativesaif.expert_internet_admin.TransactionList;
 
 public class Transaction {
 
-    private String txn_id, client_id, name, date, credit, debit, details, userid, method;
+    private String txn_id, client_id, name, date, credit, debit, details, empid, method;
 
     public Transaction(){
 
     }
 
-    public Transaction(String txn_id, String client_id, String name, String date, String credit, String debit, String details, String userid, String method) {
+    public Transaction(String txn_id, String client_id, String name, String date, String credit, String debit, String details, String empid, String method) {
         this.txn_id = txn_id;
         this.client_id = client_id;
         this.name = name;
@@ -16,7 +16,7 @@ public class Transaction {
         this.credit = credit;
         this.debit = debit;
         this.details = details;
-        this.userid = userid;
+        this.empid = empid;
         this.method = method;
     }
 
@@ -77,12 +77,12 @@ public class Transaction {
         this.details = details;
     }
 
-    public String getUserid() {
-        return userid;
+    public String getEmpid() {
+        return empid;
     }
 
-    public void setUserid(String userid) {
-        this.userid = userid;
+    public void setEmpid(String empid) {
+        this.empid = empid;
     }
 
     public String getMethod() {

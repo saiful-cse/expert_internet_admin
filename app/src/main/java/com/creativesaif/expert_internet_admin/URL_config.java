@@ -1,0 +1,46 @@
+package com.creativesaif.expert_internet_admin;
+
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
+public class URL_config {
+
+    //public static final String BASE_URL = "https://expert-internet.net/api/exp-v5.0/";
+    public static final String BASE_URL = "http://192.168.1.8/API/expert_internet_api/exp-v5.0/";
+
+    public static final String SEARCH = "client/search.php";
+    public static final String PAYMENT_DETAILS = "txn/payment_details.php";
+    public static final String DATEWISE_ALL_TXN = "txn/all_txn.php";
+    public static final String TOTAL_DEBIT_CREDIT_CASH = "txn/total_credit_debit.php";
+    public static final String EMPLOYEE_MAKE_TXN = "txn/employee_make_txn.php";
+    public static final String TXN_DETAILS = "txn/txn_details.php";
+    public static final String TXN_DELETE = "txn/txn_delete.php";
+    public static final String TXN_UPDATE = "txn/txn_update.php";
+    public static final String NOTE_VIEW = "note/note_view.php";
+    public static final String NOTE_EDIT = "note/note_edit.php";
+    public static final String DASHBOARD_READ = "dashboard/read.php";
+    public static final String DASHBOARD_VIEW = "dashboard/view.php";
+    public static final String AREAWISE_SMS = "sms/areawise_sms_service.php";
+    public static final String ENABLE_CLIENT_SMS = "sms/enabled_clients_sms.php";
+    public static final String IDWISE_CLIENT_SMS = "sms/idwise_sms_service.php";
+    public static final String AREA_LOAD = "area/area.php";
+    public static final String SMS_HISTORY = "sms/sms_history.php";
+    public static final String LOGIN = "login/login.php";
+    public static final String REGISTER_CLIENT = "client/registered_client.php";
+    public static final String UNREGISTER_CLIENT = "client/unregistered_client.php";
+    public static final String EXPIRED_CLIENT = "client/expired_client.php";
+    public static final String CLIENT_DETAILS_ID = "client/client_details_id.php";
+    public static final String EMPLOYEE_MAKE_PAYMENT = "txn/employee_make_payment.php";
+    public static final String CLIENT_DETAILS_UPDATE = "client/client_details_update.php";
+    public static final String  CLIENT_REG_UPDATE = "client/client_registration_update.php";
+    public static final String CLIENT_REG = "client/client_registration.php";
+    public static final String EXPIRING_WARNING_SMS = "sms/expiring_clients_sms.php";
+    public static final String SALARY_LIST = "txn/salary_list.php";
+    public static final String SALARY_ADD = "txn/add_salary.php";
+    public static final String EXPIRED_CLIENT_DISCONNECT = "client/expired_client_disconnect.php";
+    public static final String UPSTREAM_BILL_LIST = "txn/upstream_bill_list.php?emp_id=";
+    public static final String EMPLOYEE_LIST = "employee/employee_list.php";
+}

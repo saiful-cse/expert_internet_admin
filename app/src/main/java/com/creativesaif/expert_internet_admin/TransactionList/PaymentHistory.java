@@ -19,6 +19,7 @@ import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
+import com.creativesaif.expert_internet_admin.URL_config;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,7 +67,7 @@ public class PaymentHistory extends AppCompatActivity {
     private void load_payment_details(String got_id) {
 
         progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.payment_details)+"?id="+got_id;
+        String url = URL_config.BASE_URL + URL_config.PAYMENT_DETAILS +"?id="+got_id;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

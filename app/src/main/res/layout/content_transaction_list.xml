@@ -97,7 +97,7 @@
                             <TextView
                                 android:layout_width="60dp"
                                 android:layout_height="wrap_content"
-                                android:text="AdminID"
+                                android:text="EmpID"
                                 android:textAlignment="center"
                                 android:textColor="#ffffff"
                                 android:textSize="15sp" />

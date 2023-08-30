@@ -6,6 +6,11 @@
     <group android:checkableBehavior="single">
 
         <item
+            android:id="@+id/nav_access_control"
+            android:icon="@drawable/baseline_people_alt_24"
+            android:title="Employee"/>
+
+        <item
             android:id="@+id/nav_dashboard"
             android:icon="@drawable/ic_dashboard_black_24dp"
             android:title="@string/menu_dashboard"/>
@@ -23,10 +28,6 @@
             android:id="@+id/nav_search"
             android:icon="@drawable/ic_baseline_search_24"
             android:title="Client Search"/>
-        <item
-            android:id="@+id/nav_txn_search"
-            android:icon="@drawable/ic_baseline_search_24"
-            android:title="bKash Txn Search"/>
 
         <item
             android:id="@+id/nav_note"
@@ -56,6 +57,10 @@
             android:id="@+id/nav_salarylist"
             android:icon="@drawable/ic_txn_list_black_24dp"
             android:title="Salary"/>
+        <item
+            android:id="@+id/nav_device"
+            android:icon="@drawable/baseline_device_hub_24"
+            android:title="Device"/>
     </group>
 
 </menu>

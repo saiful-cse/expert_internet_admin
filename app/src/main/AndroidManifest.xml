@@ -11,7 +11,7 @@
         android:name=".MySingleton"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="Testing Local"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
@@ -20,6 +20,15 @@
         <activity android:name=".Webview.Webviewpage" />
         <activity android:name=".Search.Search_Page" />
         <activity android:name=".ClientList.ClientReg" />
+        <activity
+            android:name=".Employees.Employee"
+            android:label="Employees" />
+        <activity
+            android:name=".Employees.Employee_add"
+            android:label="Employees Add+" />
+        <activity
+            android:name=".DeviceUrl.DeviceUrl"
+            android:label="Device Credential" />
         <activity
             android:name=".ClientList.ClientRegUpdate"
             android:label="Registration Update" />

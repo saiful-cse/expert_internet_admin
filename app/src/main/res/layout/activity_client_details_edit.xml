@@ -192,6 +192,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
                             android:textAlignment="center"
+                            android:inputType="phone"
                             android:textSize="15sp" />
                     </LinearLayout>
 
@@ -351,6 +352,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
                             android:textAlignment="center"
+                            android:inputType="numberDecimal"
                             android:textSize="15sp" />
                     </LinearLayout>
 
@@ -375,6 +377,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
                             android:textAlignment="center"
+                            android:inputType="number"
                             android:textSize="15sp" />
                     </LinearLayout>
 

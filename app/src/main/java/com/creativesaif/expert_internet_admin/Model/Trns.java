@@ -30,9 +30,9 @@ public class Trns {
     @SerializedName("method")
     @Expose
     private String method;
-    @SerializedName("admin_id")
+    @SerializedName("emp_id")
     @Expose
-    private String adminId;
+    private String empId;
 
     @SerializedName("client_id")
     @Expose
@@ -78,12 +78,12 @@ public class Trns {
         this.method = method;
     }
 
-    public String getAdminId() {
-        return adminId;
+    public String getEmpId() {
+        return empId;
     }
 
-    public void setAdminId(String adminId) {
-        this.adminId = adminId;
+    public void setEmpId(String empId) {
+        this.empId = empId;
     }
 
     public String getClientId() {

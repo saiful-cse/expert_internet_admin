@@ -32,6 +32,7 @@ import com.creativesaif.expert_internet_admin.Network.ApiInterface;
 import com.creativesaif.expert_internet_admin.Network.RetrofitApiClient;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
+import com.creativesaif.expert_internet_admin.URL_config;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -161,7 +162,7 @@ public class ClientReg extends AppCompatActivity {
     //Area load
     public void area_load()
     {
-        String url = getString(R.string.base_url)+getString(R.string.area_load);
+        String url = URL_config.BASE_URL+URL_config.AREA_LOAD;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override

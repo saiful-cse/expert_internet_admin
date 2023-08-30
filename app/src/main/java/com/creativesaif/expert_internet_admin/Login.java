@@ -38,7 +38,6 @@ public class Login extends AppCompatActivity {
     ProgressBar progressBar;
     TextView viewversionname;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +58,7 @@ public class Login extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        editTextUserId.setText(sharedPreferences.getString("admin_id", null));
+        editTextUserId.setText(sharedPreferences.getString("employee_id", null));
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,7 +103,7 @@ public class Login extends AppCompatActivity {
     public void login()
     {
         progressBar.setVisibility(View.VISIBLE);
-        String url = getString(R.string.base_url)+getString(R.string.login);
+        String url = URL_config.BASE_URL+URL_config.LOGIN;
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -120,8 +119,9 @@ public class Login extends AppCompatActivity {
                     if (status.equals("200")) {
 
                         //store jwt and userid
-                        sharedPreferences.edit().putString("admin_id", jsonObject.getString("admin_id")).apply();
+                        sharedPreferences.edit().putString("employee_id", jsonObject.getString("employee_id")).apply();
                         sharedPreferences.edit().putString("jwt", jsonObject.getString("jwt")).apply();
+                        sharedPreferences.edit().putString("super_admin", jsonObject.getString("super_admin")).apply();
                         sharedPreferences.edit().putString("dashboard", jsonObject.getString("dashboard")).apply();
                         sharedPreferences.edit().putString("client_add", jsonObject.getString("client_add")).apply();
                         sharedPreferences.edit().putString("client_details_update", jsonObject.getString("client_details_update")).apply();
@@ -130,6 +130,13 @@ public class Login extends AppCompatActivity {
                         sharedPreferences.edit().putString("txn_edit", jsonObject.getString("txn_edit")).apply();
                         sharedPreferences.edit().putString("upstream_bill", jsonObject.getString("upstream_bill")).apply();
                         sharedPreferences.edit().putString("salary_add", jsonObject.getString("salary_add")).apply();
+                        sharedPreferences.edit().putString("device", jsonObject.getString("device")).apply();
+                        sharedPreferences.edit().putString("note", jsonObject.getString("note")).apply();
+
+                        sharedPreferences.edit().putString("api_base", jsonObject.getString("api_base")).apply();
+                        sharedPreferences.edit().putString("login_ip", jsonObject.getString("login_ip")).apply();
+                        sharedPreferences.edit().putString("username", jsonObject.getString("username")).apply();
+                        sharedPreferences.edit().putString("password", jsonObject.getString("password")).apply();
 
                         Intent intent = new Intent(Login.this, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -158,7 +165,7 @@ public class Login extends AppCompatActivity {
             protected Map<String, String> getParams()throws AuthFailureError {
                 Map<String,String> map = new HashMap<>();
 
-                map.put("admin_id", editTextUserId.getText().toString().trim());
+                map.put("employee_id", editTextUserId.getText().toString().trim());
                 map.put("pin", editTextUserPin.getText().toString().trim());
                 return map;
 

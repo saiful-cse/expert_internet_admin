@@ -67,6 +67,18 @@ public class Client {
         @Expose
         private String takeTime;
 
+        @SerializedName("ccr_login_ip")
+        @Expose
+        private String ccrLoginIp;
+
+        @SerializedName("ccr_username")
+        @Expose
+        private String ccrUsername;
+
+        @SerializedName("ccr_password")
+        @Expose
+        private String ccrPassword;
+
         public String getTakeTime() {
             return takeTime;
         }
@@ -219,5 +231,15 @@ public class Client {
         }
 
 
+        public void setCcrLoginIp(String loginIp){
+            this.ccrLoginIp = loginIp;
+        }
+
+        public void setCcrUsername(String ccrUsername){
+            this.ccrUsername = ccrUsername;
+        }
+        public void setCcrPassword(String ccrPassword){
+            this.ccrPassword = ccrPassword;
+        }
 
 }

@@ -12,13 +12,14 @@ public class Salary {
     @Expose
     private String id;
 
-    @SerializedName("admin_id")
-    @Expose
-    private String admin_id;
 
     @SerializedName("employee_id")
     @Expose
     private String employee_id;
+
+    @SerializedName("super_admin_id")
+    @Expose
+    private String superAdminId;
 
     @SerializedName("month")
     @Expose
@@ -46,11 +47,11 @@ public class Salary {
         this.employee_id = employee_id;
     }
 
-    public String getAdmin_id(){
-        return admin_id;
+    public String getSuperAdminId(){
+        return superAdminId;
     }
-    public void setAdmin_id(String admin_id){
-        this.admin_id = admin_id;
+    public void setSuperAdminId(String superAdminId){
+        this.superAdminId = superAdminId;
     }
 
     public String getMonth(){

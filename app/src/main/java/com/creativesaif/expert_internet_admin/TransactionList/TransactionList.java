@@ -34,6 +34,7 @@ import com.creativesaif.expert_internet_admin.MySingleton;
 
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
+import com.creativesaif.expert_internet_admin.URL_config;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -96,8 +97,8 @@ public class TransactionList extends AppCompatActivity {
         fab1 = findViewById(R.id.total);
         fab3 = findViewById(R.id.txn_edit);
 
-        String admin_id = sharedPreferences.getString("admin_id", null);
-        assert admin_id != null;
+        String employee_id = sharedPreferences.getString("employee_id", null);
+        assert employee_id != null;
 
         if (Objects.equals(sharedPreferences.getString("txn_summary", null), "1")){
             fab1.setVisibility(View.VISIBLE);
@@ -209,7 +210,7 @@ public class TransactionList extends AppCompatActivity {
     private void load_txn() {
 
         progressDialog.showDialog();
-        String url = getString(R.string.base_url)+getString(R.string.all_txn)+"?first_date="+first_date+"&last_date="+last_date;
+        String url = URL_config.BASE_URL+URL_config.DATEWISE_ALL_TXN +"?first_date="+first_date+"&last_date="+last_date;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @SuppressLint("NotifyDataSetChanged")
@@ -247,7 +248,7 @@ public class TransactionList extends AppCompatActivity {
 
                             transaction.setDate(jsonObject1.getString("date"));
                             transaction.setTxn_id(jsonObject1.getString("txn_id"));
-                            transaction.setUserid(jsonObject1.getString("admin_id"));
+                            transaction.setEmpid(jsonObject1.getString("emp_id"));
                             transaction.setMethod(jsonObject1.getString("method"));
                             transaction.setDetails(jsonObject1.getString("details"));
                             transaction.setCredit(jsonObject1.getString("credit"));
@@ -277,7 +278,7 @@ public class TransactionList extends AppCompatActivity {
 
     public void total_credit_debit_load()
     {
-        String url = getString(R.string.base_url)+getString(R.string.total_credit_debit)+"?first_date="+first_date+"&last_date="+last_date;
+        String url = URL_config.BASE_URL+URL_config.TOTAL_DEBIT_CREDIT_CASH+"?first_date="+first_date+"&last_date="+last_date;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
@@ -285,7 +286,6 @@ public class TransactionList extends AppCompatActivity {
 
                 //Toast.makeText(TransactionList.this,response,Toast.LENGTH_LONG).show();
                 summary = response;
-
             }
         }, new Response.ErrorListener() {
             @Override
