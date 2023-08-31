@@ -48,4 +48,5 @@ public class URL_config {
     public static final String EMPLOYEE_DELETE = "employee/employee_delete.php";
     public static final String DEVICE_URL = "device/device_url.php";
     public static final String DEVICE_URL_UPDATE = "device/device_url_update.php";
+    public static final String EMPLOYEE_ADD = "employee/employee_add.php";
 }

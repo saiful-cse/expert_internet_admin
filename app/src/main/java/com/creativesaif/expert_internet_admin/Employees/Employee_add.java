@@ -29,6 +29,7 @@ import com.creativesaif.expert_internet_admin.MainActivity;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
+import com.creativesaif.expert_internet_admin.URL_config;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -108,7 +109,7 @@ public class Employee_add extends AppCompatActivity {
     }
     public void employee_add()
     {
-        String url = "http://192.168.1.8/api/expert_internet_api/exp-v5.0/employee/employee_add.php";
+        String url = URL_config.BASE_URL+URL_config.EMPLOYEE_ADD;
 
         progressDialog.showDialog();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
