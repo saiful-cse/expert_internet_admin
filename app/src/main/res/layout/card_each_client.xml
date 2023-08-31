@@ -94,7 +94,6 @@
                     android:text="Expire Date"
                     android:textStyle="bold"
                     android:textAlignment="textStart"
-                    android:textColor="@color/colorPrimary"
                     android:textSize="15sp" />
 
                 <TextView

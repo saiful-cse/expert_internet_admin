@@ -1,5 +1,6 @@
 package com.creativesaif.expert_internet_admin.TransactionList;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.support.v7.widget.CardView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +26,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.creativesaif.expert_internet_admin.ClientList.ClientDetails;
+import com.creativesaif.expert_internet_admin.ClientList.ClientDetailsEdit;
 import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
@@ -41,18 +44,22 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.TimeZone;
 
 public class TransactionEdit extends AppCompatActivity {
 
     EditText edTxnId, edDate, edEmpId, edDetails, edCredit, edDebit;
-    String jwt, txnId, date, empId, details, credit, debit;
+    String employee_id, jwt, txnId, selectedDate, details, credit, debit;
     Button btnSearch, btnDelete, btnUpdate;
     TextView tvClientId, tvClientName, tvtype;
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences preferences;
     ProgressDialog progressDialog;
 
     CardView cardViewDetails;
+    final Calendar myCalendar = Calendar.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,8 +72,8 @@ public class TransactionEdit extends AppCompatActivity {
         cardViewDetails = findViewById(R.id.details_card);
         cardViewDetails.setVisibility(View.GONE);
 
-        sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
-
+        preferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
+        employee_id = preferences.getString("employee_id", null);
         /*
         ID's initialize
          */
@@ -93,7 +100,6 @@ public class TransactionEdit extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 txnId = edTxnId.getText().toString().trim();
-                String admin_id = sharedPreferences.getString("employee_id", null);
 
                 if(!isNetworkConnected())
                 {
@@ -104,17 +110,31 @@ public class TransactionEdit extends AppCompatActivity {
                     Snackbar.make(findViewById(android.R.id.content),"Write a txn id",Snackbar.LENGTH_LONG).show();
 
                 }else {
-                    assert admin_id != null;
-                    if(admin_id.equals("9161")) {
-
-                        txn_load(txnId);
-
-                    }else {
-                        Toast.makeText(getApplicationContext(), "You are not permitted to edit", Toast.LENGTH_LONG).show();
-
-                    }
+                    txn_load(txnId);
                 }
 
+            }
+        });
+
+        DatePickerDialog.OnDateSetListener date =new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int day) {
+                myCalendar.setTimeZone(TimeZone.getTimeZone("Asia/Dhaka"));
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH,month);
+                myCalendar.set(Calendar.DAY_OF_MONTH,day);
+
+                String myFormat="yyyy-MM-dd 09:00:00";
+                SimpleDateFormat dateFormat=new SimpleDateFormat(myFormat, Locale.getDefault());
+                edDate.setText(dateFormat.format(myCalendar.getTime()));
+                selectedDate = dateFormat.format(myCalendar.getTime());
+            }
+        };
+
+        edDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DatePickerDialog(TransactionEdit.this,date,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
 
@@ -123,8 +143,8 @@ public class TransactionEdit extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                date = edDate.getText().toString().trim();
-                jwt = sharedPreferences.getString("jwt", null);
+                selectedDate = edDate.getText().toString().trim();
+                jwt = preferences.getString("jwt", null);
 
                 if (jwt == null){
                     finish();
@@ -143,7 +163,7 @@ public class TransactionEdit extends AppCompatActivity {
                     Date currentDate = cal.getTime();
 
                     try {
-                        Date txnDate = sdf.parse(date);
+                        Date txnDate = sdf.parse(selectedDate);
                         int result = currentDate.compareTo(txnDate);
 
                         //if current date is before txndate
@@ -169,13 +189,13 @@ public class TransactionEdit extends AppCompatActivity {
             public void onClick(View view) {
 
                 txnId = edTxnId.getText().toString().trim();
-                date = edDate.getText().toString().trim();
+                selectedDate = edDate.getText().toString().trim();
 
                 details = edDetails.getText().toString().trim();
-                empId = edEmpId.getText().toString().trim();
+                employee_id = edEmpId.getText().toString().trim();
                 credit = edCredit.getText().toString().trim();
                 debit = edDebit.getText().toString().trim();
-                jwt = sharedPreferences.getString("jwt", null);
+                jwt = preferences.getString("jwt", null);
 
                 if (jwt == null){
                     finish();
@@ -184,10 +204,10 @@ public class TransactionEdit extends AppCompatActivity {
                 } else if(txnId.isEmpty()){
                     Snackbar.make(findViewById(android.R.id.content),"Txn ID cannot empty",Snackbar.LENGTH_LONG).show();
 
-                }else if(date.isEmpty()){
+                }else if(selectedDate.isEmpty()){
                     Snackbar.make(findViewById(android.R.id.content),"Date cannot empty",Snackbar.LENGTH_LONG).show();
 
-                }else if(empId.isEmpty()){
+                }else if(employee_id.isEmpty()){
                     Snackbar.make(findViewById(android.R.id.content),"Admin ID cannot empty",Snackbar.LENGTH_LONG).show();
 
                 }else if(details.isEmpty()){
@@ -213,7 +233,7 @@ public class TransactionEdit extends AppCompatActivity {
                     Date currentDate = cal.getTime();
                     try {
 
-                        Date txnDate = sdf.parse(date);
+                        Date txnDate = sdf.parse(selectedDate);
                         int result = currentDate.compareTo(txnDate);
 
                         //if current date is before txndate
@@ -323,7 +343,10 @@ public class TransactionEdit extends AppCompatActivity {
 
                     }else if(status.equals("401")){
 
-                        warningShow(message);
+                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(TransactionEdit.this, Login.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
 
                     }else{
                         Toast.makeText(TransactionEdit.this, message,Toast.LENGTH_LONG).show();
@@ -407,8 +430,8 @@ public class TransactionEdit extends AppCompatActivity {
 
                 map.put("jwt", jwt);
                 map.put("txn_id", txnId);
-                map.put("date", date);
-                map.put("emp_id", empId);
+                map.put("date", selectedDate);
+                map.put("emp_id", employee_id);
                 map.put("details", details);
                 map.put("credit", credit);
                 map.put("debit", debit);
@@ -461,31 +484,5 @@ public class TransactionEdit extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void warningShow(String message){
-        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
-        alert.setCancelable(false);
-        alert.setTitle("Warning!!");
-        alert.setMessage(message);
-        alert.setIcon(R.drawable.warning_icon);
-
-        alert.setPositiveButton("Login", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                finish();
-                startActivity(new Intent(TransactionEdit.this, Login.class));
-
-            }
-        });
-
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-        android.app.AlertDialog dlg = alert.create();
-        dlg.show();
     }
 }

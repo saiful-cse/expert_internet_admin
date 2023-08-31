@@ -169,7 +169,7 @@ public class Employee extends AppCompatActivity {
 
     public void employee_details_load(String id)
     {
-        String url = "http://192.168.1.8/api/expert_internet_api/exp-v5.0/employee/employee_details.php";
+        String url = URL_config.BASE_URL+URL_config.EMPLOYEE_DETAILS;
 
         progressDialog.showDialog();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -235,7 +235,7 @@ public class Employee extends AppCompatActivity {
 
     public void employee_details_update()
     {
-        String url = "http://192.168.1.8/api/expert_internet_api/exp-v5.0/employee/employee_details_update.php";
+        String url = URL_config.BASE_URL+URL_config.EMPLOYEE_DETAILS_UPDATE;
 
         progressDialog.showDialog();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -299,7 +299,7 @@ public class Employee extends AppCompatActivity {
 
     public void employee_delete()
     {
-        String url = "http://192.168.1.8/api/expert_internet_api/exp-v5.0/employee/employee_delete.php";
+        String url = URL_config.BASE_URL+URL_config.EMPLOYEE_DELETE;
 
         progressDialog.showDialog();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {

@@ -8,8 +8,8 @@ import android.preference.PreferenceManager;
 
 public class URL_config {
 
-    //public static final String BASE_URL = "https://expert-internet.net/api/exp-v5.0/";
-    public static final String BASE_URL = "http://192.168.1.8/API/expert_internet_api/exp-v5.0/";
+    public static final String BASE_URL = "https://expert-internet.net/api/exp-v5.0/";
+    //public static final String BASE_URL = "http://192.168.1.8/API/expert_internet_api/exp-v5.0/";
 
     public static final String SEARCH = "client/search.php";
     public static final String PAYMENT_DETAILS = "txn/payment_details.php";
@@ -43,4 +43,9 @@ public class URL_config {
     public static final String EXPIRED_CLIENT_DISCONNECT = "client/expired_client_disconnect.php";
     public static final String UPSTREAM_BILL_LIST = "txn/upstream_bill_list.php?emp_id=";
     public static final String EMPLOYEE_LIST = "employee/employee_list.php";
+    public static final String EMPLOYEE_DETAILS = "employee/employee_details.php";
+    public static final String EMPLOYEE_DETAILS_UPDATE = "employee/employee_details_update.php";
+    public static final String EMPLOYEE_DELETE = "employee/employee_delete.php";
+    public static final String DEVICE_URL = "device/device_url.php";
+    public static final String DEVICE_URL_UPDATE = "device/device_url_update.php";
 }

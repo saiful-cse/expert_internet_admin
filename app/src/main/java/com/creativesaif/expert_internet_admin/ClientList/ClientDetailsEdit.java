@@ -76,7 +76,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
     //Declaring progress dialog
     private ProgressDialog progressDialog;
 
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences preferences;
 
     //Declaring spinner
     private Spinner areaSpinner,zoneSpinner, packageSpinner;
@@ -86,7 +86,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
 
     private ApiInterface apiInterface;
     private Client client;
-    final Calendar myCalendar= Calendar.getInstance();
+    final Calendar myCalendar = Calendar.getInstance();
     private String employee_id;
 
     @Override
@@ -95,13 +95,11 @@ public class ClientDetailsEdit extends AppCompatActivity{
         setContentView(R.layout.activity_client_details_edit);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        preferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
+
         progressDialog = new ProgressDialog(this);
         id = getIntent().getStringExtra("id");
-        SharedPreferences preferences = this.getSharedPreferences("users", MODE_PRIVATE);
         jwt = preferences.getString("jwt", null);
-
-        sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
-
         apiInterface = RetrofitApiClient.getClient().create(ApiInterface.class);
         client = new Client();
         employee_id = preferences.getString("employee_id", null);
@@ -214,8 +212,8 @@ public class ClientDetailsEdit extends AppCompatActivity{
                         disable_date = df.format(c);
                     }
 
-                    if(client_mode.equals("Disable") && !employee_id.equals("9161")){
-                        warningShow("You don't have permission to Disable. In case you need to disable, contact with Super Admin");
+                    if (client_mode.equals("Disable") && !Objects.equals(preferences.getString("super_admin", null), "1")){
+                            warningShow("You don't have permission to Disable. In case you need to disable, contact with Super Admin");
 
                     } else{
                         client.setJwt(jwt);

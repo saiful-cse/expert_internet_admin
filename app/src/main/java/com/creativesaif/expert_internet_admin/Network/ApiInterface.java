@@ -16,9 +16,6 @@ import retrofit2.http.POST;
 
 public interface ApiInterface{
 //
-    String DOMAIN_URL = "http://192.168.1.8/";
-//    String DOMAIN_URL = "https://expert-internet.net/";
-
     @POST(URL_config.BASE_URL+URL_config.REGISTER_CLIENT)
     Call<ClientWrapper> getRegistered_client(@Body Client client);
 

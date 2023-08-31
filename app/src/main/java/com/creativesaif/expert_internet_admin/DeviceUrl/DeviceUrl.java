@@ -26,6 +26,7 @@ import com.creativesaif.expert_internet_admin.MainActivity;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
+import com.creativesaif.expert_internet_admin.URL_config;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -126,7 +127,7 @@ public class DeviceUrl extends AppCompatActivity {
 
     public void device_url_load()
     {
-        String url = "http://192.168.1.8/api/expert_internet_api/exp-v5.0/device/device_url.php";
+        String url = URL_config.BASE_URL+URL_config.DEVICE_URL;
 
         progressDialog.showDialog();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -172,7 +173,7 @@ public class DeviceUrl extends AppCompatActivity {
 
     public void device_url_update()
     {
-        String url = "http://192.168.1.8/api/expert_internet_api/exp-v5.0/device/device_url_update.php";
+        String url = URL_config.BASE_URL+URL_config.DEVICE_URL_UPDATE;
 
         progressDialog.showDialog();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
