@@ -29,6 +29,10 @@ public class Client {
         @SerializedName("area")
         @Expose
         private String area;
+
+    @SerializedName("area_id")
+    @Expose
+    private String area_id;
         @SerializedName("disable_date")
         @Expose
         private String disableDate;
@@ -90,7 +94,13 @@ public class Client {
         public String getActionType(){
             return actionType;
         }
+    public String getArea_id() {
+        return area_id;
+    }
 
+    public void setArea_id(String area_id) {
+        this.area_id = area_id;
+    }
         public void setActionType(String actionType) {
             this.actionType = actionType;
         }

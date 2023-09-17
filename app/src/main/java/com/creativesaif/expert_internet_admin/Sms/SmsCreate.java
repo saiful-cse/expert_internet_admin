@@ -25,6 +25,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.creativesaif.expert_internet_admin.ClientList.ClientDetailsEdit;
 import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.Model.Client;
 import com.creativesaif.expert_internet_admin.Model.DetailsWrapper;
@@ -52,14 +53,14 @@ public class SmsCreate extends AppCompatActivity {
 
     private EditText editTextActiveClientMsg, editTextAreaMessage;
     private ProgressDialog progressDialog;
-    private String jwt, activeClientMessage, areaMessage, selectedArea;
+    private JSONArray jsonArrayArea;
+    private String jwt, activeClientMessage, areaMessage, selectedAreaId;
     private SharedPreferences preferences;
     private Spinner areaSpinner;
     private ApiInterface apiInterface;
     private Client client;
     private String admin_id;
     //Declaring Array List
-    private ArrayList<String> areaList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,15 +81,19 @@ public class SmsCreate extends AppCompatActivity {
         admin_id = preferences.getString("admin_id", null);
 
         areaSpinner = findViewById(R.id.areaListSpinner);
-        areaList = new ArrayList<>();
-
 
         //Spinner item choice and click event
         areaSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // On selecting a spinner item
-                selectedArea = parentView.getItemAtPosition(position).toString();
+                try {
+                    JSONObject json = jsonArrayArea.getJSONObject(position);
+                    selectedAreaId = json.getString("id");
+
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
@@ -106,7 +111,7 @@ public class SmsCreate extends AppCompatActivity {
                 if (areaMessage.isEmpty()){
                     Snackbar.make(findViewById(android.R.id.content),"Write a SMS",Snackbar.LENGTH_LONG).show();
 
-                }else if(selectedArea.equals("---") || selectedArea.isEmpty()){
+                }else if(selectedAreaId.equals("---")){
                     Snackbar.make(findViewById(android.R.id.content),"Select an area",Snackbar.LENGTH_LONG).show();
                 }
                 else if(!isNetworkConnected()){
@@ -379,7 +384,7 @@ public class SmsCreate extends AppCompatActivity {
 
                 map.put("jwt", jwt);
                 map.put("message", areaMessage);
-                map.put("area", selectedArea);
+                map.put("area_id", selectedAreaId);
                 return map;
 
             }
@@ -481,21 +486,26 @@ public class SmsCreate extends AppCompatActivity {
     {
         String url = URL_config.BASE_URL+URL_config.AREA_LOAD;
 
+        progressDialog.showDialog();
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
+                progressDialog.hideDialog();
+                ArrayList<String> areaList = new ArrayList<>();
                 try {
 
-                    JSONArray jsonArray = new JSONArray(response);
+                    jsonArrayArea = new JSONArray(response);
 
-                    for(int i=0; i<jsonArray.length(); i++) {
-                        areaList.add(jsonArray.getString(i));
+                    for(int i=0; i<jsonArrayArea.length(); i++) {
+                        JSONObject jsonObjectItem = jsonArrayArea.getJSONObject(i);
+                        areaList.add(jsonObjectItem.getString("area_name"));
                     }
 
                     ArrayAdapter<String> AreaArrayAdapter = new ArrayAdapter<>(SmsCreate.this,
                             android.R.layout.simple_spinner_dropdown_item, areaList);
                     areaSpinner.setAdapter(AreaArrayAdapter);
+
 
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -504,12 +514,14 @@ public class SmsCreate extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressDialog.hideDialog();
                 Toast.makeText(SmsCreate.this,error.toString(),Toast.LENGTH_LONG).show();
                 finish();
             }
         });
-        MySingleton.getInstance().addToRequestQueue(stringRequest);
-
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance().addToRequestQueue(stringRequest);;
     }
 
     public void loginWarningShow(String message){

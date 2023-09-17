@@ -154,7 +154,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
+                            android:layout_weight="0.8"
                             android:text="Name :"
                             android:textAlignment="center"
                             android:textSize="15sp"
@@ -164,7 +164,7 @@
                             android:id="@+id/edclientname"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
+                            android:layout_weight="0.2"
                             android:textAlignment="center"
                             android:textSize="15sp" />
 
@@ -180,7 +180,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
+                            android:layout_weight="0.8"
                             android:text="Phone :"
                             android:textAlignment="center"
                             android:textSize="15sp"
@@ -190,7 +190,7 @@
                             android:id="@+id/edclientphone"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
+                            android:layout_weight="0.2"
                             android:textAlignment="center"
                             android:inputType="phone"
                             android:textSize="15sp" />
@@ -206,7 +206,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
+                            android:layout_weight="0.7"
                             android:text="Take Time :"
                             android:textAlignment="center"
                             android:textSize="15sp"
@@ -216,7 +216,7 @@
                             android:id="@+id/edtaketime"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
+                            android:layout_weight="0.3"
                             android:inputType="numberDecimal"
                             android:textAlignment="center"
                             android:textSize="15sp" />
@@ -232,7 +232,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
+                            android:layout_weight="0.8"
                             android:text="Area :"
                             android:textAlignment="center"
                             android:textSize="15sp"
@@ -242,7 +242,7 @@
                             android:id="@+id/areaListSpinner"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
+                            android:layout_weight="0.2"
                             android:textAlignment="center"
                             android:textSize="15sp" />
 
@@ -258,7 +258,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
+                            android:layout_weight="0.8"
                             android:text="Zone :"
                             android:textAlignment="center"
                             android:textSize="15sp"
@@ -268,9 +268,11 @@
                             android:id="@+id/zoneListSpinner"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
+                            android:layout_weight="0.2"
                             android:textAlignment="center"
-                            android:textSize="15sp" />
+                            android:textSize="15sp"
+                            android:entries="@array/zone_name"
+                            />
 
                     </LinearLayout>
 
@@ -352,7 +354,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
                             android:textAlignment="center"
-                            android:inputType="numberDecimal"
+                            android:inputType="text"
                             android:textSize="15sp" />
                     </LinearLayout>
 
@@ -396,14 +398,15 @@
                             android:textAlignment="center"
                             android:textSize="15sp"
                             android:textStyle="bold" />
-
                         <Spinner
                             android:id="@+id/spinnerpkgs"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.5"
                             android:textAlignment="center"
-                            android:textSize="15sp" />
+                            android:textSize="15sp"
+                            android:entries="@array/package_name"
+                            />
                     </LinearLayout>
 
                 </LinearLayout>

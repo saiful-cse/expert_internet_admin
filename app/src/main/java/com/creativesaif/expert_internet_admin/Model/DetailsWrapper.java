@@ -28,6 +28,9 @@ public class DetailsWrapper {
     @SerializedName("area")
     @Expose
     private String area;
+    @SerializedName("area_id")
+    @Expose
+    private String area_id;
     @SerializedName("zone")
     @Expose
     private String zone;
@@ -157,6 +160,14 @@ public class DetailsWrapper {
 
     public void setArea(String area) {
         this.area = area;
+    }
+
+    public String getArea_id() {
+        return area_id;
+    }
+
+    public void setArea_id(String area_id) {
+        this.area_id = area_id;
     }
 
     public String getZone() {

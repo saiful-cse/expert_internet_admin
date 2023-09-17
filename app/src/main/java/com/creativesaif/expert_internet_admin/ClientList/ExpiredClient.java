@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +40,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class ExpiredClient extends Fragment {
 
     private RecyclerView recyclerView;
+    private ProgressBar progressBar;
     private ClientAdapter clientAdapter;
     private ArrayList<Client> clientArrayList;
     private ApiInterface apiInterface;
@@ -60,6 +62,7 @@ public class ExpiredClient extends Fragment {
         swipeRefreshLayout = view.findViewById(R.id.layout_refresh);
         clientArrayList = new ArrayList<>();
         clientAdapter = new ClientAdapter(getActivity(), clientArrayList);
+        progressBar = view.findViewById(R.id.progressBarClientView);
 
         recyclerView = view.findViewById(R.id.recyclerViewClient);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -70,6 +73,19 @@ public class ExpiredClient extends Fragment {
         client = new Client();
 
         jwt = preferences.getString("jwt", null);
+
+
+        if (!isConnected()) {
+            Toast.makeText(getContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
+            swipeRefreshLayout.setRefreshing(false);
+
+        } else {
+            //sent value on client model class
+            client.setJwt(jwt);
+
+            //Network call to load client list
+            load_client(client);
+        }
 
         //reload or refresh posts
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -100,12 +116,13 @@ public class ExpiredClient extends Fragment {
     }
 
     public void load_client(Client mClient) {
-
+        progressBar.setVisibility(View.VISIBLE);
         Call<ClientWrapper> call = apiInterface.getExpired_client(mClient);
         call.enqueue(new Callback<ClientWrapper>() {
             @Override
             public void onResponse(Call<ClientWrapper> call, retrofit2.Response<ClientWrapper> response) {
 
+                progressBar.setVisibility(View.GONE);
                 swipeRefreshLayout.setRefreshing(false);
                 clientArrayList.clear();
 
@@ -139,6 +156,7 @@ public class ExpiredClient extends Fragment {
             public void onFailure(Call<ClientWrapper> call, Throwable t) {
                 errorImage.setImageResource(R.drawable.ic_baseline_error_outline_24);
                 errorText.setText(t.toString());
+                progressBar.setVisibility(View.GONE);
                 swipeRefreshLayout.setRefreshing(false);
 
             }

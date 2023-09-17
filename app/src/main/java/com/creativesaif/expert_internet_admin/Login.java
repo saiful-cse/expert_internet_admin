@@ -52,7 +52,7 @@ public class Login extends AppCompatActivity {
         try{
 
             PackageInfo info = manager.getPackageInfo(this.getPackageName(), PackageManager.GET_ACTIVITIES);
-            viewversionname.setText("App Version: "+info.versionName+"\n"+"Web API version: exp-v5.0\nRelease date: 31/08/2023");
+            viewversionname.setText("App Version: "+info.versionName+"\n"+"Web API version: exp-v6.0\nRelease date: 31/08/2023");
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();

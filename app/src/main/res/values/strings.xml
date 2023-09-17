@@ -59,4 +59,16 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 
 
+    <string-array name="package_name">
+        <item>---</item>
+        <item>Basic</item>
+        <item>Standard</item>
+        <item>Professional</item>
+    </string-array>
+
+    <string-array name="zone_name">
+        <item>Main</item>
+        <item>Osman</item>
+    </string-array>
+
 </resources>

@@ -11,7 +11,7 @@
         android:name=".MySingleton"
         android:allowBackup="true"
         android:icon="@mipmap/app_icon"
-        android:label="EXP ADMIN PANEL"
+        android:label="TEST"
         android:roundIcon="@mipmap/app_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
@@ -53,6 +53,15 @@
         <activity
             android:name=".ClientList.ClientList"
             android:label="@string/title_client_list" />
+        <activity
+            android:name=".TaskList.TaskList"
+            android:label="Task List" />
+        <activity
+            android:name=".TaskList.Task_Add"
+            android:label="Task Add+" />
+        <activity
+            android:name=".TaskList.Task_Edit_Delete"
+            android:label="Task Update/Delete" />
         <activity
             android:name=".ClientList.ClientDetails"
             android:label="@string/title_client_details" />

@@ -23,6 +23,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -62,12 +63,12 @@ public class ClientDetailsEdit extends AppCompatActivity{
     //Declaring RadioButton
     private RadioGroup radioGroupPaymentMethod, radioGroupClientMode;
     //Declaring String
-    private String jwt;
+    private String jwt, existAreaName, existAreaId;
+    private JSONArray jsonArrayArea;
     private String id;
     private String name;
     private String phone;
-    private String existArea;
-    private String selectedArea, expire_date, disable_date;
+    private String selectedAreaId, expire_date, disable_date;
     private String pppname;
     private String pppassword;
     private String takeTime;
@@ -82,7 +83,6 @@ public class ClientDetailsEdit extends AppCompatActivity{
     private Spinner areaSpinner,zoneSpinner, packageSpinner;
 
     //Declaring Array List
-    private ArrayList<String> areaList;
 
     private ApiInterface apiInterface;
     private Client client;
@@ -109,7 +109,6 @@ public class ClientDetailsEdit extends AppCompatActivity{
         areaSpinner = findViewById(R.id.areaListSpinner);
         packageSpinner = findViewById(R.id.spinnerpkgs);
         zoneSpinner = findViewById(R.id.zoneListSpinner);
-        areaList = new ArrayList<>();
 
         radioGroupPaymentMethod = findViewById(R.id.radioGroupPaymentMethod);
         radioGroupClientMode = findViewById(R.id.radioGroupClientMode);
@@ -177,7 +176,10 @@ public class ClientDetailsEdit extends AppCompatActivity{
                 }else if(phone.isEmpty() || phone.length() < 11){
                     Toast.makeText(getApplicationContext(), "Enter correct phone number", Toast.LENGTH_SHORT).show();
 
-                }else if(phone.length() > 11){
+                }else if(selectedAreaId.equals("1")){
+                    Toast.makeText(getApplicationContext(), "Select Area", Toast.LENGTH_SHORT).show();
+
+                } else if(phone.length() > 11){
                     Toast.makeText(getApplicationContext(), "Enter correct phone number", Toast.LENGTH_SHORT).show();
 
                 } else if(pppname.isEmpty()){
@@ -185,6 +187,9 @@ public class ClientDetailsEdit extends AppCompatActivity{
 
                 }else if(pppassword.isEmpty()){
                     Toast.makeText(getApplicationContext(), "Enter PPP password", Toast.LENGTH_SHORT).show();
+
+                }else if(selectedPackage.equals("---")){
+                    Toast.makeText(getApplicationContext(), "Select Package Name", Toast.LENGTH_SHORT).show();
 
                 } else if (!isNetworkConnected()){
                     Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
@@ -222,7 +227,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                         client.setPaymentMethod(payment_method);
                         client.setName(name);
                         client.setPhone(phone);
-                        client.setArea(selectedArea);
+                        client.setArea_id(selectedAreaId);
                         client.setZone(selectedZone);
                         client.setExpireDate(expire_date);
                         client.setDisableDate(disable_date);
@@ -242,7 +247,13 @@ public class ClientDetailsEdit extends AppCompatActivity{
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // On selecting a spinner item
-                selectedArea = parentView.getItemAtPosition(position).toString();
+                try {
+                    JSONObject json = jsonArrayArea.getJSONObject(position);
+                    selectedAreaId = json.getString("id");
+
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
@@ -308,7 +319,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                     edclientname.setText(detailsWrapper.getName());
                     edclientphone.setText(detailsWrapper.getPhone());
                     edtaketime.setText(detailsWrapper.getTakeTime());
-                    existArea = detailsWrapper.getArea();
+                    existAreaId = detailsWrapper.getArea_id();
 
                     if (detailsWrapper.getPaymentMethod().equals("Cash")) {
                         radioGroupPaymentMethod.check(R.id.payment_cash);
@@ -324,17 +335,6 @@ public class ClientDetailsEdit extends AppCompatActivity{
                         radioGroupClientMode.check(R.id.client_disable);
                     }
 
-                    List<String> zoneList = new ArrayList<>();
-                    zoneList.add("Main");
-                    zoneList.add("Osman");
-
-                    ArrayAdapter<String> zoneArrayAdapter = new ArrayAdapter<>(ClientDetailsEdit.this,
-                            android.R.layout.simple_spinner_dropdown_item, zoneList);
-                    zoneSpinner.setAdapter(zoneArrayAdapter);
-
-                    int zonespinnerPosition = zoneArrayAdapter.getPosition(detailsWrapper.getZone());
-                    zoneSpinner.setSelection(zonespinnerPosition);
-
                     expire_date = detailsWrapper.getExpireDate();
                     disable_date = detailsWrapper.getDisableDate();
 
@@ -342,18 +342,20 @@ public class ClientDetailsEdit extends AppCompatActivity{
                     edpppusername.setText(detailsWrapper.getPppName());
                     edpppassword.setText(detailsWrapper.getPppPass());
 
-                    //Load packages
-                    List<String> packageList = new ArrayList<>();
+                    //Setting zone and package on spinner
+                    ArrayAdapter<CharSequence> zoneArrayAdapter = ArrayAdapter.createFromResource(ClientDetailsEdit.this,
+                            R.array.zone_name, android.R.layout.simple_spinner_item);
+                    zoneSpinner.setAdapter(zoneArrayAdapter);
 
-                    for (int i = 0; i < detailsWrapper.getPackages().size(); i++){
-                        packageList.add(detailsWrapper.getPackages().get(i).getPkgId());
-                    }
+                    int zoneSpinnerPosition = zoneArrayAdapter.getPosition(detailsWrapper.getZone());
+                    zoneSpinner.setSelection(zoneSpinnerPosition);
 
-                    ArrayAdapter<String> packageArrayAdapter = new ArrayAdapter<>(ClientDetailsEdit.this,
-                         android.R.layout.simple_spinner_dropdown_item, packageList);
-                    packageSpinner.setAdapter(packageArrayAdapter);
+                    ArrayAdapter<CharSequence> packageAdapter = ArrayAdapter.createFromResource(ClientDetailsEdit.this,
+                            R.array.package_name, android.R.layout.simple_spinner_item);
+                    packageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    packageSpinner.setAdapter(packageAdapter);
 
-                    int spinnerPosition = packageArrayAdapter.getPosition(detailsWrapper.getPkgId());
+                    int spinnerPosition = packageAdapter.getPosition(detailsWrapper.getPkgId());
                     packageSpinner.setSelection(spinnerPosition);
 
                 }else{
@@ -394,25 +396,35 @@ public class ClientDetailsEdit extends AppCompatActivity{
     {
         String url = URL_config.BASE_URL+URL_config.AREA_LOAD;
 
+        progressDialog.showDialog();
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
+                progressDialog.hideDialog();
+                ArrayList<String> areaList = new ArrayList<>();
                 try {
 
-                    JSONArray jsonArray = new JSONArray(response);
+                    jsonArrayArea = new JSONArray(response);
 
-                    for(int i=0; i<jsonArray.length(); i++) {
-                        areaList.add(jsonArray.getString(i));
+                    for(int i=0; i<jsonArrayArea.length(); i++) {
+                        JSONObject jsonObjectItem = jsonArrayArea.getJSONObject(i);
+                        areaList.add(jsonObjectItem.getString("area_name"));
                     }
 
                     ArrayAdapter<String> AreaArrayAdapter = new ArrayAdapter<>(ClientDetailsEdit.this,
                             android.R.layout.simple_spinner_dropdown_item, areaList);
                     areaSpinner.setAdapter(AreaArrayAdapter);
 
-                    int spinnerPosition2 = AreaArrayAdapter.getPosition(existArea);
-                    areaSpinner.setSelection(spinnerPosition2);
-
+                    //Assigning database value into Spinner
+                    for(int i=0; i<jsonArrayArea.length(); i++) {
+                        JSONObject jsonObjectItem = jsonArrayArea.getJSONObject(i);
+                        if (jsonObjectItem.getString("id").equals(existAreaId)){
+                            existAreaName = jsonObjectItem.getString("area_name");
+                        }
+                    }
+                    int spinnerPosition = AreaArrayAdapter.getPosition(existAreaName);
+                    areaSpinner.setSelection(spinnerPosition);
 
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -421,11 +433,14 @@ public class ClientDetailsEdit extends AppCompatActivity{
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressDialog.hideDialog();
                 Toast.makeText(ClientDetailsEdit.this,error.toString(),Toast.LENGTH_LONG).show();
                 finish();
             }
         });
-        MySingleton.getInstance().addToRequestQueue(stringRequest);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance().addToRequestQueue(stringRequest);;
     }
 
     public void updateDetails(Client client) {

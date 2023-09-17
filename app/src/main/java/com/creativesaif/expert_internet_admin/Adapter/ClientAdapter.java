@@ -59,7 +59,7 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
         myViewHolder.tv2.setText("Phone: "+client.getPhone());
         myViewHolder.tv3.setText("PPPoE: "+client.getPppName());
         myViewHolder.tvzone.setText("Zone: "+client.getZone());
-        myViewHolder.tvpkgid.setText("Package ID: "+client.getPkgId());
+        myViewHolder.tvpkgid.setText("Package: "+client.getPkgId());
         myViewHolder.tv4.setText("Area: "+client.getArea());
         myViewHolder.tv5.setText("Exp Date: "+client.getExpireDate());
         myViewHolder.tv7.setText("Taken time: "+client.getTakeTime()+" day");

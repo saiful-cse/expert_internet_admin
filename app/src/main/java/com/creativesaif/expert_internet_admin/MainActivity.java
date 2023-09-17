@@ -39,6 +39,7 @@ import com.creativesaif.expert_internet_admin.Sms.SmsCreate;
 
 import com.creativesaif.expert_internet_admin.Search.Search_Page;
 import com.creativesaif.expert_internet_admin.Sms.SmsHistory;
+import com.creativesaif.expert_internet_admin.TaskList.TaskList;
 import com.creativesaif.expert_internet_admin.TransactionList.TransactionList;
 import com.creativesaif.expert_internet_admin.Webview.Webviewpage;
 
@@ -205,7 +206,12 @@ public class MainActivity extends AppCompatActivity
 
             startActivity(new Intent(MainActivity.this, ClientList.class));
 
-        } else if (id == R.id.nav_search) {
+        }else if (id == R.id.nav_tasklist) {
+
+            startActivity(new Intent(MainActivity.this, TaskList.class));
+
+        }
+        else if (id == R.id.nav_search) {
 
             startActivity(new Intent(MainActivity.this, Search_Page.class));
 

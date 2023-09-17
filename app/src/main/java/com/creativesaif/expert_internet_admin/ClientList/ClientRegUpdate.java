@@ -21,6 +21,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -37,6 +38,7 @@ import com.creativesaif.expert_internet_admin.URL_config;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,21 +53,18 @@ public class ClientRegUpdate extends AppCompatActivity {
 
     //Declaring RadioButton
     private RadioGroup radioGroupPaymentMethod, radioGroupClientMode;
-
+    private JSONArray jsonArrayArea;
     //Declaring String
-    private String jwt, id, name, phone, existArea, selectedArea, selectedZone,
+    private String jwt, id, name, phone, existAreaId, existAreaName, selectedAreaId, selectedZone,
             pppname, pppassword, selectedPackage;
 
     //Declaring progress dialog
     private ProgressDialog progressDialog;
 
-    private ProgressBar areaLoader;
 
     //Declaring spinner
     private Spinner areaSpinner, zoneSpinner, packageSpinner;
 
-    //Declaring Array List
-    private ArrayList<String> areaList;
     private ApiInterface apiInterface;
     private Client client;
 
@@ -76,7 +75,6 @@ public class ClientRegUpdate extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         progressDialog = new ProgressDialog(this);
-        areaLoader = findViewById(R.id.areaLoadProgressBar);
 
         id = getIntent().getStringExtra("id");
         SharedPreferences preferences = this.getSharedPreferences("users", MODE_PRIVATE);
@@ -91,7 +89,6 @@ public class ClientRegUpdate extends AppCompatActivity {
         areaSpinner = findViewById(R.id.areaListSpinner);
         zoneSpinner = findViewById(R.id.zoneListSpinner);
         packageSpinner = findViewById(R.id.spinnerpkgs);
-        areaList = new ArrayList<>();
 
         radioGroupPaymentMethod = findViewById(R.id.radioGroupPaymentMethod);
         radioGroupClientMode = findViewById(R.id.radioGroupClientMode);
@@ -125,7 +122,7 @@ public class ClientRegUpdate extends AppCompatActivity {
                 }else if(phone.isEmpty() || phone.length() < 11){
                     Toast.makeText(getApplicationContext(), "Enter correct phone number", Toast.LENGTH_SHORT).show();
 
-                }else if(selectedArea.equals("---")){
+                }else if(selectedAreaId.equals("1")){
                     Toast.makeText(getApplicationContext(), "Select Area", Toast.LENGTH_SHORT).show();
 
                 } else if(pppname.isEmpty() || pppname.equals("ss-expnet-")){
@@ -134,7 +131,10 @@ public class ClientRegUpdate extends AppCompatActivity {
                 }else if(pppassword.isEmpty() || pppassword.length() < 8){
                     Toast.makeText(getApplicationContext(), "Enter Correct PPP Password", Toast.LENGTH_SHORT).show();
 
-                }else if (!isNetworkConnected()){
+                }else if(selectedPackage.equals("---")){
+                    Toast.makeText(getApplicationContext(), "Select Package Name", Toast.LENGTH_SHORT).show();
+                }
+                else if (!isNetworkConnected()){
                     Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
 
                 }else {
@@ -153,7 +153,7 @@ public class ClientRegUpdate extends AppCompatActivity {
                     client.setMode(client_mode);
                     client.setName(name);
                     client.setPhone(phone);
-                    client.setArea(selectedArea);
+                    client.setArea_id(selectedAreaId);
                     client.setZone(selectedZone);
                     client.setPppName(pppname);
                     client.setPppPass(pppassword);
@@ -169,7 +169,13 @@ public class ClientRegUpdate extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // On selecting a spinner item
-                selectedArea = parentView.getItemAtPosition(position).toString();
+                try {
+                    JSONObject json = jsonArrayArea.getJSONObject(position);
+                    selectedAreaId = json.getString("id");
+
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
@@ -235,19 +241,7 @@ public class ClientRegUpdate extends AppCompatActivity {
                 if (detailsWrapper.getStatus() == 200) {
                     edclientname.setText(detailsWrapper.getName());
                     edclientphone.setText(detailsWrapper.getPhone());
-                    existArea = detailsWrapper.getArea();
-
-                    List<String> zoneList = new ArrayList<>();
-                    zoneList.add("Main");
-                    zoneList.add("Osman");
-
-                    ArrayAdapter<String> zoneArrayAdapter = new ArrayAdapter<>(ClientRegUpdate.this,
-                            android.R.layout.simple_spinner_dropdown_item, zoneList);
-                    zoneSpinner.setAdapter(zoneArrayAdapter);
-
-                    int zonespinnerPosition = zoneArrayAdapter.getPosition(detailsWrapper.getZone());
-                    zoneSpinner.setSelection(zonespinnerPosition);
-
+                    existAreaId = detailsWrapper.getArea_id();
 
                     if (detailsWrapper.getPaymentMethod().equals("Cash")) {
                         radioGroupPaymentMethod.check(R.id.payment_cash);
@@ -266,20 +260,21 @@ public class ClientRegUpdate extends AppCompatActivity {
                     edpppusername.setText(detailsWrapper.getPppName());
                     edpppassword.setText(detailsWrapper.getPppPass());
 
-                    //Load packages
-                    List<String> packageList = new ArrayList<>();
+                    //Setting zone and package on spinner
+                    ArrayAdapter<CharSequence> zoneArrayAdapter = ArrayAdapter.createFromResource(ClientRegUpdate.this,
+                            R.array.zone_name, android.R.layout.simple_spinner_item);
+                    zoneSpinner.setAdapter(zoneArrayAdapter);
 
-                    for (int i = 0; i < detailsWrapper.getPackages().size(); i++){
-                        packageList.add(detailsWrapper.getPackages().get(i).getPkgId());
-                    }
+                    int zoneSpinnerPosition = zoneArrayAdapter.getPosition(detailsWrapper.getZone());
+                    zoneSpinner.setSelection(zoneSpinnerPosition);
 
-                    ArrayAdapter<String> packageArrayAdapter = new ArrayAdapter<>(ClientRegUpdate.this,
-                            android.R.layout.simple_spinner_dropdown_item, packageList);
-                    packageSpinner.setAdapter(packageArrayAdapter);
+                    ArrayAdapter<CharSequence> packageAdapter = ArrayAdapter.createFromResource(ClientRegUpdate.this,
+                            R.array.package_name, android.R.layout.simple_spinner_item);
+                    packageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    packageSpinner.setAdapter(packageAdapter);
 
-                    int spinnerPosition = packageArrayAdapter.getPosition(detailsWrapper.getPkgId());
+                    int spinnerPosition = packageAdapter.getPosition(detailsWrapper.getPkgId());
                     packageSpinner.setSelection(spinnerPosition);
-
 
                 }else{
                     Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
@@ -317,26 +312,37 @@ public class ClientRegUpdate extends AppCompatActivity {
     //Area load
     public void area_load()
     {
-        areaLoader.setVisibility(View.VISIBLE);
         String url = URL_config.BASE_URL+URL_config.AREA_LOAD;
+
+        progressDialog.showDialog();
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-                areaLoader.setVisibility(View.GONE);
+                progressDialog.hideDialog();
+                ArrayList<String> areaList = new ArrayList<>();
                 try {
 
-                    JSONArray jsonArray = new JSONArray(response);
+                    jsonArrayArea = new JSONArray(response);
 
-                    for(int i=0; i<jsonArray.length(); i++) {
-                        areaList.add(jsonArray.getString(i));
+                    for(int i=0; i<jsonArrayArea.length(); i++) {
+                        JSONObject jsonObjectItem = jsonArrayArea.getJSONObject(i);
+                        areaList.add(jsonObjectItem.getString("area_name"));
                     }
 
                     ArrayAdapter<String> AreaArrayAdapter = new ArrayAdapter<>(ClientRegUpdate.this,
                             android.R.layout.simple_spinner_dropdown_item, areaList);
                     areaSpinner.setAdapter(AreaArrayAdapter);
-                    int spinnerPosition2 = AreaArrayAdapter.getPosition(existArea);
-                    areaSpinner.setSelection(spinnerPosition2);
+
+                    //Assigning database value into Spinner
+                    for(int i=0; i<jsonArrayArea.length(); i++) {
+                        JSONObject jsonObjectItem = jsonArrayArea.getJSONObject(i);
+                        if (jsonObjectItem.getString("id").equals(existAreaId)){
+                            existAreaName = jsonObjectItem.getString("area_name");
+                        }
+                    }
+                    int spinnerPosition = AreaArrayAdapter.getPosition(existAreaName);
+                    areaSpinner.setSelection(spinnerPosition);
 
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -345,13 +351,14 @@ public class ClientRegUpdate extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                areaLoader.setVisibility(View.GONE);
+                progressDialog.hideDialog();
                 Toast.makeText(ClientRegUpdate.this,error.toString(),Toast.LENGTH_LONG).show();
                 finish();
             }
         });
-        MySingleton.getInstance().addToRequestQueue(stringRequest);
-
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance().addToRequestQueue(stringRequest);;
     }
 
     public void updateRegistration(Client client) {

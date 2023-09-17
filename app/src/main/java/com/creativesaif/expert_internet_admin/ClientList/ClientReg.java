@@ -20,10 +20,12 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.creativesaif.expert_internet_admin.Employees.Employee;
 import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.Model.Client;
 import com.creativesaif.expert_internet_admin.Model.DetailsWrapper;
@@ -36,6 +38,7 @@ import com.creativesaif.expert_internet_admin.URL_config;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,9 +50,10 @@ public class ClientReg extends AppCompatActivity {
 
     //Declaring EditText
     private EditText edclientname, edclientphone;
+    private JSONArray jsonArrayArea;
 
     //Declaring String
-    private String jwt,name, phone, selectedArea;
+    private String jwt,name, phone, selectedAreaId;
 
     //Declaring progress dialog
     private ProgressDialog progressDialog;
@@ -58,7 +62,6 @@ public class ClientReg extends AppCompatActivity {
     private Spinner areaSpinner;
 
     //Declaring Array List
-    private ArrayList<String> areaList;
 
     private ApiInterface apiInterface;
     private Client client;
@@ -86,7 +89,6 @@ public class ClientReg extends AppCompatActivity {
         Id initialize
          */
         areaSpinner = findViewById(R.id.areaListSpinner);
-        areaList = new ArrayList<>();
         edclientname = findViewById(R.id.edclientname);
         edclientphone = findViewById(R.id.edclientphone);
         //Declaring Button
@@ -107,7 +109,7 @@ public class ClientReg extends AppCompatActivity {
                 }else if(phone.length() > 11){
                     Toast.makeText(getApplicationContext(), "Enter correct phone number", Toast.LENGTH_SHORT).show();
 
-                }else if(selectedArea.equals("---")){
+                }else if(selectedAreaId.equals("1")){
                     Toast.makeText(getApplicationContext(), "Select area name", Toast.LENGTH_SHORT).show();
 
                 } else if (!isNetworkConnected()){
@@ -118,7 +120,7 @@ public class ClientReg extends AppCompatActivity {
                     client.setJwt(jwt);
                     client.setName(name);
                     client.setPhone(phone);
-                    client.setArea(selectedArea);
+                    client.setArea_id(selectedAreaId);
 
                     clientRegistration(client);
                 }
@@ -130,7 +132,13 @@ public class ClientReg extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // On selecting a spinner item
-                selectedArea = parentView.getItemAtPosition(position).toString();
+                try {
+                    JSONObject json = jsonArrayArea.getJSONObject(position);
+                    selectedAreaId = json.getString("id");
+
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
@@ -140,6 +148,9 @@ public class ClientReg extends AppCompatActivity {
         });
 
     }
+
+
+
 
     //Internet connection check
     private boolean isNetworkConnected() {
@@ -159,21 +170,25 @@ public class ClientReg extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    //Area load
+
     public void area_load()
     {
         String url = URL_config.BASE_URL+URL_config.AREA_LOAD;
 
+        progressDialog.showDialog();
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
+                progressDialog.hideDialog();
+                ArrayList<String> areaList = new ArrayList<>();
                 try {
 
-                    JSONArray jsonArray = new JSONArray(response);
+                    jsonArrayArea = new JSONArray(response);
 
-                    for(int i=0; i<jsonArray.length(); i++) {
-                        areaList.add(jsonArray.getString(i));
+                    for(int i=0; i<jsonArrayArea.length(); i++) {
+                        JSONObject jsonObjectItem = jsonArrayArea.getJSONObject(i);
+                        areaList.add(jsonObjectItem.getString("area_name"));
                     }
 
                     ArrayAdapter<String> AreaArrayAdapter = new ArrayAdapter<>(ClientReg.this,
@@ -187,12 +202,14 @@ public class ClientReg extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressDialog.hideDialog();
                 Toast.makeText(ClientReg.this,error.toString(),Toast.LENGTH_LONG).show();
                 finish();
             }
         });
-        MySingleton.getInstance().addToRequestQueue(stringRequest);
-
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance().addToRequestQueue(stringRequest);;
     }
 
     public void clientRegistration(Client client) {

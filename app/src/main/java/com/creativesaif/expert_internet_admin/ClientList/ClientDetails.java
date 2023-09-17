@@ -905,7 +905,6 @@ public class ClientDetails extends AppCompatActivity {
                 }
             }
         });
-
         aleart1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -914,7 +913,6 @@ public class ClientDetails extends AppCompatActivity {
         });
         AlertDialog dlg = aleart1.create();
         dlg.show();
-
     }
 
 }

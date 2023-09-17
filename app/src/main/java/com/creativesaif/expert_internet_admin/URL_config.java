@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 
 public class URL_config {
 
-    public static final String BASE_URL = "https://expert-internet.net/api/exp-v5.0/";
+    public static final String BASE_URL = "https://expert-internet.net/api/exp-v6.0/";
     //public static final String BASE_URL = "http://192.168.1.8/API/expert_internet_api/exp-v5.0/";
 
     public static final String SEARCH = "client/search.php";
@@ -26,7 +26,7 @@ public class URL_config {
     public static final String AREAWISE_SMS = "sms/areawise_sms_service.php";
     public static final String ENABLE_CLIENT_SMS = "sms/enabled_clients_sms.php";
     public static final String IDWISE_CLIENT_SMS = "sms/idwise_sms_service.php";
-    public static final String AREA_LOAD = "area/area.php";
+    public static final String AREA_LOAD = "area/area_list.php";
     public static final String SMS_HISTORY = "sms/sms_history.php";
     public static final String LOGIN = "login/login.php";
     public static final String REGISTER_CLIENT = "client/registered_client.php";
@@ -49,4 +49,10 @@ public class URL_config {
     public static final String DEVICE_URL = "device/device_url.php";
     public static final String DEVICE_URL_UPDATE = "device/device_url_update.php";
     public static final String EMPLOYEE_ADD = "employee/employee_add.php";
+    public static final String TASK_PENDING = "task/pending_task.php?employee_id=";
+    public static final String TASK_COMPLETED = "task/completed_task.php?employee_id=";
+    public static final String TASK_DONE_UPDATE = "task/done_task.php?taskId=";
+    public static final String TASK_DELETE = "task/delete_task.php?taskId=";
+    public static final String TASK_UPDATE = "task/update_task.php";
+    public static final String TASK_ADD = "task/add_task.php";
 }
