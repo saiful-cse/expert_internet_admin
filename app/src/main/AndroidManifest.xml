@@ -11,7 +11,7 @@
         android:name=".MySingleton"
         android:allowBackup="true"
         android:icon="@mipmap/app_icon"
-        android:label="TEST"
+        android:label="Exp Admin App"
         android:roundIcon="@mipmap/app_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
