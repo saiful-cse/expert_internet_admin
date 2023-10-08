@@ -217,7 +217,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                         disable_date = df.format(c);
                     }
 
-                    if (client_mode.equals("Disable") && !Objects.equals(preferences.getString("super_admin", null), "1")){
+                    if (client_mode.equals("Disable") && !employee_id.equals("9161")){
                             warningShow("You don't have permission to Disable. In case you need to disable, contact with Super Admin");
 
                     } else{
