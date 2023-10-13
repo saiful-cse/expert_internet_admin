@@ -134,7 +134,6 @@ public class ClientDetailsEdit extends AppCompatActivity{
             }
         };
 
-
         edExpiredate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -142,7 +141,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                 if (employee_id.equals("9161")){
                     new DatePickerDialog(ClientDetailsEdit.this,date,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
                 }else{
-                   warningShow("You don't have permission to edit. In case you need to edit, contact with Super Admin");
+                   warningShow("Unable to edit. Something went wrong!!");
                 }
             }
         });
@@ -218,7 +217,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                     }
 
                     if (client_mode.equals("Disable") && !employee_id.equals("9161")){
-                            warningShow("You don't have permission to Disable. In case you need to disable, contact with Super Admin");
+                            warningShow("Unable to disable. Something went wrong!!");
 
                     } else{
                         client.setJwt(jwt);

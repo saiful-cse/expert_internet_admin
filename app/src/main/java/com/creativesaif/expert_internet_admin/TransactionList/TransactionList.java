@@ -106,8 +106,9 @@ public class TransactionList extends AppCompatActivity {
             fab1.setVisibility(View.GONE);
         }
 
-        if (Objects.equals(sharedPreferences.getString("txn_edit", null), "1")){
+        if (Objects.equals(sharedPreferences.getString("txn_edit", null), "1") && Objects.equals(sharedPreferences.getString("employee_id", null), "9161")){
             fab3.setVisibility(View.VISIBLE);
+
         }else{
             fab3.setVisibility(View.GONE);
         }

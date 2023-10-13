@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 
 public class URL_config {
 
-    public static final String BASE_URL = "https://expert-internet.net/api/exp-v6.0/";
+    public static final String BASE_URL = "https://expert-internet.net/api/exp-v6.1/";
     //public static final String BASE_URL = "http://192.168.1.8/API/expert_internet_api/exp-v5.0/";
 
     public static final String SEARCH = "client/search.php";

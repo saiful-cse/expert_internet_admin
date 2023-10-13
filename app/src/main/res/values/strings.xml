@@ -64,6 +64,8 @@
         <item>Basic</item>
         <item>Standard</item>
         <item>Professional</item>
+        <item>---</item>
+        <item>Govt5</item>
     </string-array>
 
     <string-array name="zone_name">
