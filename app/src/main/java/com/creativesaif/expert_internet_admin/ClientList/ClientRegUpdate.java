@@ -2,19 +2,27 @@ package com.creativesaif.expert_internet_admin.ClientList;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Instrumentation;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetFileDescriptor;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -35,11 +43,16 @@ import com.creativesaif.expert_internet_admin.Network.RetrofitApiClient;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
 import com.creativesaif.expert_internet_admin.R;
 import com.creativesaif.expert_internet_admin.URL_config;
+import com.github.mikephil.charting.jobs.MoveViewJob;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +80,12 @@ public class ClientRegUpdate extends AppCompatActivity {
 
     private ApiInterface apiInterface;
     private Client client;
+
+    private Button btn_img_choose;
+    private ImageView imageView;
+    int SELECT_PICTURE = 200;
+    Bitmap bitmap;
+    private String encodedStringImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +127,16 @@ public class ClientRegUpdate extends AppCompatActivity {
             load_details(client);
         }
 
+        //========= Image selection =============
+        imageView = findViewById(R.id.img_view);
+
+        findViewById(R.id.btn_choose_img).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageChooser();
+            }
+        });
+
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,7 +154,10 @@ public class ClientRegUpdate extends AppCompatActivity {
                 }else if(selectedAreaId.equals("1")){
                     Toast.makeText(getApplicationContext(), "Select Area", Toast.LENGTH_SHORT).show();
 
-                } else if(pppname.isEmpty() || pppname.equals("ss-expnet-")){
+                }else if(encodedStringImage == null){
+                    Toast.makeText(getApplicationContext(), "Select NID/Brith Ct/Passport", Toast.LENGTH_SHORT).show();
+                }
+                else if(pppname.isEmpty() || pppname.equals("ss-expnet-")){
                     Toast.makeText(getApplicationContext(), "Enter Correct PPP Serial", Toast.LENGTH_SHORT).show();
 
                 }else if(pppassword.isEmpty() || pppassword.length() < 8){
@@ -152,12 +184,14 @@ public class ClientRegUpdate extends AppCompatActivity {
                     client.setPaymentMethod(payment_method);
                     client.setMode(client_mode);
                     client.setName(name);
+                    client.setDocument(encodedStringImage);
                     client.setPhone(phone);
                     client.setArea_id(selectedAreaId);
                     client.setZone(selectedZone);
                     client.setPppName(pppname);
                     client.setPppPass(pppassword);
                     client.setPkgId(selectedPackage);
+                    //Toast.makeText(getApplicationContext(), "Image string: "+encodedStringImage, Toast.LENGTH_LONG).show();
 
                     updateRegistration(client);
                 }
@@ -215,6 +249,64 @@ public class ClientRegUpdate extends AppCompatActivity {
         });
 
     }
+
+
+    public void imageChooser(){
+        Intent i = new Intent();
+        i.setType("image/*");
+        i.setAction(Intent.ACTION_GET_CONTENT);
+
+        startActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE);
+    }
+
+    @SuppressLint("Recycle")
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+
+            // compare the resultCode with the
+            // SELECT_PICTURE constant
+            if (requestCode == SELECT_PICTURE) {
+                // Get the url of the image from data
+                Uri selectedImageUri = data.getData();
+                if (null != selectedImageUri) {
+
+                    //Size calculation
+                    AssetFileDescriptor fileDescriptor = null;
+                    try {
+                        fileDescriptor = getApplicationContext().getContentResolver().openAssetFileDescriptor(selectedImageUri , "r");
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                    assert fileDescriptor != null;
+                    long fileSize = fileDescriptor.getLength() / 1024;
+
+                    if (fileSize > 500){
+                        Toast.makeText(getApplicationContext(), "File size must be less than 500 KB", Toast.LENGTH_LONG).show();
+                    }else {
+                        // update the preview image in the layout
+                        imageView.setImageURI(selectedImageUri);
+                        try {
+                            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),selectedImageUri);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        //Encoding
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        byte[] imageBytes = baos.toByteArray();
+                        //imageView.setImageBitmap(bitmap);
+                        encodedStringImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+
+                        //Toast.makeText(getApplicationContext(), "String: "+encodedStringImage, Toast.LENGTH_LONG).show();
+
+                    }
+                }
+            }
+        }
+    }
+
 
 
     public void load_details(Client mClient) {
@@ -373,7 +465,12 @@ public class ClientRegUpdate extends AppCompatActivity {
                 progressDialog.hideDialog();
 
                 DetailsWrapper detailsWrapper = response.body();
+
                 assert detailsWrapper != null;
+                //Toast.makeText(getApplicationContext(), "Response: "+detailsWrapper.toString(), Toast.LENGTH_LONG).show();
+
+
+                //assert detailsWrapper != null;
 
                 if (detailsWrapper.getStatus() == 401) {
                     //Go to phone verification step

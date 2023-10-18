@@ -20,6 +20,9 @@ public class Client {
         @SerializedName("name")
         @Expose
         private String name;
+        @SerializedName("document")
+        @Expose
+        private String document;
         @SerializedName("phone")
         @Expose
         private String phone;
@@ -30,9 +33,9 @@ public class Client {
         @Expose
         private String area;
 
-    @SerializedName("area_id")
-    @Expose
-    private String area_id;
+        @SerializedName("area_id")
+        @Expose
+        private String area_id;
         @SerializedName("disable_date")
         @Expose
         private String disableDate;
@@ -94,11 +97,11 @@ public class Client {
         public String getActionType(){
             return actionType;
         }
-    public String getArea_id() {
-        return area_id;
-    }
+        public String getArea_id() {
+            return area_id;
+        }
 
-    public void setArea_id(String area_id) {
+        public void setArea_id(String area_id) {
         this.area_id = area_id;
     }
         public void setActionType(String actionType) {
@@ -143,6 +146,14 @@ public class Client {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public String getDocument() {
+            return document;
+        }
+
+        public void setDocument(String document) {
+            this.document = document;
         }
 
         public String getPhone() {

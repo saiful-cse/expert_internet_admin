@@ -7,9 +7,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetFileDescriptor;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -28,6 +34,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.bumptech.glide.Glide;
 import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.Model.Client;
 import com.creativesaif.expert_internet_admin.Model.DetailsWrapper;
@@ -43,6 +50,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -88,6 +98,11 @@ public class ClientDetailsEdit extends AppCompatActivity{
     private Client client;
     final Calendar myCalendar = Calendar.getInstance();
     private String employee_id;
+    private ImageView imageDocumentView;
+
+    int SELECT_PICTURE = 200;
+    Bitmap bitmap;
+    private String stringImageDocument;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +134,8 @@ public class ClientDetailsEdit extends AppCompatActivity{
         edpppassword = findViewById(R.id.edppppassword);
         edtaketime = findViewById(R.id.edtaketime);
 
+        imageDocumentView = findViewById(R.id.img_view_document);
+
         DatePickerDialog.OnDateSetListener date =new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int day) {
@@ -148,6 +165,13 @@ public class ClientDetailsEdit extends AppCompatActivity{
 
         //Declaring Button
         Button buttonUpdate = findViewById(R.id.update_button);
+
+        findViewById(R.id.btn_choose_img).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageChooser();
+            }
+        });
 
         if (!isNetworkConnected()) {
             Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
@@ -225,6 +249,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                         client.setMode(client_mode);
                         client.setPaymentMethod(payment_method);
                         client.setName(name);
+                        client.setDocument(stringImageDocument);
                         client.setPhone(phone);
                         client.setArea_id(selectedAreaId);
                         client.setZone(selectedZone);
@@ -234,6 +259,8 @@ public class ClientDetailsEdit extends AppCompatActivity{
                         client.setPppName(pppname);
                         client.setPppPass(pppassword);
                         client.setPkgId(selectedPackage);
+
+                        //Toast.makeText(getApplicationContext(), "Image is: "+stringImageDocument, Toast.LENGTH_SHORT).show();
                         updateDetails(client);
                     }
 
@@ -319,6 +346,12 @@ public class ClientDetailsEdit extends AppCompatActivity{
                     edclientphone.setText(detailsWrapper.getPhone());
                     edtaketime.setText(detailsWrapper.getTakeTime());
                     existAreaId = detailsWrapper.getArea_id();
+
+                    stringImageDocument  = detailsWrapper.getDocument();
+
+                    Glide.with(getApplicationContext())
+                            .load(URL_config.BASE_URL+"documents/"+detailsWrapper.getDocument())
+                            .into(imageDocumentView);
 
                     if (detailsWrapper.getPaymentMethod().equals("Cash")) {
                         radioGroupPaymentMethod.check(R.id.payment_cash);
@@ -481,6 +514,59 @@ public class ClientDetailsEdit extends AppCompatActivity{
                 Toast.makeText(getApplicationContext(), "Failure: "+t.toString(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    public void imageChooser(){
+        Intent i = new Intent();
+        i.setType("image/*");
+        i.setAction(Intent.ACTION_GET_CONTENT);
+
+        startActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE);
+    }
+
+    @SuppressLint("Recycle")
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+
+            // compare the resultCode with the
+            // SELECT_PICTURE constant
+            if (requestCode == SELECT_PICTURE) {
+                // Get the url of the image from data
+                Uri selectedImageUri = data.getData();
+                if (null != selectedImageUri) {
+
+                    //Size calculation
+                    AssetFileDescriptor fileDescriptor = null;
+                    try {
+                        fileDescriptor = getApplicationContext().getContentResolver().openAssetFileDescriptor(selectedImageUri , "r");
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                    assert fileDescriptor != null;
+                    long fileSize = fileDescriptor.getLength() / 1024;
+
+                    if (fileSize > 500){
+                        Toast.makeText(getApplicationContext(), "File size must be less than 500 KB", Toast.LENGTH_LONG).show();
+                    }else {
+                        // update the preview image in the layout
+                        imageDocumentView.setImageURI(selectedImageUri);
+                        try {
+                            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),selectedImageUri);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        //Encoding
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        byte[] imageBytes = baos.toByteArray();
+                        //imageView.setImageBitmap(bitmap);
+                        stringImageDocument = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+                    }
+                }
+            }
+        }
     }
 
     public void warningShow(String message){

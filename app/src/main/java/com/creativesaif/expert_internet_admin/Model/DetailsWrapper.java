@@ -22,6 +22,11 @@ public class DetailsWrapper {
     @SerializedName("name")
     @Expose
     private String name;
+
+    @SerializedName("document")
+    @Expose
+    private String document;
+
     @SerializedName("phone")
     @Expose
     private String phone;
@@ -220,6 +225,14 @@ public class DetailsWrapper {
 
     public String getDisableDate() {
         return disableDate;
+    }
+
+    public String getDocument() {
+        return document;
+    }
+
+    public void setDocument(String document) {
+        this.document = document;
     }
 
     public void setDisableDate(String disableDate) {

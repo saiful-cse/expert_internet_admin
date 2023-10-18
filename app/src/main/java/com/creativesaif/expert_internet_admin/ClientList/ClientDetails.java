@@ -72,11 +72,11 @@ public class ClientDetails extends AppCompatActivity {
     private TextView tvname, tvphone, tvarea, tvzone,
             tvppname, tvpppass, tvpppstatus, tvactivity, tvroutermac, tvlastlogout, tvlastlogin, tvuptime, tvdownload, tvupload, tvConnectedIp,
             tvmode, tvpaymentmethod, tvpackgeid, tvregdate, tvexpiredate, tvdisabledate, tvtaketime;
-    private TextView tvExpireText, tvdiconnecttemp, tvpppinfotemp, tvpaybilltemp;
+    private TextView  tv_view_document, tvExpireText, tvdiconnecttemp, tvpppinfotemp, tvpaybilltemp;
     private LinearLayout linearLayoutPPPStatus;
 
     String currentMode;
-    private String jwt, name, id, pppName, ppppass, emp_id, phone, informMessage, take_time, connected_ip, mobile_payment_reference;
+    private String document, jwt, name, id, pppName, ppppass, emp_id, phone, informMessage, take_time, connected_ip, mobile_payment_reference;
     private SharedPreferences sharedPreferences;
     private ApiInterface apiInterface;
     private Client client;
@@ -125,6 +125,7 @@ public class ClientDetails extends AppCompatActivity {
         radioGroup = findViewById(R.id.radioGroup);
         radioGroup2 = findViewById(R.id.radioGroup2);
         editTextAmount = findViewById(R.id.edAmount);
+        tv_view_document = findViewById(R.id.tv_view_document);
 
         pppStatusProgressbar = findViewById(R.id.getPpStatusProgressBar);
         tvGetStatus = findViewById(R.id.tvGetStatus);
@@ -190,6 +191,14 @@ public class ClientDetails extends AppCompatActivity {
             client.setId(id);
             load_details(client);
         }
+
+        tv_view_document.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse(URL_config.BASE_URL+"documents/"+document));
+                startActivity(in);
+            }
+        });
 
         user_call.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -425,7 +434,7 @@ public class ClientDetails extends AppCompatActivity {
                     tvphone.setText(detailsWrapper.getPhone());
                     tvarea.setText(detailsWrapper.getArea());
                     tvzone.setText(detailsWrapper.getZone());
-
+                    document = detailsWrapper.getDocument();
                     currentMode = detailsWrapper.getMode();
                     tvmode.setText(currentMode);
 
