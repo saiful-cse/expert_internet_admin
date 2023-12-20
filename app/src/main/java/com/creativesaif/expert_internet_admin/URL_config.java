@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 
 public class URL_config {
 
-    public static final String BASE_URL = "https://expert-internet.net/api/exp-v6.2/";
+    public static final String BASE_URL = "https://expert-internet.net/api/exp-v6.4/";
     //public static final String BASE_URL = "http://192.168.1.8/API/expert_internet_api/exp-v5.0/";
 
     public static final String SEARCH = "client/search.php";
@@ -35,6 +35,7 @@ public class URL_config {
     public static final String CLIENT_DETAILS_ID = "client/client_details_id.php";
     public static final String EMPLOYEE_MAKE_PAYMENT = "txn/employee_make_payment.php";
     public static final String CLIENT_DETAILS_UPDATE = "client/client_details_update.php";
+    public static final String ONU_MAC_UPDATE = "client/onu_mac_update.php";
     public static final String  CLIENT_REG_UPDATE = "client/client_registration_update.php";
     public static final String CLIENT_REG = "client/client_registration.php";
     public static final String EXPIRING_WARNING_SMS = "sms/expiring_clients_sms.php";

@@ -65,12 +65,14 @@
         <item>Standard</item>
         <item>Professional</item>
         <item>---</item>
+        <item>Regular</item>
         <item>Govt5</item>
     </string-array>
 
     <string-array name="zone_name">
         <item>Main</item>
-        <item>Osman</item>
+        <item>OsmanPt</item>
+        <item>OsmanMp</item>
     </string-array>
 
 </resources>

@@ -73,23 +73,15 @@ public class ClientDetails extends AppCompatActivity {
             tvppname, tvpppass, tvpppstatus, tvactivity, tvroutermac, tvlastlogout, tvlastlogin, tvuptime, tvdownload, tvupload, tvConnectedIp,
             tvmode, tvpaymentmethod, tvpackgeid, tvregdate, tvexpiredate, tvdisabledate, tvtaketime;
     private TextView  tv_view_document, tvExpireText, tvdiconnecttemp, tvpppinfotemp, tvpaybilltemp;
-    private LinearLayout linearLayoutPPPStatus;
+    private LinearLayout linearLayoutPPPStatus, linearLayoutOnuStatus;
 
     String currentMode;
-    private String document, jwt, name, id, pppName, ppppass, emp_id, phone, informMessage, take_time, connected_ip, mobile_payment_reference;
+    private String document, jwt, name, id, pppName, ppppass, emp_id, area_id, phone, informMessage, take_time, connected_ip, router_mac, onu_mac, mobile_payment_reference;
     private SharedPreferences sharedPreferences;
     private ApiInterface apiInterface;
     private Client client;
     private Trns trns;
 
-
-    /*
-    Payment Details
-     */
-// initialize adapter and data structure here
-    /*
-    Make txn
-     */
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private EditText editTextAmount, editTextInformSms;
@@ -97,13 +89,15 @@ public class ClientDetails extends AppCompatActivity {
     private RadioGroup radioGroup, radioGroup2;
     Button buttonTxnSubmit;
     private TextView tvGetStatus;
-    private ProgressBar pppStatusProgressbar;
+    private ProgressBar pppStatusProgressbar, onuStatusProgressbar;
     /*
    Progress dialog
     */
     ProgressDialog progressDialog;
 
-    private Switch pppswitch ;
+    private Switch pppswitch;
+
+    private TextView tvgetOnuStatus, tvoltport, tvonuid, tvonustatus, tvonumac, tvonudesc, tvonudistance, tvlastregtime, tvlastdregtime, tvdregreason, tvonuptime, tvonupower;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,6 +153,23 @@ public class ClientDetails extends AppCompatActivity {
         tvdownload = findViewById(R.id.tvdownload);
         tvupload = findViewById(R.id.tvupload);
         tvConnectedIp = findViewById(R.id.tvconnectedip);
+
+        //------ONU information ---------
+        tvgetOnuStatus = findViewById(R.id.tvGetOnuStatus);
+        linearLayoutOnuStatus = findViewById(R.id.onuStatusLayout);
+        onuStatusProgressbar = findViewById(R.id.onustatusprogress);
+        tvoltport = findViewById(R.id.tvoltport);
+        tvonuid = findViewById(R.id.tvonuid);
+        tvonustatus = findViewById(R.id.tvonustatus);
+        tvonumac = findViewById(R.id.tvonumac);
+        tvonudesc = findViewById(R.id.tvonudesc);
+        tvonudistance = findViewById(R.id.tvonudistance);
+        tvlastregtime = findViewById(R.id.tvonulastregtime);
+        tvlastdregtime = findViewById(R.id.tvonulastdregtime);
+        tvdregreason = findViewById(R.id.tvdregreason);
+        tvonuptime = findViewById(R.id.tvonuuptime);
+        tvonupower = findViewById(R.id.tvonupower);
+
 
         //------Service details--------
         tvpaymentmethod = findViewById(R.id.tvpaymentmethod);
@@ -241,6 +252,21 @@ public class ClientDetails extends AppCompatActivity {
             }
         });
 
+        tvgetOnuStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!isNetworkConnected()) {
+                    Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
+
+                }else{
+                    //Toast.makeText(getApplicationContext(), onu_mac, Toast.LENGTH_SHORT).show();
+
+                    getOnuStatusByOnuMac(onu_mac);
+                }
+
+            }
+        });
+
         //reload or refresh posts
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -310,7 +336,7 @@ public class ClientDetails extends AppCompatActivity {
         tvdiconnecttemp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editTextInformSms.setText("আপনার WiFi সংযোগের মেয়াদ শেষ, পুনরায় চালু করতে বিল পরিশোধ করুন।\nhttps://baycombd.com/paybill\n01975-559161(bKash Payment) Reference: "+pppName);
+                editTextInformSms.setText("আপনার WiFi সংযোগের মেয়াদ শেষ, অটো চালু করতে লিংক দিয়ে বিল পরিশোধ করুন।\nhttps://expert-internet.net/paybill/info.php?mobile_no="+phone);
             }
         });
 
@@ -424,8 +450,10 @@ public class ClientDetails extends AppCompatActivity {
                 } else if (detailsWrapper.getStatus() == 200) {
 
                     linearLayoutPPPStatus.setVisibility(View.GONE);
-                    tvGetStatus.setText("Get Status");
+                    linearLayoutOnuStatus.setVisibility(View.GONE);
+                    tvGetStatus.setText("Get PPP Status");
                     tvGetStatus.setVisibility(View.VISIBLE);
+
 
                     id = detailsWrapper.getId();
                     phone = detailsWrapper.getPhone();
@@ -433,6 +461,7 @@ public class ClientDetails extends AppCompatActivity {
                     tvname.setText(detailsWrapper.getName());
                     tvphone.setText(detailsWrapper.getPhone());
                     tvarea.setText(detailsWrapper.getArea());
+                    area_id = detailsWrapper.getArea_id();
                     tvzone.setText(detailsWrapper.getZone());
                     document = detailsWrapper.getDocument();
                     currentMode = detailsWrapper.getMode();
@@ -462,6 +491,17 @@ public class ClientDetails extends AppCompatActivity {
                     tvdisabledate.setText(detailsWrapper.getDisableDate());
                     take_time = detailsWrapper.getTakeTime();
                     tvtaketime.setText(take_time+" Days");
+
+                    if (detailsWrapper.getOnu_mac().equals("---")){
+                        tvonumac.setText(detailsWrapper.getOnu_mac());
+                        tvgetOnuStatus.setVisibility(View.GONE);
+
+                    }else{
+                        onu_mac = detailsWrapper.getOnu_mac();
+                        tvonumac.setText(onu_mac);
+                        tvgetOnuStatus.setVisibility(View.VISIBLE);
+                        tvgetOnuStatus.setText("Get ONU Status");
+                    }
 
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -506,9 +546,9 @@ public class ClientDetails extends AppCompatActivity {
     {
         String url = sharedPreferences.getString("api_base", null)+"pppStatus.php";
 
-        linearLayoutPPPStatus.setVisibility(View.GONE);
         pppStatusProgressbar.setVisibility(View.VISIBLE);
         tvGetStatus.setVisibility(View.GONE);
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -542,6 +582,16 @@ public class ClientDetails extends AppCompatActivity {
                         tvConnectedIp.setTextColor(Color.BLUE);
                         connected_ip = jsonObject.getString("connected_ip");
                         tvConnectedIp.setText(connected_ip);
+
+                        if (jsonObject.getString("ppp_activity").equals("Online")){
+                            tvactivity.setTextColor(Color.GREEN);
+                            getOnuStatusByRouterMac(jsonObject.getString("router_mac"));
+
+                        }else{
+                            tvactivity.setTextColor(Color.RED);
+                            linearLayoutOnuStatus.setVisibility(View.GONE);
+                        }
+
                     }else{
                         linearLayoutPPPStatus.setVisibility(View.GONE);
                         tvGetStatus.setText("Refresh");
@@ -574,7 +624,192 @@ public class ClientDetails extends AppCompatActivity {
         };
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance().addToRequestQueue(stringRequest);
+    }
+
+    public void getOnuStatusByRouterMac(String mac)
+    {
+
+        int area_id_int = Integer.parseInt(area_id);
+        String url;
+
+        if (area_id_int >= 29 && 38 >= area_id_int)
+        {
+            //olt 3
+            url = "https://kgnet.xyz/business_api/apivsol.php?auth=Djt875hgKikhSf77fsjk98&action=macstatus&mac="+mac;
+
+        }else if(area_id_int >= 20 && 28 >= area_id_int || area_id_int == 17){
+            //olt 1
+            url = "https://kgnet.xyz/business_api/apivsol.php?auth=jfK4sdGBj783KJD5saGl56&action=macstatus&mac="+mac;
+        }else {
+            //olt 2
+            url = "https://kgnet.xyz/business_api/apivsol.php?auth=K25sghf6le9b7MkzXpS652&action=macstatus&mac="+mac;
+
+        }
+
+        onuStatusProgressbar.setVisibility(View.VISIBLE);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                onuStatusProgressbar.setVisibility(View.GONE);
+                tvgetOnuStatus.setVisibility(View.GONE);
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (jsonObject.getString("status").equals("404"))
+                    {
+                        warningShow(jsonObject.getString("msg"));
+
+                    }else if(jsonObject.getString("status").equals("200")){
+
+                        linearLayoutOnuStatus.setVisibility(View.VISIBLE);
+                        tvoltport.setText(jsonObject.getString("olt_port"));
+                        tvonuid.setText(jsonObject.getString("onu_id"));
+                        tvonustatus.setText(jsonObject.getString("onu_status"));
+                        onu_mac = jsonObject.getString("onu_mac");
+                        tvonumac.setText(onu_mac);
+                        tvonudesc.setText(jsonObject.getString("description"));
+                        tvonudistance.setText(jsonObject.getString("distance"));
+                        tvlastregtime.setText(jsonObject.getString("last_reg_time"));
+                        tvlastdregtime.setText(jsonObject.getString("last_dreg_time"));
+                        tvdregreason.setText(jsonObject.getString("dreg_reason"));
+                        tvonuptime.setText(jsonObject.getString("uptime"));
+                        tvonupower.setText(jsonObject.getString("rx_power"));
+
+                        if (jsonObject.getString("onu_status").equals("Online")){
+                            tvonustatus.setTextColor(Color.GREEN);
+                            onu_mac_store();
+                        }else{
+                            tvonustatus.setTextColor(Color.RED);
+                        }
+
+                    }else{
+                        warningShow(jsonObject.getString("msg"));
+                    }
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                onuStatusProgressbar.setVisibility(View.GONE);
+                warningShow(error.toString());
+            }
+        });
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         MySingleton.getInstance().addToRequestQueue(stringRequest);;
+    }
+
+    public void getOnuStatusByOnuMac(String mac)
+    {
+
+        int area_id_int = Integer.parseInt(area_id);
+        String url;
+
+        if (area_id_int >= 29 && 38 >= area_id_int)
+        {
+            //olt 3
+            url = "https://kgnet.xyz/business_api/apivsol.php?auth=Djt875hgKikhSf77fsjk98&action=onumacstatus&mac="+mac;
+
+        }else if(area_id_int >= 20 && 28 >= area_id_int || area_id_int == 17){
+            //olt 1
+            url = "https://kgnet.xyz/business_api/apivsol.php?auth=jfK4sdGBj783KJD5saGl56&action=onumacstatus&mac="+mac;
+
+        }else {
+            //olt 2
+            url = "https://kgnet.xyz/business_api/apivsol.php?auth=K25sghf6le9b7MkzXpS652&action=onumacstatus&mac="+mac;
+
+        }
+
+        onuStatusProgressbar.setVisibility(View.VISIBLE);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                onuStatusProgressbar.setVisibility(View.GONE);
+                tvgetOnuStatus.setVisibility(View.GONE);
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (jsonObject.getString("status").equals("404"))
+                    {
+                        warningShow(jsonObject.getString("msg"));
+
+                    }else if(jsonObject.getString("status").equals("200")){
+
+
+                        linearLayoutOnuStatus.setVisibility(View.VISIBLE);
+                        tvoltport.setText(jsonObject.getString("olt_port"));
+                        tvonuid.setText(jsonObject.getString("onu_id"));
+                        tvonustatus.setText(jsonObject.getString("onu_status"));
+                        onu_mac = jsonObject.getString("onu_mac");
+                        tvonumac.setText(onu_mac);
+                        tvonudesc.setText(jsonObject.getString("description"));
+                        tvonudistance.setText(jsonObject.getString("distance"));
+                        tvlastregtime.setText(jsonObject.getString("last_reg_time"));
+                        tvlastdregtime.setText(jsonObject.getString("last_dreg_time"));
+                        tvdregreason.setText(jsonObject.getString("dreg_reason"));
+                        tvonuptime.setText(jsonObject.getString("uptime"));
+                        tvonupower.setText(jsonObject.getString("rx_power"));
+
+                        if (jsonObject.getString("onu_status").equals("Offline")){
+                            tvonustatus.setTextColor(Color.RED);
+                        }else {
+                            tvonustatus.setTextColor(Color.GREEN);
+                        }
+
+                    }else{
+                        warningShow(jsonObject.getString("msg"));
+                    }
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                onuStatusProgressbar.setVisibility(View.GONE);
+                warningShow(error.toString());
+            }
+        });
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance().addToRequestQueue(stringRequest);;
+    }
+
+    public void onu_mac_store()
+    {
+        String url = URL_config.BASE_URL+URL_config.ONU_MAC_UPDATE;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams()throws AuthFailureError {
+                Map<String,String> map = new HashMap<>();
+
+                map.put("id", id);
+                map.put("onu_mac", onu_mac);
+
+                return map;
+
+            }
+        };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance().addToRequestQueue(stringRequest);;
+
     }
 
     public void getPPPAction(String actionType)
@@ -847,6 +1082,7 @@ public class ClientDetails extends AppCompatActivity {
         android.app.AlertDialog dlg = alert.create();
         dlg.show();
     }
+
 
     public void warningShowDisablePayment(){
         android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);

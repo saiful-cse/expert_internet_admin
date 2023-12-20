@@ -66,6 +66,9 @@ public class DetailsWrapper {
     @SerializedName("mode")
     @Expose
     private String mode;
+    @SerializedName("onu_mac")
+    @Expose
+    private String onu_mac;
     @SerializedName("packages")
     @Expose
     private List<Package> packages = null;
@@ -325,6 +328,13 @@ public class DetailsWrapper {
     }
     public void setDownload(String download) {
         this.download = download;
+    }
+
+    public String getOnu_mac() {
+        return onu_mac;
+    }
+    public void setOnu_mac(String onu_mac) {
+        this.onu_mac = onu_mac;
     }
 
     public String getUpload() {

@@ -84,6 +84,35 @@
 
     </LinearLayout>
 
+        <LinearLayout
+            android:background="@color/activity_backround"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:id="@+id/dashboard_mon_service"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                />
+
+            <TextView
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:id="@+id/dashboard_mon_bill"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                />
+
+        </LinearLayout>
+
     <TextView
         android:textSize="15sp"
         android:textStyle="bold"

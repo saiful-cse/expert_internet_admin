@@ -45,7 +45,7 @@ import java.util.Map;
 public class Dashboard extends AppCompatActivity {
 
     TextView textViewTotalExpiredClient, textViewEnableClient, textViewDisableClient,
-            textViewMonthCredit, textViewMonthDebit, textViewMonthProfit;
+            textViewMonthCredit, textViewMonthDebit, tvMonthServiceFee, tvMonthBill, textViewMonthProfit;
     String jwt, totalExpiredCLient, activeClient, inactiveClient, monthCredit, monthDebit;
     ProgressDialog progressDialog;
 
@@ -69,6 +69,8 @@ public class Dashboard extends AppCompatActivity {
         textViewDisableClient = findViewById(R.id.dashboard_inactive);
         textViewMonthCredit = findViewById(R.id.dashboard_mon_credit);
         textViewMonthDebit = findViewById(R.id.dashboard_mon_debit);
+        tvMonthServiceFee = findViewById(R.id.dashboard_mon_service);
+        tvMonthBill = findViewById(R.id.dashboard_mon_bill);
         textViewMonthProfit = findViewById(R.id.dashboard_profit);
         progressDialog = new ProgressDialog(this);
 
@@ -148,6 +150,9 @@ public class Dashboard extends AppCompatActivity {
 
                     textViewMonthCredit.setText("This Month Credit\n"+monthCredit);
                     textViewMonthDebit.setText("This Month Debit\n"+monthDebit);
+
+                    tvMonthServiceFee.setText("This Month Service fee\n"+jsonObject.getString("current_month_total_service"));
+                    tvMonthBill.setText("This Month Bill\n"+jsonObject.getString("current_month_total_bill"));
 
                     textViewMonthProfit.setText("Monthly Profit\n"+monthlyProfit);
 
