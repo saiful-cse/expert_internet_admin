@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -68,7 +70,7 @@ public class ClientRegUpdate extends AppCompatActivity {
     private RadioGroup radioGroupPaymentMethod, radioGroupClientMode;
     private JSONArray jsonArrayArea;
     //Declaring String
-    private String jwt, id, name, phone, existAreaId, existAreaName, selectedAreaId, selectedZone,
+    private String selectedTakeTime, super_admin, zone, jwt, id, name, phone, existAreaId, existAreaName, selectedAreaId, selectedZone,
             pppname, pppassword, selectedPackage;
 
     //Declaring progress dialog
@@ -86,6 +88,8 @@ public class ClientRegUpdate extends AppCompatActivity {
     int SELECT_PICTURE = 200;
     Bitmap bitmap;
     private String encodedStringImage;
+    private CardView payment_method_card;
+    private LinearLayout zone_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +102,8 @@ public class ClientRegUpdate extends AppCompatActivity {
         id = getIntent().getStringExtra("id");
         SharedPreferences preferences = this.getSharedPreferences("users", MODE_PRIVATE);
         jwt = preferences.getString("jwt", null);
+        zone = preferences.getString("zone", null);
+        super_admin = preferences.getString("super_admin", null);
 
         apiInterface = RetrofitApiClient.getClient().create(ApiInterface.class);
         client = new Client();
@@ -115,6 +121,9 @@ public class ClientRegUpdate extends AppCompatActivity {
         edclientphone = findViewById(R.id.edclientphone);
         edpppusername = findViewById(R.id.edpppusername);
         edpppassword = findViewById(R.id.edppppassword);
+        payment_method_card = findViewById(R.id.payment_method_card);
+        zone_layout = findViewById(R.id.zone_layout);
+
         //Declaring Button
         Button btnUpdate = findViewById(R.id.update_button);
 
@@ -191,7 +200,7 @@ public class ClientRegUpdate extends AppCompatActivity {
                     client.setPppName(pppname);
                     client.setPppPass(pppassword);
                     client.setPkgId(selectedPackage);
-                    //Toast.makeText(getApplicationContext(), "Image string: "+encodedStringImage, Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(), selectedZone, Toast.LENGTH_LONG).show();
 
                     updateRegistration(client);
                 }
@@ -335,6 +344,18 @@ public class ClientRegUpdate extends AppCompatActivity {
                     edclientphone.setText(detailsWrapper.getPhone());
                     existAreaId = detailsWrapper.getArea_id();
 
+                    if (zone.equals("All") || zone.equals("Main")){
+                        if (detailsWrapper.getPaymentMethod().equals("Cash")) {
+                            radioGroupPaymentMethod.check(R.id.payment_cash);
+
+                        } else if (detailsWrapper.getPaymentMethod().equals("Mobile")) {
+                            radioGroupPaymentMethod.check(R.id.payment_mobile);
+                        }
+                    }else{
+                        payment_method_card.setVisibility(View.GONE);
+                    }
+
+
                     if (detailsWrapper.getPaymentMethod().equals("Cash")) {
                         radioGroupPaymentMethod.check(R.id.payment_cash);
 
@@ -352,6 +373,12 @@ public class ClientRegUpdate extends AppCompatActivity {
                     edpppusername.setText(detailsWrapper.getPppName());
                     edpppassword.setText(detailsWrapper.getPppPass());
 
+
+                    if (!super_admin.equals("1")){
+                        zone_layout.setVisibility(View.GONE);
+                        selectedZone = detailsWrapper.getZone();
+                    }
+
                     //Setting zone and package on spinner
                     ArrayAdapter<CharSequence> zoneArrayAdapter = ArrayAdapter.createFromResource(ClientRegUpdate.this,
                             R.array.zone_name, android.R.layout.simple_spinner_item);
@@ -360,6 +387,7 @@ public class ClientRegUpdate extends AppCompatActivity {
                     int zoneSpinnerPosition = zoneArrayAdapter.getPosition(detailsWrapper.getZone());
                     zoneSpinner.setSelection(zoneSpinnerPosition);
 
+
                     ArrayAdapter<CharSequence> packageAdapter = ArrayAdapter.createFromResource(ClientRegUpdate.this,
                             R.array.package_name, android.R.layout.simple_spinner_item);
                     packageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -367,6 +395,7 @@ public class ClientRegUpdate extends AppCompatActivity {
 
                     int spinnerPosition = packageAdapter.getPosition(detailsWrapper.getPkgId());
                     packageSpinner.setSelection(spinnerPosition);
+
 
                 }else{
                     Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();

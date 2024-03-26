@@ -57,10 +57,9 @@ public class TransactionList extends AppCompatActivity {
     SharedPreferences sharedPreferences;
 
     Button buttonDatePicker1,buttonDatePicker2, buttonTxnView;
+    String zone, first_date, last_date, summary;
 
-    String first_date, last_date, summary;
-
-    FloatingActionButton fab1, fab3;
+    FloatingActionButton fab1, fab3, fab2;
 
     final Calendar myCalendar= Calendar.getInstance();
 
@@ -75,6 +74,8 @@ public class TransactionList extends AppCompatActivity {
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
 
+        sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
+        zone = sharedPreferences.getString("zone", null);
         /*
         Initialize here
          */
@@ -96,6 +97,7 @@ public class TransactionList extends AppCompatActivity {
 
         fab1 = findViewById(R.id.total);
         fab3 = findViewById(R.id.txn_edit);
+        fab2 = findViewById(R.id.txn_add);
 
         String employee_id = sharedPreferences.getString("employee_id", null);
         assert employee_id != null;
@@ -111,6 +113,13 @@ public class TransactionList extends AppCompatActivity {
 
         }else{
             fab3.setVisibility(View.GONE);
+        }
+
+        if (zone.equals("All") || zone.equals("Main")){
+            fab2.setVisibility(View.VISIBLE);
+
+        }else{
+            fab2.setVisibility(View.GONE);
         }
 
         DatePickerDialog.OnDateSetListener date1 =new DatePickerDialog.OnDateSetListener() {
@@ -192,7 +201,6 @@ public class TransactionList extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab2 = findViewById(R.id.fab);
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -211,7 +219,7 @@ public class TransactionList extends AppCompatActivity {
     private void load_txn() {
 
         progressDialog.showDialog();
-        String url = URL_config.BASE_URL+URL_config.DATEWISE_ALL_TXN +"?first_date="+first_date+"&last_date="+last_date;
+        String url = URL_config.BASE_URL+URL_config.DATEWISE_ALL_TXN +"?first_date="+first_date+"&last_date="+last_date+"&zone="+zone;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @SuppressLint("NotifyDataSetChanged")
@@ -279,7 +287,7 @@ public class TransactionList extends AppCompatActivity {
 
     public void total_credit_debit_load()
     {
-        String url = URL_config.BASE_URL+URL_config.TOTAL_DEBIT_CREDIT_CASH+"?first_date="+first_date+"&last_date="+last_date;
+        String url = URL_config.BASE_URL+URL_config.TOTAL_DEBIT_CREDIT_CASH+"?first_date="+first_date+"&last_date="+last_date+"&zone="+zone;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override

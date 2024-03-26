@@ -53,7 +53,7 @@ public class ClientReg extends AppCompatActivity {
     private JSONArray jsonArrayArea;
 
     //Declaring String
-    private String jwt,name, phone, selectedAreaId;
+    private String zone, jwt,name, phone, selectedAreaId;
 
     //Declaring progress dialog
     private ProgressDialog progressDialog;
@@ -75,6 +75,7 @@ public class ClientReg extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         SharedPreferences preferences = this.getSharedPreferences("users", MODE_PRIVATE);
         jwt = preferences.getString("jwt", null);
+        zone = preferences.getString("zone", null);
 
         apiInterface = RetrofitApiClient.getClient().create(ApiInterface.class);
         client = new Client();
@@ -121,7 +122,7 @@ public class ClientReg extends AppCompatActivity {
                     client.setName(name);
                     client.setPhone(phone);
                     client.setArea_id(selectedAreaId);
-
+                    client.setZone((zone.equals("All") ? "Main" : zone));
                     clientRegistration(client);
                 }
             }

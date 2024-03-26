@@ -1130,6 +1130,7 @@
             <!-- service details end -->
 
             <android.support.v7.widget.CardView
+                android:id="@+id/make_payment_layout"
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

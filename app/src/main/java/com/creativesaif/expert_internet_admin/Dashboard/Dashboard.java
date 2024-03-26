@@ -1,16 +1,16 @@
 package com.creativesaif.expert_internet_admin.Dashboard;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,8 +19,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.creativesaif.expert_internet_admin.ClientList.ClientDetails;
-import com.creativesaif.expert_internet_admin.DeviceUrl.DeviceUrl;
+import com.creativesaif.expert_internet_admin.Adapter.PackageAdapter;
+import com.creativesaif.expert_internet_admin.DeviceUrl.PackageUse;
+
 import com.creativesaif.expert_internet_admin.Login;
 import com.creativesaif.expert_internet_admin.MySingleton;
 import com.creativesaif.expert_internet_admin.ProgressDialog;
@@ -30,29 +31,31 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Dashboard extends AppCompatActivity {
 
-    TextView textViewTotalExpiredClient, textViewEnableClient, textViewDisableClient,
+    TextView textViewTotalExpiredClient, textViewEnableClient, textViewDisableClient, pkg_summary,
             textViewMonthCredit, textViewMonthDebit, tvMonthServiceFee, tvMonthBill, textViewMonthProfit;
     String jwt, totalExpiredCLient, activeClient, inactiveClient, monthCredit, monthDebit;
     ProgressDialog progressDialog;
+    RecyclerView recyclerView;
+    private ArrayList<PackageUse> packageArrayList;
+    private PackageAdapter packageAdapter;
 
     ArrayList noOfClient;
     ArrayList month;
 
-    BarChart chart;
+    BarChart barchart;
 
     BarDataSet bardataset;
     SharedPreferences preferences;
@@ -74,9 +77,24 @@ public class Dashboard extends AppCompatActivity {
         textViewMonthProfit = findViewById(R.id.dashboard_profit);
         progressDialog = new ProgressDialog(this);
 
-        chart = findViewById(R.id.barchart);
+
+        //Bar chart
+        barchart = findViewById(R.id.barchart);
         noOfClient = new ArrayList();
         month = new ArrayList();
+        // -----bar chat end -------
+
+        // Pakcage qtn
+        packageArrayList = new ArrayList<>();
+        packageAdapter = new PackageAdapter(this, packageArrayList);
+
+        recyclerView = findViewById(R.id.recyclerPkgRow);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+
+        //now set adapter to recyclerView
+        recyclerView.setAdapter(packageAdapter);
+
         preferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
         jwt = preferences.getString("jwt", null);
 
@@ -118,6 +136,7 @@ public class Dashboard extends AppCompatActivity {
         String url = URL_config.BASE_URL+URL_config.DASHBOARD_READ;
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onResponse(String response) {
 
@@ -144,20 +163,22 @@ public class Dashboard extends AppCompatActivity {
 
                     double monthlyProfit = Double.parseDouble(monthCredit) - Double.parseDouble(monthDebit);
 
-                    textViewTotalExpiredClient.setText("Total Expired Client\n"+totalExpiredCLient);
+                    textViewTotalExpiredClient.setText("Expired Client\n"+totalExpiredCLient);
                     textViewEnableClient.setText("Enabled Client\n"+activeClient);
                     textViewDisableClient.setText("Disabled Client\n"+inactiveClient);
 
-                    textViewMonthCredit.setText("This Month Credit\n"+monthCredit);
-                    textViewMonthDebit.setText("This Month Debit\n"+monthDebit);
+                    textViewMonthCredit.setText("Credit\n"+monthCredit);
+                    textViewMonthDebit.setText("Debit\n"+monthDebit);
 
-                    tvMonthServiceFee.setText("This Month Service fee\n"+jsonObject.getString("current_month_total_service"));
-                    tvMonthBill.setText("This Month Bill\n"+jsonObject.getString("current_month_total_bill"));
+                    tvMonthServiceFee.setText("Service fee\n"+jsonObject.getString("current_month_total_service"));
+                    tvMonthBill.setText("Bill\n"+jsonObject.getString("current_month_total_bill"));
 
-                    textViewMonthProfit.setText("Monthly Profit\n"+monthlyProfit);
+                    textViewMonthProfit.setText("Balance\n"+monthlyProfit);
 
-                    //Chart data
+                    //BarChart data
                     JSONArray jsonArray = jsonObject.getJSONArray("monthly_client_count");
+                    //Toast.makeText(getApplicationContext(), (CharSequence) jsonArray, Toast.LENGTH_LONG).show();
+
                     for (int i = 0; i < jsonArray.length(); i++){
 
                         JSONObject jsonObject1 = jsonArray.getJSONObject(i);
@@ -167,10 +188,23 @@ public class Dashboard extends AppCompatActivity {
                     }
 
                     bardataset = new BarDataSet(noOfClient, "No Of Client");
-                    chart.animateY(2000);
+                    barchart.animateY(2000);
                     BarData data = new BarData(month, bardataset);
                     bardataset.setColors(ColorTemplate.COLORFUL_COLORS);
-                    chart.setData(data);
+                    barchart.setData(data);
+                    //BarChart data end-----
+                    }
+
+                    // Package quantity data
+                    JSONArray jsonArrayPkg = jsonObject.getJSONArray("pkg_usages");
+                    for (int i = 0; i<jsonArrayPkg.length(); i++){
+                        PackageUse packageUse = new PackageUse();
+                        JSONObject jsonObject2 = jsonArrayPkg.getJSONObject(i);
+
+                        packageUse.setPkgNmae(jsonObject2.getString("pkg_name"));
+                        packageUse.setPkgQtn(jsonObject2.getString("pkg_qtn"));
+                        packageArrayList.add(packageUse);
+                        packageAdapter.notifyDataSetChanged();
 
                     }
 
@@ -193,6 +227,7 @@ public class Dashboard extends AppCompatActivity {
                 Map<String,String> map = new HashMap<>();
 
                 map.put("jwt", jwt);
+                map.put("zone", Objects.requireNonNull(preferences.getString("zone", "---")));
                 return map;
 
             }

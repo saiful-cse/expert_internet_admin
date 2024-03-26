@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +24,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -68,21 +70,18 @@ import retrofit2.Callback;
 public class ClientDetailsEdit extends AppCompatActivity{
 
     //Declaring EditText
-    private EditText edclientname, edclientphone, edExpiredate, edpppusername, edpppassword, edtaketime;
+    private EditText edclientname, edclientphone, edExpiredate, edpppusername, edpppassword;
 
     //Declaring RadioButton
     private RadioGroup radioGroupPaymentMethod, radioGroupClientMode;
     //Declaring String
-    private String jwt, existAreaName, existAreaId;
+    private String jwt, zone, super_admin, existAreaName, existAreaId;
     private JSONArray jsonArrayArea;
-    private String id;
-    private String name;
-    private String phone;
+    private String id, pppassword, name, phone, pppname;
+
     private String selectedAreaId, expire_date, disable_date;
-    private String pppname;
-    private String pppassword;
-    private String takeTime;
-    private String selectedPackage, selectedZone;
+
+    private String selectedPackage, selectedZone, selectedTakeTime, payment_method;
 
     //Declaring progress dialog
     private ProgressDialog progressDialog;
@@ -90,7 +89,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
     private SharedPreferences preferences;
 
     //Declaring spinner
-    private Spinner areaSpinner,zoneSpinner, packageSpinner;
+    private Spinner areaSpinner,zoneSpinner, packageSpinner, take_timeSpiner;
 
     //Declaring Array List
 
@@ -104,6 +103,9 @@ public class ClientDetailsEdit extends AppCompatActivity{
     Bitmap bitmap;
     private String stringImageDocument;
 
+    private CardView payment_method_card;
+    private LinearLayout expired_date_layout, pacakge_layout, take_time_layout, zone_layout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,6 +117,9 @@ public class ClientDetailsEdit extends AppCompatActivity{
         progressDialog = new ProgressDialog(this);
         id = getIntent().getStringExtra("id");
         jwt = preferences.getString("jwt", null);
+        zone = preferences.getString("zone", null);
+        super_admin = preferences.getString("super_admin", null);
+
         apiInterface = RetrofitApiClient.getClient().create(ApiInterface.class);
         client = new Client();
         employee_id = preferences.getString("employee_id", null);
@@ -132,9 +137,16 @@ public class ClientDetailsEdit extends AppCompatActivity{
         edExpiredate = findViewById(R.id.edexpdateedit);
         edpppusername = findViewById(R.id.edpppusername);
         edpppassword = findViewById(R.id.edppppassword);
-        edtaketime = findViewById(R.id.edtaketime);
-
+        take_timeSpiner = findViewById(R.id.take_time_ListSpinner);
+        payment_method_card = findViewById(R.id.payment_method_card);
         imageDocumentView = findViewById(R.id.img_view_document);
+        expired_date_layout = findViewById(R.id.expired_date_layout);
+        pacakge_layout = findViewById(R.id.pacakge_layout);
+        take_time_layout = findViewById(R.id.take_time_layout);
+        zone_layout = findViewById(R.id.zone_layout);
+
+        //View permission
+
 
         DatePickerDialog.OnDateSetListener date =new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -191,7 +203,6 @@ public class ClientDetailsEdit extends AppCompatActivity{
                 phone = edclientphone.getText().toString().trim();
                 pppname = edpppusername.getText().toString().trim();
                 pppassword = edpppassword.getText().toString().trim();
-                takeTime = edtaketime.getText().toString().trim();
 
                 if (name.isEmpty()){
                     Toast.makeText(getApplicationContext(), "Enter client name", Toast.LENGTH_SHORT).show();
@@ -214,6 +225,12 @@ public class ClientDetailsEdit extends AppCompatActivity{
                 }else if(selectedPackage.equals("---")){
                     Toast.makeText(getApplicationContext(), "Select Package Name", Toast.LENGTH_SHORT).show();
 
+                }else if(selectedZone.equals("---")){
+                    Toast.makeText(getApplicationContext(), "Select Zone", Toast.LENGTH_SHORT).show();
+
+                } else if(stringImageDocument.isEmpty()){
+                    warningShow("500 KB সাইজের কম ডকুমেন্ট সিলেক্ট করুন");
+
                 } else if (!isNetworkConnected()){
                     Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
 
@@ -227,7 +244,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
 
                     int selectedPaymentMethod = radioGroupPaymentMethod.getCheckedRadioButtonId();
                     RadioButton radioButtonPaymentMethod = findViewById(selectedPaymentMethod);
-                    String payment_method = radioButtonPaymentMethod.getText().toString().trim();
+                    payment_method = radioButtonPaymentMethod.getText().toString().trim();
 
                     int selectedClientMode = radioGroupClientMode.getCheckedRadioButtonId();
                     RadioButton radioButtonClientMode = findViewById(selectedClientMode);
@@ -241,9 +258,10 @@ public class ClientDetailsEdit extends AppCompatActivity{
                     }
 
                     if (client_mode.equals("Disable") && !employee_id.equals("9161")){
-                            warningShow("Unable to disable. Something went wrong!!");
+                            warningShow(getResources().getString(R.string.disable_warning_message));
 
                     } else{
+
                         client.setJwt(jwt);
                         client.setId(id);
                         client.setMode(client_mode);
@@ -255,12 +273,11 @@ public class ClientDetailsEdit extends AppCompatActivity{
                         client.setZone(selectedZone);
                         client.setExpireDate(expire_date);
                         client.setDisableDate(disable_date);
-                        client.setTakeTime(takeTime);
+                        client.setTakeTime(selectedTakeTime);
                         client.setPppName(pppname);
                         client.setPppPass(pppassword);
                         client.setPkgId(selectedPackage);
 
-                        //Toast.makeText(getApplicationContext(), "Image is: "+stringImageDocument, Toast.LENGTH_SHORT).show();
                         updateDetails(client);
                     }
 
@@ -294,6 +311,20 @@ public class ClientDetailsEdit extends AppCompatActivity{
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // On selecting a spinner item
                 selectedZone = parentView.getItemAtPosition(position).toString();
+
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+
+        take_timeSpiner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // On selecting a spinner item
+                selectedTakeTime = parentView.getItemAtPosition(position).toString();
 
             }
             @Override
@@ -344,7 +375,6 @@ public class ClientDetailsEdit extends AppCompatActivity{
                 if (detailsWrapper.getStatus() == 200) {
                     edclientname.setText(detailsWrapper.getName());
                     edclientphone.setText(detailsWrapper.getPhone());
-                    edtaketime.setText(detailsWrapper.getTakeTime());
                     existAreaId = detailsWrapper.getArea_id();
 
                     stringImageDocument  = detailsWrapper.getDocument();
@@ -352,6 +382,18 @@ public class ClientDetailsEdit extends AppCompatActivity{
                     Glide.with(getApplicationContext())
                             .load(URL_config.BASE_URL+"documents/"+detailsWrapper.getDocument())
                             .into(imageDocumentView);
+
+
+                    if (zone.equals("All") || zone.equals("Main")){
+                        if (detailsWrapper.getPaymentMethod().equals("Cash")) {
+                            radioGroupPaymentMethod.check(R.id.payment_cash);
+
+                        } else if (detailsWrapper.getPaymentMethod().equals("Mobile")) {
+                            radioGroupPaymentMethod.check(R.id.payment_mobile);
+                        }
+                    }else{
+                        payment_method_card.setVisibility(View.GONE);
+                    }
 
                     if (detailsWrapper.getPaymentMethod().equals("Cash")) {
                         radioGroupPaymentMethod.check(R.id.payment_cash);
@@ -370,17 +412,47 @@ public class ClientDetailsEdit extends AppCompatActivity{
                     expire_date = detailsWrapper.getExpireDate();
                     disable_date = detailsWrapper.getDisableDate();
 
-                    edExpiredate.setText(expire_date);
                     edpppusername.setText(detailsWrapper.getPppName());
                     edpppassword.setText(detailsWrapper.getPppPass());
 
-                    //Setting zone and package on spinner
+                    edExpiredate.setText(expire_date);
+
+
+                    if (!super_admin.equals("1")){
+                        expired_date_layout.setVisibility(View.GONE);
+                    }
+
+                    if (!super_admin.equals("1")){
+                        zone_layout.setVisibility(View.GONE);
+                        selectedZone = detailsWrapper.getZone();
+                    }
+
+                    if (!super_admin.equals("1") && getIntent().getStringExtra("expired").equals("no")){
+                        pacakge_layout.setVisibility(View.GONE);
+                        selectedPackage = detailsWrapper.getPkgId();
+                    }
+
+                    if (getIntent().getStringExtra("expired").equals("no")){
+                        take_time_layout.setVisibility(View.GONE);
+                    }
+
+                    //setting zone
                     ArrayAdapter<CharSequence> zoneArrayAdapter = ArrayAdapter.createFromResource(ClientDetailsEdit.this,
                             R.array.zone_name, android.R.layout.simple_spinner_item);
                     zoneSpinner.setAdapter(zoneArrayAdapter);
 
                     int zoneSpinnerPosition = zoneArrayAdapter.getPosition(detailsWrapper.getZone());
                     zoneSpinner.setSelection(zoneSpinnerPosition);
+                    //End zone spinner
+
+                    //Setting taketime
+                    ArrayAdapter<CharSequence> takeTimeAdapter = ArrayAdapter.createFromResource(ClientDetailsEdit.this,
+                            R.array.take_time, android.R.layout.simple_spinner_item);
+                    take_timeSpiner.setAdapter(takeTimeAdapter);
+
+                    int takeTimeSpinnerPosition = takeTimeAdapter.getPosition(detailsWrapper.getTakeTime());
+                    take_timeSpiner.setSelection(takeTimeSpinnerPosition);
+                    //End take time
 
                     ArrayAdapter<CharSequence> packageAdapter = ArrayAdapter.createFromResource(ClientDetailsEdit.this,
                             R.array.package_name, android.R.layout.simple_spinner_item);
@@ -389,6 +461,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
 
                     int spinnerPosition = packageAdapter.getPosition(detailsWrapper.getPkgId());
                     packageSpinner.setSelection(spinnerPosition);
+
 
                 }else{
                     Toast.makeText(getApplicationContext(), detailsWrapper.getMessage(), Toast.LENGTH_LONG).show();
@@ -548,7 +621,9 @@ public class ClientDetailsEdit extends AppCompatActivity{
                     long fileSize = fileDescriptor.getLength() / 1024;
 
                     if (fileSize > 500){
-                        Toast.makeText(getApplicationContext(), "File size must be less than 500 KB", Toast.LENGTH_LONG).show();
+                        warningShow("ডকুমেন্টের সাইজ অবশ্যই 500 KB এর কম হতে হবে। ফোনে আলাদা এপ ব্যবহার করে সাইজ করুন");
+                        //Toast.makeText(getApplicationContext(), "File size must be less than 500 KB", Toast.LENGTH_LONG).show();
+
                     }else {
                         // update the preview image in the layout
                         imageDocumentView.setImageURI(selectedImageUri);

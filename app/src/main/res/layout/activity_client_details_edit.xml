@@ -19,10 +19,12 @@
             android:orientation="vertical">
 
             <android.support.v7.widget.CardView
+                android:id="@+id/payment_method_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="4dp"
-                app:cardElevation="4dp">
+                app:cardElevation="4dp"
+                android:layout_marginBottom="10dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -197,6 +199,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/take_time_layout"
                         android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -206,20 +209,22 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.7"
-                            android:text="Take Time :"
+                            android:layout_weight="0.8"
+                            android:text="Time :"
                             android:textAlignment="center"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
-                        <EditText
-                            android:id="@+id/edtaketime"
+                        <Spinner
+                            android:id="@+id/take_time_ListSpinner"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.3"
-                            android:inputType="numberDecimal"
+                            android:layout_weight="0.2"
                             android:textAlignment="center"
-                            android:textSize="15sp" />
+                            android:textSize="15sp"
+                            android:entries="@array/take_time"
+                            />
+
                     </LinearLayout>
 
                     <LinearLayout
@@ -249,6 +254,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/zone_layout"
                         android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -354,6 +360,7 @@
                         android:background="@color/colorPrimary"/>
 
                     <LinearLayout
+                        android:id="@+id/expired_date_layout"
                         android:layout_marginTop="20dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -430,6 +437,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/pacakge_layout"
                         android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

@@ -59,6 +59,19 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 
 
+    <string name="client_add_instruction">
+        * মোবাইল নাম্বার অবশ্যই ১১ ডিজিটের হতে হবে। \n
+        * কাস্টমার যে মোবাইল নাম্বারে এস এম এস পেতে চায় সেই নাম্বারটি দিতে হবে। \n
+        * যে সময় কল করে পাওয়া যাবে এমন নাম্বার দিতে হবে। \n
+        * কাস্টমারের নাম অবশ্যই পুর্ন নাম হতে হবে, ডাকনাম থাকলে ব্রাকেট দিয়ে দেওয়া যাবে। \n
+        * নামের ঘরে কাস্টমারের এরিয়া দেওয়া যাবেনা। \n
+        * সঠিক এরিয়া সিলেক্ট করুন, ভুল এরিয়া সিলেক্ট করলে পরবর্তিতে সার্চ করে পেতে সমস্যা হবে।
+    </string>
+
+    <string name="disable_warning_message">
+        মোড লাইন ডিজেবল করা যাবেনা। বিলের মেয়াদ শেষ হলে অটো ডিজেবল হয়ে যাবে।
+    </string>
+
     <string-array name="package_name">
         <item>---</item>
         <item>Basic</item>
@@ -70,9 +83,17 @@
     </string-array>
 
     <string-array name="zone_name">
+        <item>---</item>
+        <item>All</item>
         <item>Main</item>
-        <item>OsmanPt</item>
-        <item>OsmanMp</item>
+        <item>Osman</item>
+    </string-array>
+
+
+    <string-array name="take_time">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
     </string-array>
 
 </resources>

@@ -17,6 +17,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -76,6 +77,7 @@ public class ClientDetails extends AppCompatActivity {
     private LinearLayout linearLayoutPPPStatus, linearLayoutOnuStatus;
 
     String currentMode;
+    private String expired;
     private String document, jwt, name, id, pppName, ppppass, emp_id, area_id, phone, informMessage, take_time, connected_ip, router_mac, onu_mac, mobile_payment_reference;
     private SharedPreferences sharedPreferences;
     private ApiInterface apiInterface;
@@ -85,7 +87,7 @@ public class ClientDetails extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private EditText editTextAmount, editTextInformSms;
-    private String payment_type, payment_method, amount;
+    private String zone, payment_type, payment_method, amount;
     private RadioGroup radioGroup, radioGroup2;
     Button buttonTxnSubmit;
     private TextView tvGetStatus;
@@ -99,6 +101,7 @@ public class ClientDetails extends AppCompatActivity {
 
     private TextView tvgetOnuStatus, tvoltport, tvonuid, tvonustatus, tvonumac, tvonudesc, tvonudistance, tvlastregtime, tvlastdregtime, tvdregreason, tvonuptime, tvonupower;
 
+    private CardView make_payment_layout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,6 +111,7 @@ public class ClientDetails extends AppCompatActivity {
         id = getIntent().getStringExtra("id");
         sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
         jwt = sharedPreferences.getString("jwt", null);
+        zone = sharedPreferences.getString("zone", null);
 
         mobile_payment_reference = "";
 
@@ -182,6 +186,7 @@ public class ClientDetails extends AppCompatActivity {
         tvdiconnecttemp = findViewById(R.id.templateDisconnect);
         tvpppinfotemp = findViewById(R.id.templatePppinfo);
         tvpaybilltemp = findViewById(R.id.templatePaybill);
+        make_payment_layout = findViewById(R.id.make_payment_layout);
 
         tvmode = findViewById(R.id.tvmode);
 
@@ -201,6 +206,13 @@ public class ClientDetails extends AppCompatActivity {
             client.setJwt(jwt);
             client.setId(id);
             load_details(client);
+        }
+
+
+        if (zone.equals("All") || zone.equals("Main")){
+            make_payment_layout.setVisibility(View.VISIBLE);
+        }else{
+            make_payment_layout.setVisibility(View.GONE);
         }
 
         tv_view_document.setOnClickListener(new View.OnClickListener() {
@@ -392,6 +404,7 @@ public class ClientDetails extends AppCompatActivity {
                 if(Objects.equals(sharedPreferences.getString("client_details_update", null), "1")){
                     Intent i = new Intent(ClientDetails.this,ClientDetailsEdit.class);
                     i.putExtra("id", id);
+                    i.putExtra("expired", expired);
                     startActivity(i);
                 }
 
@@ -512,11 +525,13 @@ public class ClientDetails extends AppCompatActivity {
                         Date expire_Date = sdf.parse(detailsWrapper.getExpireDate());
 
                         if (currentDate.getTime() >= expire_Date.getTime()){
+                            expired = "yes";
                             cal.setTimeInMillis(currentDate.getTime() - expire_Date.getTime());
                             int m = cal.get(Calendar.MONTH)+1;
                             int d = cal.get(Calendar.DAY_OF_MONTH);
                             tvExpireText.setText(m+" Month "+d +" Day expired (with current month)");
                         }else{
+                            expired = "no";
                             tvExpireText.setVisibility(View.GONE);
                         }
 

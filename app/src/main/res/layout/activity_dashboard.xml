@@ -15,12 +15,48 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barchart"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginBottom="10dp"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/activity_backround">
+            <TextView
+                android:layout_marginStart="30dp"
+                android:layout_alignParentStart="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Package"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textSize="17sp" />
+
+            <TextView
+                android:layout_marginEnd="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quantity"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textSize="17sp" />
+        </RelativeLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerPkgRow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
         <TextView
             android:textSize="15sp"
             android:textStyle="bold"
             android:id="@+id/dashboard_total_expired_client"
             android:background="@color/activity_backround"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
@@ -57,7 +93,7 @@
 
     <LinearLayout
         android:background="@color/activity_backround"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -86,7 +122,7 @@
 
         <LinearLayout
             android:background="@color/activity_backround"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -118,17 +154,13 @@
         android:textStyle="bold"
         android:id="@+id/dashboard_profit"
         android:background="@color/activity_backround"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:textColor="@color/colorPrimaryDark"
         />
-    </LinearLayout>
 
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/barchart"
-        android:layout_width="match_parent"
-        android:layout_height="180dp"/>
+    </LinearLayout>
 
 </LinearLayout>

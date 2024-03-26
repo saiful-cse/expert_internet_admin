@@ -47,11 +47,12 @@ public class Employee extends AppCompatActivity {
 
     private Spinner employee_spinner;
     private ProgressDialog progressDialog;
-    private String indexId, employeeId, name, address, mobile, pin, about, super_admin;
+    private String indexId, employeeId, name, address, mobile, pin, about, super_admin, selectedZone;
     private JSONArray jsonArrayEmployee;
     private SharedPreferences sharedPreferences;
     private EditText edName, edEmpId, edAddress, edMobile, edPin, edAbout;
 
+    private Spinner zoneSpinner;
     private Switch switchDash, switchClientAdd, switchClDeUpdate, switchSms, switchTxnSumm,
     switchTxnEdit, switchUpstreBill, switchSalaraAdd, switchDevice, switchNote;
 
@@ -71,6 +72,7 @@ public class Employee extends AppCompatActivity {
         edPin = findViewById(R.id.edEmpPin);
         edAbout = findViewById(R.id.edEmpAbout);
 
+        zoneSpinner = findViewById(R.id.zoneListSpinner);
         switchDash = findViewById(R.id.swdashboard);
         switchClientAdd = findViewById(R.id.swclientadd);
         switchClDeUpdate = findViewById(R.id.swcldetaupda);
@@ -108,6 +110,20 @@ public class Employee extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+
+        zoneSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // On selecting a spinner item
+                selectedZone = parentView.getItemAtPosition(position).toString();
 
             }
             @Override
@@ -192,6 +208,14 @@ public class Employee extends AppCompatActivity {
                         edMobile.setText(jsonObject.getString("mobile"));
                         edPin.setText(jsonObject.getString("pin"));
                         edAbout.setText(jsonObject.getString("about"));
+
+
+                        ArrayAdapter<CharSequence> zoneArrayAdapter = ArrayAdapter.createFromResource(Employee.this,
+                                R.array.zone_name, android.R.layout.simple_spinner_item);
+                        zoneSpinner.setAdapter(zoneArrayAdapter);
+
+                        int zoneSpinnerPosition = zoneArrayAdapter.getPosition(jsonObject.getString("zone"));
+                        zoneSpinner.setSelection(zoneSpinnerPosition);
 
                         switchDash.setChecked(jsonObject.getString("dashboard").equals("1"));
                         switchClientAdd.setChecked(jsonObject.getString("client_add").equals("1"));
@@ -278,6 +302,7 @@ public class Employee extends AppCompatActivity {
                 map.put("about", about);
                 map.put("pin", pin);
                 map.put("super_admin", super_admin);
+                map.put("zone", selectedZone);
                 map.put("dashboard", (switchDash.isChecked()) ? "1" : "0");
                 map.put("client_add", (switchClientAdd.isChecked()) ? "1" : "0");
                 map.put("client_details_update", (switchClDeUpdate.isChecked()) ? "1" : "0");

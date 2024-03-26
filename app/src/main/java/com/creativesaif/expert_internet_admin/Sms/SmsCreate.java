@@ -59,7 +59,7 @@ public class SmsCreate extends AppCompatActivity {
     private Spinner areaSpinner;
     private ApiInterface apiInterface;
     private Client client;
-    private String admin_id;
+    private String employee_id;
     //Declaring Array List
 
     @Override
@@ -78,7 +78,7 @@ public class SmsCreate extends AppCompatActivity {
         editTextAreaMessage = findViewById(R.id.edAreaSms);
         progressDialog = new ProgressDialog(this);
         Button areaSmsSend = findViewById(R.id.btnareasms);
-        admin_id = preferences.getString("admin_id", null);
+        employee_id = preferences.getString("employee_id", null);
 
         areaSpinner = findViewById(R.id.areaListSpinner);
 
@@ -172,10 +172,7 @@ public class SmsCreate extends AppCompatActivity {
                 activeClientMessage = editTextActiveClientMsg.getText().toString().trim();
                 jwt = preferences.getString("jwt", null);
 
-                if(!admin_id.equals("9161")){
-                    Toast.makeText(getApplicationContext(), "You don't have permission to send. In case you need to send, contact with Super Admin", Toast.LENGTH_LONG).show();
-
-                } else if (jwt == null ){
+                if (jwt == null ){
                     finish();
                     startActivity(new Intent(SmsCreate.this, Login.class));
 

@@ -72,6 +72,7 @@ public class Search_Page extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
         }else{
             client.setJwt(preferences.getString("jwt", null));
+            client.setZone(preferences.getString("zone", null));
             load_client(client);
         }
     }

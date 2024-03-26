@@ -52,7 +52,7 @@ public class Login extends AppCompatActivity {
         try{
 
             PackageInfo info = manager.getPackageInfo(this.getPackageName(), PackageManager.GET_ACTIVITIES);
-            viewversionname.setText("App Version: "+info.versionName+"\n"+"Web API version: exp-v6.0\nRelease date: 31/08/2023");
+            viewversionname.setText("App Version: "+info.versionName+"\n"+"Web API version: exp-v7.0\nRelease date: 27/03/2024");
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -122,6 +122,7 @@ public class Login extends AppCompatActivity {
                         sharedPreferences.edit().putString("employee_id", jsonObject.getString("employee_id")).apply();
                         sharedPreferences.edit().putString("jwt", jsonObject.getString("jwt")).apply();
                         sharedPreferences.edit().putString("super_admin", jsonObject.getString("super_admin")).apply();
+                        sharedPreferences.edit().putString("zone", jsonObject.getString("zone")).apply();
                         sharedPreferences.edit().putString("dashboard", jsonObject.getString("dashboard")).apply();
                         sharedPreferences.edit().putString("client_add", jsonObject.getString("client_add")).apply();
                         sharedPreferences.edit().putString("client_details_update", jsonObject.getString("client_details_update")).apply();

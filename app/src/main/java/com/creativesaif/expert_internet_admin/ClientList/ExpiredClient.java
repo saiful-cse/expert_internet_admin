@@ -82,6 +82,7 @@ public class ExpiredClient extends Fragment {
         } else {
             //sent value on client model class
             client.setJwt(jwt);
+            client.setZone(preferences.getString("zone", "---"));
 
             //Network call to load client list
             load_client(client);
