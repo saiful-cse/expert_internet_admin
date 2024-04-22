@@ -113,8 +113,9 @@
                     android:layout_alignParentStart="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
+                    android:textStyle="normal"
                     android:text="Payment: Mobile"
+                    android:textColor="#2982EF"
                     android:textSize="15sp" />
                 <TextView
                     android:layout_alignParentEnd="true"

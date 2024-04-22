@@ -14,7 +14,7 @@ public class RetrofitApiClient
 {
     //private static final String BASE_URL = "http://192.168.1.8/";
 
-    private static final String BASE_URL = "https://expert-internet.net/";
+    private static final String BASE_URL = "https://baycombd.com/";
 
     private static Retrofit retrofit = null;
 

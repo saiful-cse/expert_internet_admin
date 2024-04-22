@@ -348,7 +348,7 @@ public class ClientDetails extends AppCompatActivity {
         tvdiconnecttemp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editTextInformSms.setText("আপনার WiFi সংযোগের মেয়াদ শেষ, অটো চালু করতে লিংক দিয়ে বিল পরিশোধ করুন।\nhttps://expert-internet.net/paybill/info.php?mobile_no="+phone);
+                editTextInformSms.setText("আপনার WiFi সংযোগের মেয়াদ শেষ, অটো চালু করতে লিংক দিয়ে বিল পরিশোধ করুন।\n"+URL_config.PAYBILL_URL+phone);
             }
         });
 
@@ -365,7 +365,7 @@ public class ClientDetails extends AppCompatActivity {
         tvpaybilltemp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editTextInformSms.setText("Your payment link is:\nhttps://expert-internet.net/paybill/info.php?mobile_no="+phone);
+                editTextInformSms.setText("Your payment link is:\n"+URL_config.PAYBILL_URL+phone);
             }
         });
 

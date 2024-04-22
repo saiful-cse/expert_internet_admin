@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import com.creativesaif.expert_internet_admin.ClientList.ClientDetails;
 import com.creativesaif.expert_internet_admin.ClientList.ClientRegUpdate;
 import com.creativesaif.expert_internet_admin.Model.Client;
 import com.creativesaif.expert_internet_admin.R;
+import com.creativesaif.expert_internet_admin.URL_config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +67,13 @@ public class ClientAdapter extends RecyclerView.Adapter<ClientAdapter.MyViewHold
         myViewHolder.tv7.setText("Taken time: "+client.getTakeTime()+" day");
         myViewHolder.paymentmethod.setText("Payment: "+client.getPaymentMethod());
 
+        myViewHolder.paymentmethod.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse(URL_config.PAYBILL_URL+client.getPhone()));
+                mContext.startActivity(in);
+            }
+        });
 
         myViewHolder.tv1.setOnClickListener(new View.OnClickListener() {
             @Override

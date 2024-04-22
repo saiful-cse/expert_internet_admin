@@ -432,7 +432,9 @@ public class ClientDetailsEdit extends AppCompatActivity{
                         selectedPackage = detailsWrapper.getPkgId();
                     }
 
-                    if (getIntent().getStringExtra("expired").equals("no")){
+                    if(super_admin.equals("1") || zone.equals("Main")){
+                        take_time_layout.setVisibility(View.VISIBLE);
+                    } else if (getIntent().getStringExtra("expired").equals("no")){
                         take_time_layout.setVisibility(View.GONE);
                     }
 
