@@ -77,9 +77,10 @@
         <item>Basic</item>
         <item>Standard</item>
         <item>Professional</item>
+        <item>Economy</item>
         <item>---</item>
         <item>Regular</item>
-        <item>Govt5</item>
+        <item>Mini</item>
     </string-array>
 
     <string-array name="zone_name">

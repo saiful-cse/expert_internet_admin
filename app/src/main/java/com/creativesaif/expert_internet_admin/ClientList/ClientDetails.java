@@ -600,7 +600,7 @@ public class ClientDetails extends AppCompatActivity {
 
                         if (jsonObject.getString("ppp_activity").equals("Online")){
                             tvactivity.setTextColor(Color.GREEN);
-                            getOnuStatusByRouterMac(jsonObject.getString("router_mac"));
+                            //getOnuStatusByRouterMac(jsonObject.getString("router_mac"));
 
                         }else{
                             tvactivity.setTextColor(Color.RED);
