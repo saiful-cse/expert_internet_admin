@@ -73,12 +73,12 @@ public class ClientDetails extends AppCompatActivity {
     private TextView tvname, tvphone, tvarea, tvzone,
             tvppname, tvpppass, tvpppstatus, tvactivity, tvroutermac, tvlastlogout, tvlastlogin, tvuptime, tvdownload, tvupload, tvConnectedIp,
             tvmode, tvpaymentmethod, tvpackgeid, tvregdate, tvexpiredate, tvdisabledate, tvtaketime;
-    private TextView  tv_view_document, tvExpireText, tvdiconnecttemp, tvpppinfotemp, tvpaybilltemp;
+    private TextView  tv_view_document, tvExpireText, tvdiconnecttemp, tvpppinfotemp, tvpaybilltemp, tvhelptemp;
     private LinearLayout linearLayoutPPPStatus, linearLayoutOnuStatus;
 
     String currentMode;
-    private String expired;
-    private String document, jwt, name, id, pppName, ppppass, emp_id, area_id, phone, informMessage, take_time, connected_ip, router_mac, onu_mac, mobile_payment_reference;
+    private String expired, last_router_mac;
+    private String document, jwt, name, id, pppName, ppppass, emp_id, phone, informMessage, take_time, connected_ip, mobile_payment_reference;
     private SharedPreferences sharedPreferences;
     private ApiInterface apiInterface;
     private Client client;
@@ -90,7 +90,7 @@ public class ClientDetails extends AppCompatActivity {
     private String zone, payment_type, payment_method, amount;
     private RadioGroup radioGroup, radioGroup2;
     Button buttonTxnSubmit;
-    private TextView tvGetStatus;
+    private TextView tvGetPPPStatus;
     private ProgressBar pppStatusProgressbar, onuStatusProgressbar;
     /*
    Progress dialog
@@ -99,7 +99,7 @@ public class ClientDetails extends AppCompatActivity {
 
     private Switch pppswitch;
 
-    private TextView tvgetOnuStatus, tvoltport, tvonuid, tvonustatus, tvonumac, tvonudesc, tvonudistance, tvlastregtime, tvlastdregtime, tvdregreason, tvonuptime, tvonupower;
+    private TextView tvgetOnuStatus, tvoltname, tvonuid, tvonustatus, tvonumac, tvonudesc, tvonudistance, tvlastregtime, tvlastdregtime, tvdregreason, tvonuptime, tvonupower;
 
     private CardView make_payment_layout;
     @Override
@@ -126,7 +126,7 @@ public class ClientDetails extends AppCompatActivity {
         tv_view_document = findViewById(R.id.tv_view_document);
 
         pppStatusProgressbar = findViewById(R.id.getPpStatusProgressBar);
-        tvGetStatus = findViewById(R.id.tvGetStatus);
+        tvGetPPPStatus = findViewById(R.id.tvGetStatus);
         linearLayoutPPPStatus = findViewById(R.id.pppStatusLayout);
 
         Button btnPaymentHistory = findViewById(R.id.btnPaymentHistory);
@@ -162,7 +162,7 @@ public class ClientDetails extends AppCompatActivity {
         tvgetOnuStatus = findViewById(R.id.tvGetOnuStatus);
         linearLayoutOnuStatus = findViewById(R.id.onuStatusLayout);
         onuStatusProgressbar = findViewById(R.id.onustatusprogress);
-        tvoltport = findViewById(R.id.tvoltport);
+        tvoltname = findViewById(R.id.tvoltname);
         tvonuid = findViewById(R.id.tvonuid);
         tvonustatus = findViewById(R.id.tvonustatus);
         tvonumac = findViewById(R.id.tvonumac);
@@ -186,6 +186,7 @@ public class ClientDetails extends AppCompatActivity {
         tvdiconnecttemp = findViewById(R.id.templateDisconnect);
         tvpppinfotemp = findViewById(R.id.templatePppinfo);
         tvpaybilltemp = findViewById(R.id.templatePaybill);
+        tvhelptemp = findViewById(R.id.templateHelp);
         make_payment_layout = findViewById(R.id.make_payment_layout);
 
         tvmode = findViewById(R.id.tvmode);
@@ -252,7 +253,7 @@ public class ClientDetails extends AppCompatActivity {
             }
         });
 
-        tvGetStatus.setOnClickListener(new View.OnClickListener() {
+        tvGetPPPStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!isNetworkConnected()) {
@@ -271,9 +272,7 @@ public class ClientDetails extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
 
                 }else{
-                    //Toast.makeText(getApplicationContext(), onu_mac, Toast.LENGTH_SHORT).show();
-
-                    getOnuStatusByOnuMac(onu_mac);
+                    getOnuStatusByRouterMac(last_router_mac);
                 }
 
             }
@@ -366,6 +365,22 @@ public class ClientDetails extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 editTextInformSms.setText("Your payment link is:\n"+URL_config.PAYBILL_URL+phone);
+            }
+        });
+
+        tvhelptemp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editTextInformSms.setText("WiFi বিল ও সার্ভিসের জন্য অফিস স্টাফের সাথে যোগাযোগ করুন (সকাল ৯ টা হতে বিকেল ৪ টা)\n" +
+                        "\n" +
+                        "01975559161 (আরিফ)\n" +
+                        "01621840795 (শাহরিয়া)\n" +
+                        "\n" +
+                        "কানেকশনের মেয়াদ শেষ হলে নিচের লিংক দিয়ে রিচার্জ করুন।\n" +
+                        "\n" +
+                        "https://baycombd.com/paybill/\n" +
+                        "\n" +
+                        "Best ISP of Cox’s Bazar.");
             }
         });
 
@@ -464,8 +479,8 @@ public class ClientDetails extends AppCompatActivity {
 
                     linearLayoutPPPStatus.setVisibility(View.GONE);
                     linearLayoutOnuStatus.setVisibility(View.GONE);
-                    tvGetStatus.setText("Get PPP Status");
-                    tvGetStatus.setVisibility(View.VISIBLE);
+                    tvGetPPPStatus.setText("Get PPP Status");
+                    tvGetPPPStatus.setVisibility(View.VISIBLE);
 
 
                     id = detailsWrapper.getId();
@@ -474,7 +489,6 @@ public class ClientDetails extends AppCompatActivity {
                     tvname.setText(detailsWrapper.getName());
                     tvphone.setText(detailsWrapper.getPhone());
                     tvarea.setText(detailsWrapper.getArea());
-                    area_id = detailsWrapper.getArea_id();
                     tvzone.setText(detailsWrapper.getZone());
                     document = detailsWrapper.getDocument();
                     currentMode = detailsWrapper.getMode();
@@ -485,8 +499,8 @@ public class ClientDetails extends AppCompatActivity {
                         tvExpireText.setVisibility(View.GONE);
 
                         linearLayoutPPPStatus.setVisibility(View.GONE);
-                        tvGetStatus.setText("");
-                        tvGetStatus.setVisibility(View.GONE);
+                        tvGetPPPStatus.setText("");
+                        tvGetPPPStatus.setVisibility(View.GONE);
 
                     }else{
                         tvmode.setTextColor(Color.GREEN);
@@ -504,17 +518,6 @@ public class ClientDetails extends AppCompatActivity {
                     tvdisabledate.setText(detailsWrapper.getDisableDate());
                     take_time = detailsWrapper.getTakeTime();
                     tvtaketime.setText(take_time+" Days");
-
-                    if (detailsWrapper.getOnu_mac().equals("---")){
-                        tvonumac.setText(detailsWrapper.getOnu_mac());
-                        tvgetOnuStatus.setVisibility(View.GONE);
-
-                    }else{
-                        onu_mac = detailsWrapper.getOnu_mac();
-                        tvonumac.setText(onu_mac);
-                        tvgetOnuStatus.setVisibility(View.VISIBLE);
-                        tvgetOnuStatus.setText("Get ONU Status");
-                    }
 
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -562,7 +565,7 @@ public class ClientDetails extends AppCompatActivity {
         String url = sharedPreferences.getString("api_base", null)+"pppStatus.php";
 
         pppStatusProgressbar.setVisibility(View.VISIBLE);
-        tvGetStatus.setVisibility(View.GONE);
+        tvGetPPPStatus.setVisibility(View.GONE);
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -575,20 +578,21 @@ public class ClientDetails extends AppCompatActivity {
                     if (jsonObject.getString("status").equals("500"))
                     {
                         linearLayoutPPPStatus.setVisibility(View.GONE);
-                        tvGetStatus.setText("Refresh");
-                        tvGetStatus.setVisibility(View.VISIBLE);
+                        tvGetPPPStatus.setText("Refresh");
+                        tvGetPPPStatus.setVisibility(View.VISIBLE);
                         warningShow(jsonObject.getString("message"));
 
                     }else if(jsonObject.getString("status").equals("200")){
 
                         linearLayoutPPPStatus.setVisibility(View.VISIBLE);
-                        tvGetStatus.setText("Refresh");
-                        tvGetStatus.setVisibility(View.VISIBLE);
+                        tvGetPPPStatus.setText("Refresh");
+                        tvGetPPPStatus.setVisibility(View.VISIBLE);
 
                         pppswitch.setChecked(jsonObject.getString("ppp_status").equals("Enable"));
                         tvpppstatus.setText(jsonObject.getString("ppp_status"));
                         tvactivity.setText(jsonObject.getString("ppp_activity"));
                         tvroutermac.setText(jsonObject.getString("router_mac"));
+                        last_router_mac = jsonObject.getString("router_mac");
                         tvlastlogout.setText(jsonObject.getString("last_loged_out"));
                         tvlastlogin.setText(jsonObject.getString("last_log_in"));
                         tvuptime.setText(jsonObject.getString("uptime"));
@@ -600,17 +604,19 @@ public class ClientDetails extends AppCompatActivity {
 
                         if (jsonObject.getString("ppp_activity").equals("Online")){
                             tvactivity.setTextColor(Color.GREEN);
-                            //getOnuStatusByRouterMac(jsonObject.getString("router_mac"));
 
                         }else{
                             tvactivity.setTextColor(Color.RED);
                             linearLayoutOnuStatus.setVisibility(View.GONE);
                         }
 
+                        tvgetOnuStatus.setVisibility(View.VISIBLE);
+                        tvgetOnuStatus.setText("Get ONU Status");
+
                     }else{
                         linearLayoutPPPStatus.setVisibility(View.GONE);
-                        tvGetStatus.setText("Refresh");
-                        tvGetStatus.setVisibility(View.VISIBLE);
+                        tvGetPPPStatus.setText("Refresh");
+                        tvGetPPPStatus.setVisibility(View.VISIBLE);
                         warningShow(jsonObject.getString("message"));
                     }
                 }catch (JSONException e){
@@ -645,62 +651,45 @@ public class ClientDetails extends AppCompatActivity {
     public void getOnuStatusByRouterMac(String mac)
     {
 
-        int area_id_int = Integer.parseInt(area_id);
-        String url;
-
-        if (area_id_int >= 29 && 38 >= area_id_int)
-        {
-            //olt 3
-            url = "https://kgnet.xyz/business_api/apivsol.php?auth=Djt875hgKikhSf77fsjk98&action=macstatus&mac="+mac;
-
-        }else if(area_id_int >= 20 && 28 >= area_id_int || area_id_int == 17){
-            //olt 1
-            url = "https://kgnet.xyz/business_api/apivsol.php?auth=jfK4sdGBj783KJD5saGl56&action=macstatus&mac="+mac;
-        }else {
-            //olt 2
-            url = "https://kgnet.xyz/business_api/apivsol.php?auth=K25sghf6le9b7MkzXpS652&action=macstatus&mac="+mac;
-
-        }
+        String url = "https://kgnet.xyz/business_api/api.php?auth=K25sghf6le9b7MkzXpS652&action=onustatus&mac="+mac;
 
         onuStatusProgressbar.setVisibility(View.VISIBLE);
+        tvgetOnuStatus.setVisibility(View.GONE);
+
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 onuStatusProgressbar.setVisibility(View.GONE);
-                tvgetOnuStatus.setVisibility(View.GONE);
                 try {
                     JSONObject jsonObject = new JSONObject(response);
 
-                    if (jsonObject.getString("status").equals("404"))
+                    if (jsonObject.getString("status_code").equals("200"))
                     {
-                        warningShow(jsonObject.getString("msg"));
-
-                    }else if(jsonObject.getString("status").equals("200")){
-
                         linearLayoutOnuStatus.setVisibility(View.VISIBLE);
-                        tvoltport.setText(jsonObject.getString("olt_port"));
+                        tvoltname.setText(jsonObject.getString("olt_name"));
                         tvonuid.setText(jsonObject.getString("onu_id"));
-                        tvonustatus.setText(jsonObject.getString("onu_status"));
-                        onu_mac = jsonObject.getString("onu_mac");
-                        tvonumac.setText(onu_mac);
+                        tvonustatus.setText(jsonObject.getString("status"));
+                        tvonumac.setText(jsonObject.getString("mac_ddress"));
                         tvonudesc.setText(jsonObject.getString("description"));
                         tvonudistance.setText(jsonObject.getString("distance"));
-                        tvlastregtime.setText(jsonObject.getString("last_reg_time"));
-                        tvlastdregtime.setText(jsonObject.getString("last_dreg_time"));
-                        tvdregreason.setText(jsonObject.getString("dreg_reason"));
-                        tvonuptime.setText(jsonObject.getString("uptime"));
+                        tvlastregtime.setText(jsonObject.getString("last_register_time"));
+                        tvlastdregtime.setText(jsonObject.getString("last_deregister_time"));
+                        tvdregreason.setText(jsonObject.getString("last_deregister_reason"));
+                        tvonuptime.setText(jsonObject.getString("alive_time"));
                         tvonupower.setText(jsonObject.getString("rx_power"));
 
-                        if (jsonObject.getString("onu_status").equals("Online")){
+                        if (jsonObject.getString("status").equals("Online")){
                             tvonustatus.setTextColor(Color.GREEN);
-                            onu_mac_store();
                         }else{
                             tvonustatus.setTextColor(Color.RED);
                         }
 
+                        tvgetOnuStatus.setVisibility(View.VISIBLE);
+                        tvgetOnuStatus.setText("Refresh");
+
                     }else{
-                        warningShow(jsonObject.getString("msg"));
+                        warningShow(jsonObject.getString("status_code"));
                     }
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -716,115 +705,6 @@ public class ClientDetails extends AppCompatActivity {
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         MySingleton.getInstance().addToRequestQueue(stringRequest);;
-    }
-
-    public void getOnuStatusByOnuMac(String mac)
-    {
-
-        int area_id_int = Integer.parseInt(area_id);
-        String url;
-
-        if (area_id_int >= 29 && 38 >= area_id_int)
-        {
-            //olt 3
-            url = "https://kgnet.xyz/business_api/apivsol.php?auth=Djt875hgKikhSf77fsjk98&action=onumacstatus&mac="+mac;
-
-        }else if(area_id_int >= 20 && 28 >= area_id_int || area_id_int == 17){
-            //olt 1
-            url = "https://kgnet.xyz/business_api/apivsol.php?auth=jfK4sdGBj783KJD5saGl56&action=onumacstatus&mac="+mac;
-
-        }else {
-            //olt 2
-            url = "https://kgnet.xyz/business_api/apivsol.php?auth=K25sghf6le9b7MkzXpS652&action=onumacstatus&mac="+mac;
-
-        }
-
-        onuStatusProgressbar.setVisibility(View.VISIBLE);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                onuStatusProgressbar.setVisibility(View.GONE);
-                tvgetOnuStatus.setVisibility(View.GONE);
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-
-                    if (jsonObject.getString("status").equals("404"))
-                    {
-                        warningShow(jsonObject.getString("msg"));
-
-                    }else if(jsonObject.getString("status").equals("200")){
-
-
-                        linearLayoutOnuStatus.setVisibility(View.VISIBLE);
-                        tvoltport.setText(jsonObject.getString("olt_port"));
-                        tvonuid.setText(jsonObject.getString("onu_id"));
-                        tvonustatus.setText(jsonObject.getString("onu_status"));
-                        onu_mac = jsonObject.getString("onu_mac");
-                        tvonumac.setText(onu_mac);
-                        tvonudesc.setText(jsonObject.getString("description"));
-                        tvonudistance.setText(jsonObject.getString("distance"));
-                        tvlastregtime.setText(jsonObject.getString("last_reg_time"));
-                        tvlastdregtime.setText(jsonObject.getString("last_dreg_time"));
-                        tvdregreason.setText(jsonObject.getString("dreg_reason"));
-                        tvonuptime.setText(jsonObject.getString("uptime"));
-                        tvonupower.setText(jsonObject.getString("rx_power"));
-
-                        if (jsonObject.getString("onu_status").equals("Offline")){
-                            tvonustatus.setTextColor(Color.RED);
-                        }else {
-                            tvonustatus.setTextColor(Color.GREEN);
-                        }
-
-                    }else{
-                        warningShow(jsonObject.getString("msg"));
-                    }
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                onuStatusProgressbar.setVisibility(View.GONE);
-                warningShow(error.toString());
-            }
-        });
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        MySingleton.getInstance().addToRequestQueue(stringRequest);;
-    }
-
-    public void onu_mac_store()
-    {
-        String url = URL_config.BASE_URL+URL_config.ONU_MAC_UPDATE;
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams()throws AuthFailureError {
-                Map<String,String> map = new HashMap<>();
-
-                map.put("id", id);
-                map.put("onu_mac", onu_mac);
-
-                return map;
-
-            }
-        };
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        MySingleton.getInstance().addToRequestQueue(stringRequest);;
-
     }
 
     public void getPPPAction(String actionType)

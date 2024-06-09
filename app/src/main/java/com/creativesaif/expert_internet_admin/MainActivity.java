@@ -74,10 +74,11 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+        sharedPreferences = getApplicationContext().getSharedPreferences("users", MODE_PRIVATE);
         linearLayoutError = findViewById(R.id.connection_error_layout);
         progressBar = findViewById(R.id.progressbar);
         swipeRefreshLayout = findViewById(R.id.viewRefresh);
-        url = URL_config.BASE_URL + URL_config.DASHBOARD_VIEW;
+        url = URL_config.BASE_URL + URL_config.DASHBOARD_VIEW+"?emp_id="+sharedPreferences.getString("employee_id", null);
 
         webview = findViewById(R.id.webView);
         webview.getSettings().setJavaScriptEnabled(true);

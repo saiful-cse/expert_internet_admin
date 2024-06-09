@@ -602,32 +602,6 @@
                         android:background="@color/colorPrimary"/>
 
                     <LinearLayout
-                        android:layout_marginTop="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:weightSum="1">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:text="ONU MAC :"
-                            android:textAlignment="center"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tvonumac"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:text="---"
-                            android:textAlignment="center"
-                            android:textSize="15sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
                         android:id="@+id/onuStatusLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -644,13 +618,39 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="0.5"
-                                android:text="OLT Port:"
+                                android:text="ONU MAC :"
                                 android:textAlignment="center"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
 
                             <TextView
-                                android:id="@+id/tvoltport"
+                                android:id="@+id/tvonumac"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:text="---"
+                                android:textAlignment="center"
+                                android:textSize="15sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_marginTop="10dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="1">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:text="OLT Name:"
+                                android:textAlignment="center"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvoltname"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="0.5"
@@ -894,6 +894,14 @@
 
                         </LinearLayout>
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:textSize="15sp"
+                            android:text="WireDown থাকলে OLT তে লগিন করে আশেপাশের অনুর স্টাটাস চেক করুন" />
+
+
                     </LinearLayout>
 
                     <ProgressBar
@@ -911,6 +919,7 @@
                         android:layout_gravity="center"
                         android:textSize="20sp"
                         android:textColor="@color/colorPrimary"/>
+
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
@@ -1350,6 +1359,16 @@
                             android:textSize="15sp"
                             android:textColor="@color/colorPrimary"
                             android:text="Paybill Link"/>
+                        <TextView
+                            android:id="@+id/templateHelp"
+                            android:layout_marginStart="10dp"
+                            android:padding="5dp"
+                            android:background="@drawable/button_border"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="15sp"
+                            android:textColor="@color/colorPrimary"
+                            android:text="Help"/>
                     </LinearLayout>
 
                     <Button
