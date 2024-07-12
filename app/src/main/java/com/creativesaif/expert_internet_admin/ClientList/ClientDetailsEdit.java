@@ -434,7 +434,11 @@ public class ClientDetailsEdit extends AppCompatActivity{
 
                     if(super_admin.equals("1") || zone.equals("Main")){
                         take_time_layout.setVisibility(View.VISIBLE);
-                    } else if (getIntent().getStringExtra("expired").equals("no")){
+
+                    }else if(zone.equals("Osman")){
+                        take_time_layout.setVisibility(View.GONE);
+                    }
+                    else if (getIntent().getStringExtra("expired").equals("no")){
                         take_time_layout.setVisibility(View.GONE);
                     }
 

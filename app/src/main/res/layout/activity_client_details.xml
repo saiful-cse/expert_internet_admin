@@ -1290,6 +1290,7 @@
             <!-- txn end -->
 
             <android.support.v7.widget.CardView
+                android:id="@+id/make_sms_temp_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="4dp"

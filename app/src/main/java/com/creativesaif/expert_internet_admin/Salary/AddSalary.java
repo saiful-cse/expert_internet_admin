@@ -79,18 +79,16 @@ public class AddSalary extends AppCompatActivity {
         //Set month list
         List<String> monthList = new ArrayList<>();
         monthList.add("---");
-        monthList.add("June, 2023");
-        monthList.add("July, 2023");
-        monthList.add("August, 2023");
-        monthList.add("September, 2023");
-        monthList.add("October, 2023");
-        monthList.add("November, 2023");
-        monthList.add("December, 2023");
-        monthList.add("January, 2024");
-        monthList.add("February, 2024");
         monthList.add("March, 2024");
         monthList.add("April, 2024");
         monthList.add("May, 2024");
+        monthList.add("June, 2024");
+        monthList.add("July, 2024");
+        monthList.add("August, 2024");
+        monthList.add("September, 2024");
+        monthList.add("October, 2024");
+        monthList.add("November, 2024");
+        monthList.add("December, 2024");
 
         ArrayAdapter<String> monthArrayAdapter = new ArrayAdapter<>(AddSalary.this,
                 android.R.layout.simple_spinner_dropdown_item, monthList);

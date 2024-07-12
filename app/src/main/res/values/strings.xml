@@ -74,13 +74,12 @@
 
     <string-array name="package_name">
         <item>---</item>
+        <item>Mini</item>
         <item>Basic</item>
+        <item>Regular</item>
         <item>Standard</item>
         <item>Professional</item>
         <item>Economy</item>
-        <item>---</item>
-        <item>Regular</item>
-        <item>Mini</item>
     </string-array>
 
     <string-array name="zone_name">
@@ -88,8 +87,8 @@
         <item>All</item>
         <item>Main</item>
         <item>Osman</item>
+        <item>Kajol</item>
     </string-array>
-
 
     <string-array name="take_time">
         <item>0</item>

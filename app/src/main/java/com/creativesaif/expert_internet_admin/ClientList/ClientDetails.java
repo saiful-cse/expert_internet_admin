@@ -101,7 +101,7 @@ public class ClientDetails extends AppCompatActivity {
 
     private TextView tvgetOnuStatus, tvoltname, tvonuid, tvonustatus, tvonumac, tvonudesc, tvonudistance, tvlastregtime, tvlastdregtime, tvdregreason, tvonuptime, tvonupower;
 
-    private CardView make_payment_layout;
+    private CardView make_payment_layout, sms_temp_layout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -188,6 +188,7 @@ public class ClientDetails extends AppCompatActivity {
         tvpaybilltemp = findViewById(R.id.templatePaybill);
         tvhelptemp = findViewById(R.id.templateHelp);
         make_payment_layout = findViewById(R.id.make_payment_layout);
+        sms_temp_layout = findViewById(R.id.make_sms_temp_layout);
 
         tvmode = findViewById(R.id.tvmode);
 
@@ -215,6 +216,11 @@ public class ClientDetails extends AppCompatActivity {
         }else{
             make_payment_layout.setVisibility(View.GONE);
         }
+
+        if (zone.equals("Osman")){
+            sms_temp_layout.setVisibility(View.GONE);
+        }
+
 
         tv_view_document.setOnClickListener(new View.OnClickListener() {
             @Override
