@@ -29,8 +29,10 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -56,7 +58,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -64,13 +70,13 @@ import retrofit2.Callback;
 public class ClientRegUpdate extends AppCompatActivity {
 
     //Declaring EditText
-    private EditText edclientname, edclientphone, edpppusername, edpppassword;
+    private EditText edclientname, edclientphone, edpppusername, edpppassword, edotpinput;
 
     //Declaring RadioButton
     private RadioGroup radioGroupPaymentMethod, radioGroupClientMode;
     private JSONArray jsonArrayArea;
     //Declaring String
-    private String selectedTakeTime, super_admin, zone, jwt, id, name, phone, existAreaId, existAreaName, selectedAreaId, selectedZone,
+    private String generatedOtp, super_admin, zone, jwt, id, name, phone, existAreaId, existAreaName, selectedAreaId, selectedZone,
             pppname, pppassword, selectedPackage;
 
     //Declaring progress dialog
@@ -88,8 +94,11 @@ public class ClientRegUpdate extends AppCompatActivity {
     int SELECT_PICTURE = 200;
     Bitmap bitmap;
     private String encodedStringImage;
-    private CardView payment_method_card;
+    private CardView payment_method_card, otp_layout_card;
     private LinearLayout zone_layout;
+
+    private Button btnUpdate, otp_submit_btn;
+    private TextView tvtvOtpStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,10 +131,14 @@ public class ClientRegUpdate extends AppCompatActivity {
         edpppusername = findViewById(R.id.edpppusername);
         edpppassword = findViewById(R.id.edppppassword);
         payment_method_card = findViewById(R.id.payment_method_card);
+        otp_layout_card = findViewById(R.id.otpcardview);
         zone_layout = findViewById(R.id.zone_layout);
+        edotpinput = findViewById(R.id.edotpinput);
+        otp_submit_btn = findViewById(R.id.otpinputbtn);
+        tvtvOtpStatus = findViewById(R.id.tvOtpStatus);
 
         //Declaring Button
-        Button btnUpdate = findViewById(R.id.update_button);
+        btnUpdate = findViewById(R.id.update_button);
 
         if (!isNetworkConnected()) {
             Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
@@ -157,9 +170,6 @@ public class ClientRegUpdate extends AppCompatActivity {
                 if (name.isEmpty()){
                     Toast.makeText(getApplicationContext(), "Enter client name", Toast.LENGTH_SHORT).show();
 
-                }else if(phone.isEmpty() || phone.length() < 11){
-                    Toast.makeText(getApplicationContext(), "Enter correct phone number", Toast.LENGTH_SHORT).show();
-
                 }else if(selectedAreaId.equals("1")){
                     Toast.makeText(getApplicationContext(), "Select Area", Toast.LENGTH_SHORT).show();
 
@@ -178,34 +188,20 @@ public class ClientRegUpdate extends AppCompatActivity {
                 else if (!isNetworkConnected()){
                     Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
 
+                }else if(phone.isEmpty() || phone.length() < 11){
+                    Toast.makeText(getApplicationContext(), "Enter 11 digit phone number", Toast.LENGTH_SHORT).show();
+
                 }else {
-
-                    int selectedPaymentMethod = radioGroupPaymentMethod.getCheckedRadioButtonId();
-                    RadioButton radioButtonPaymentMethod = findViewById(selectedPaymentMethod);
-                    String payment_method = radioButtonPaymentMethod.getText().toString().trim();
-
-                    int selectedClientMode = radioGroupClientMode.getCheckedRadioButtonId();
-                    RadioButton radioButtonClientMode = findViewById(selectedClientMode);
-                    String client_mode = radioButtonClientMode.getText().toString().trim();
-
-                    client.setJwt(jwt);
-                    client.setId(id);
-                    client.setPaymentMethod(payment_method);
-                    client.setMode(client_mode);
-                    client.setName(name);
-                    client.setDocument(encodedStringImage);
-                    client.setPhone(phone);
-                    client.setArea_id(selectedAreaId);
-                    client.setZone(selectedZone);
-                    client.setPppName(pppname);
-                    client.setPppPass(pppassword);
-                    client.setPkgId(selectedPackage);
-                    //Toast.makeText(getApplicationContext(), selectedZone, Toast.LENGTH_LONG).show();
-
-                    updateRegistration(client);
+                    generatedOtp = generateOtp();
+                    if (isNetworkConnected()){
+                        sendOtp();
+                    }else{
+                        Toast.makeText(getApplicationContext(), "Please check internet connection.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
+
 
         //Spinner item choice and click event
         areaSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -316,7 +312,12 @@ public class ClientRegUpdate extends AppCompatActivity {
         }
     }
 
-
+    @SuppressLint("DefaultLocale")
+    public String generateOtp(){
+        Random random = new Random();
+        int number = random.nextInt(10000);
+        return String.format("%04d", number);
+    }
 
     public void load_details(Client mClient) {
         progressDialog.showDialog();
@@ -410,6 +411,89 @@ public class ClientRegUpdate extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+
+    public void sendOtp()
+    {
+        String url = URL_config.BASE_URL+URL_config.PHONE_VERIFY;
+        progressDialog.showDialog();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                progressDialog.hideDialog();
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if(jsonObject.getString("status").equals("200")){
+
+                        tvtvOtpStatus.setText(phone+" এই নাম্বারে 4 ডিজিটের কোড পাঠানো হয়েছে");
+                        otp_layout_card.setVisibility(View.VISIBLE);
+                        edclientphone.setFocusable(false);
+                        btnUpdate.setVisibility(View.GONE);
+
+                        otp_submit_btn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                String otp = edotpinput.getText().toString().trim();
+                                if (otp.equals(generatedOtp)){
+                                    Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_SHORT).show();
+
+                                    int selectedPaymentMethod = radioGroupPaymentMethod.getCheckedRadioButtonId();
+                                    RadioButton radioButtonPaymentMethod = findViewById(selectedPaymentMethod);
+                                    String payment_method = radioButtonPaymentMethod.getText().toString().trim();
+
+                                    int selectedClientMode = radioGroupClientMode.getCheckedRadioButtonId();
+                                    RadioButton radioButtonClientMode = findViewById(selectedClientMode);
+                                    String client_mode = radioButtonClientMode.getText().toString().trim();
+
+                                    client.setJwt(jwt);
+                                    client.setId(id);
+                                    client.setPaymentMethod(payment_method);
+                                    client.setMode(client_mode);
+                                    client.setName(name);
+                                    client.setDocument(encodedStringImage);
+                                    client.setPhone(phone);
+                                    client.setArea_id(selectedAreaId);
+                                    client.setZone(selectedZone);
+                                    client.setPppName(pppname);
+                                    client.setPppPass(pppassword);
+                                    client.setPkgId(selectedPackage);
+                                    updateRegistration(client);
+                                }else{
+                                    warningShow("OTP not matched.");
+                                }
+                            }
+                        });
+                    }else{
+                        warningShow(jsonObject.getString("message"));
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.hideDialog();
+                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams()throws AuthFailureError {
+                Map<String,String> map = new HashMap<>();
+
+                map.put("otp", generatedOtp);
+                map.put("phone", phone);
+                return map;
+
+            }
+        };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance().addToRequestQueue(stringRequest);;
+
     }
 
     //Internet connection check

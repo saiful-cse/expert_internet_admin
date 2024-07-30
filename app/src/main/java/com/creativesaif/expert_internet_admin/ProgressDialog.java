@@ -38,8 +38,8 @@ public class ProgressDialog {
         //...now load that gif which we put inside the drawble folder here with the help of Glide
 
         Glide.with(activity)
-                .load(R.drawable.cloud_progress)
-                .placeholder(R.drawable.cloud_progress)
+                .load(R.drawable.loader)
+                .placeholder(R.drawable.loader)
                 .centerCrop()
                 .into(gifImageView);
 

@@ -210,17 +210,13 @@ public class ClientDetails extends AppCompatActivity {
             load_details(client);
         }
 
-
         if (zone.equals("All") || zone.equals("Main")){
             make_payment_layout.setVisibility(View.VISIBLE);
+            sms_temp_layout.setVisibility(View.VISIBLE);
         }else{
             make_payment_layout.setVisibility(View.GONE);
-        }
-
-        if (zone.equals("Osman")){
             sms_temp_layout.setVisibility(View.GONE);
         }
-
 
         tv_view_document.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -379,14 +375,13 @@ public class ClientDetails extends AppCompatActivity {
             public void onClick(View view) {
                 editTextInformSms.setText("WiFi বিল ও সার্ভিসের জন্য অফিস স্টাফের সাথে যোগাযোগ করুন (সকাল ৯ টা হতে বিকেল ৪ টা)\n" +
                         "\n" +
-                        "01975559161 (আরিফ)\n" +
+                        "01975559161 (অফিস)\n" +
+                        "01906282646 (আরিফ)\n" +
                         "01621840795 (শাহরিয়া)\n" +
                         "\n" +
                         "কানেকশনের মেয়াদ শেষ হলে নিচের লিংক দিয়ে রিচার্জ করুন।\n" +
                         "\n" +
-                        "https://baycombd.com/paybill/\n" +
-                        "\n" +
-                        "Best ISP of Cox’s Bazar.");
+                        "https://baycombd.com/paybill/");
             }
         });
 

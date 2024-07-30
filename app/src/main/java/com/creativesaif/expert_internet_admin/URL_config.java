@@ -9,7 +9,7 @@ import android.preference.PreferenceManager;
 public class URL_config {
 
 
-    public static final String BASE_URL = "https://baycombd.com/exp-v9.1/";
+    public static final String BASE_URL = "https://baycombd.com/exp-v10.0/";
     //public static final String BASE_URL = "http://192.168.1.8/API/expert_internet_api/exp-v7.0/";
 
     public static final String PAYBILL_URL = "https://baycombd.com/paybill/info.php?mobile_no=";
@@ -28,6 +28,7 @@ public class URL_config {
     public static final String AREAWISE_SMS = "sms/areawise_sms_service.php";
     public static final String ENABLE_CLIENT_SMS = "sms/enabled_clients_sms.php";
     public static final String IDWISE_CLIENT_SMS = "sms/idwise_sms_service.php";
+    public static final String PHONE_VERIFY = "sms/phone_verify.php";
     public static final String AREA_LOAD = "area/area_list.php";
     public static final String SMS_HISTORY = "sms/sms_history.php";
     public static final String LOGIN = "login/login.php";
