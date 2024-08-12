@@ -73,7 +73,7 @@ public class ClientDetails extends AppCompatActivity {
     private TextView tvname, tvphone, tvarea, tvzone,
             tvppname, tvpppass, tvpppstatus, tvactivity, tvroutermac, tvlastlogout, tvlastlogin, tvuptime, tvdownload, tvupload, tvConnectedIp,
             tvmode, tvpaymentmethod, tvpackgeid, tvregdate, tvexpiredate, tvdisabledate, tvtaketime;
-    private TextView  tv_view_document, tvExpireText, tvdiconnecttemp, tvpppinfotemp, tvpaybilltemp, tvhelptemp;
+    private TextView  tv_view_document, tvExpireText, tvdiconnecttemp, tvpppinfotemp, tvpaybilltemp, tvhelptemp, tvrouteralogin;
     private LinearLayout linearLayoutPPPStatus, linearLayoutOnuStatus;
 
     String currentMode;
@@ -189,6 +189,8 @@ public class ClientDetails extends AppCompatActivity {
         tvhelptemp = findViewById(R.id.templateHelp);
         make_payment_layout = findViewById(R.id.make_payment_layout);
         sms_temp_layout = findViewById(R.id.make_sms_temp_layout);
+        tvrouteralogin = findViewById(R.id.templaterouterlogin);
+        editTextInformSms = findViewById(R.id.edInformSms);
 
         tvmode = findViewById(R.id.tvmode);
 
@@ -215,7 +217,7 @@ public class ClientDetails extends AppCompatActivity {
             sms_temp_layout.setVisibility(View.VISIBLE);
         }else{
             make_payment_layout.setVisibility(View.GONE);
-            sms_temp_layout.setVisibility(View.GONE);
+            editTextInformSms.setFocusable(false);
         }
 
         tv_view_document.setOnClickListener(new View.OnClickListener() {
@@ -344,7 +346,9 @@ public class ClientDetails extends AppCompatActivity {
 
         //Make inform
         Button btnSmsSend = findViewById(R.id.btnInformSend);
-        editTextInformSms = findViewById(R.id.edInformSms);
+
+
+
 
         tvdiconnecttemp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -370,18 +374,38 @@ public class ClientDetails extends AppCompatActivity {
             }
         });
 
+        String mainzonehelp = "WiFi বিল ও সার্ভিসের জন্য অফিস স্টাফের সাথে যোগাযোগ করুন (সকাল ৯ টা হতে বিকেল ৪ টা)\n" +
+                "01975559161 (অফিস)\n" +
+                "01906282646 (আরিফ)\n" +
+                "01621840795 (শাহরিয়া)\n" +
+                "কানেকশনের মেয়াদ শেষ হলে নিচের লিংক দিয়ে রিচার্জ করুন।\n" +
+                "https://baycombd.com/paybill/";
+
+        String osmanzonehelp = "WiFi বিল ও সার্ভিসের জন্য পি এম খালি প্রতিনিধির সাথে যোগাযোগ করুন (সকাল ৯ টা হতে বিকেল ৪ টা) 01893006606 (উসমান)";
+
         tvhelptemp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editTextInformSms.setText("WiFi বিল ও সার্ভিসের জন্য অফিস স্টাফের সাথে যোগাযোগ করুন (সকাল ৯ টা হতে বিকেল ৪ টা)\n" +
-                        "\n" +
-                        "01975559161 (অফিস)\n" +
-                        "01906282646 (আরিফ)\n" +
-                        "01621840795 (শাহরিয়া)\n" +
-                        "\n" +
-                        "কানেকশনের মেয়াদ শেষ হলে নিচের লিংক দিয়ে রিচার্জ করুন।\n" +
-                        "\n" +
-                        "https://baycombd.com/paybill/");
+                if(zone.equals("Osman")){
+                    editTextInformSms.setText(osmanzonehelp);
+                }else{
+                    editTextInformSms.setText(mainzonehelp);
+                }
+
+            }
+        });
+
+        tvrouteralogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String adminpassword = "admin"+pppName.replace("ss-expnet-","");
+
+                editTextInformSms.setText("Router login credentials are: \n" +
+                        "URL: 192.168.0.1 or 192.168.1.1 \n"+
+                        "Username: admin"+
+                        "\nPassword: " +adminpassword+
+                        "\nDon't share with wifi users.");
+
             }
         });
 

@@ -270,7 +270,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                         //Toast.makeText(getApplicationContext(), "Number changed", Toast.LENGTH_SHORT).show();
 
                         if (isNetworkConnected()){
-                            sendOtp();
+                            verificatewarningShow();
                         }else{
                             Toast.makeText(getApplicationContext(), "Please check internet connection.", Toast.LENGTH_SHORT).show();
                         }
@@ -754,6 +754,29 @@ public class ClientDetailsEdit extends AppCompatActivity{
         alert.setTitle("Warning!!");
         alert.setMessage(message);
         alert.setIcon(R.drawable.ic_baseline_warning_24);
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog dlg = alert.create();
+        dlg.show();
+    }
+
+    public void verificatewarningShow(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Warning!!");
+        alert.setMessage("নাম্বারটি পরিবর্তন করলে "+phone+" এই নাম্বারটিতে ৪ ডিজিটের পিন পাঠানো হবে");
+        alert.setIcon(R.drawable.ic_baseline_warning_24);
+
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                sendOtp();
+            }
+        });
 
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override

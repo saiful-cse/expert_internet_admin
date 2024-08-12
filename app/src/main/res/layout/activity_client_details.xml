@@ -1360,6 +1360,13 @@
                             android:textSize="15sp"
                             android:textColor="@color/colorPrimary"
                             android:text="Paybill Link"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
                         <TextView
                             android:id="@+id/templateHelp"
                             android:layout_marginStart="10dp"
@@ -1370,6 +1377,19 @@
                             android:textSize="15sp"
                             android:textColor="@color/colorPrimary"
                             android:text="Help"/>
+
+                        <TextView
+                            android:id="@+id/templaterouterlogin"
+                            android:layout_marginStart="10dp"
+                            android:padding="5dp"
+                            android:background="@drawable/button_border"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="15sp"
+                            android:textColor="@color/colorPrimary"
+                            android:text="Router login"/>
+
+
                     </LinearLayout>
 
                     <Button
