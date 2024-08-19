@@ -99,7 +99,7 @@ public class ClientDetails extends AppCompatActivity {
 
     private Switch pppswitch;
 
-    private TextView tvgetOnuStatus, tvoltname, tvonuid, tvonustatus, tvonumac, tvonudesc, tvonudistance, tvlastregtime, tvlastdregtime, tvdregreason, tvonuptime, tvonupower;
+    private TextView tvgetOnuStatus, tvoltname, tvolturl, tvonuid, tvonustatus, tvonumac, tvonudesc, tvonudistance, tvlastregtime, tvlastdregtime, tvdregreason, tvonuptime, tvonupower;
 
     private CardView make_payment_layout, sms_temp_layout;
     @Override
@@ -163,6 +163,7 @@ public class ClientDetails extends AppCompatActivity {
         linearLayoutOnuStatus = findViewById(R.id.onuStatusLayout);
         onuStatusProgressbar = findViewById(R.id.onustatusprogress);
         tvoltname = findViewById(R.id.tvoltname);
+        tvolturl = findViewById(R.id.tvolturl);
         tvonuid = findViewById(R.id.tvonuid);
         tvonustatus = findViewById(R.id.tvonustatus);
         tvonumac = findViewById(R.id.tvonumac);
@@ -212,7 +213,7 @@ public class ClientDetails extends AppCompatActivity {
             load_details(client);
         }
 
-        if (zone.equals("All") || zone.equals("Main")){
+        if (zone.equals("All")){
             make_payment_layout.setVisibility(View.VISIBLE);
             sms_temp_layout.setVisibility(View.VISIBLE);
         }else{
@@ -242,6 +243,13 @@ public class ClientDetails extends AppCompatActivity {
             public void onClick(View view) {
                 Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse("http://"+connected_ip+":8080"));
                 startActivity(in);
+            }
+        });
+
+        tvolturl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //
             }
         });
 
@@ -346,8 +354,6 @@ public class ClientDetails extends AppCompatActivity {
 
         //Make inform
         Button btnSmsSend = findViewById(R.id.btnInformSend);
-
-
 
 
         tvdiconnecttemp.setOnClickListener(new View.OnClickListener() {
@@ -676,7 +682,7 @@ public class ClientDetails extends AppCompatActivity {
     public void getOnuStatusByRouterMac(String mac)
     {
 
-        String url = "https://kgnet.xyz/business_api/api.php?auth=K25sghf6le9b7MkzXpS652&action=onustatus&mac="+mac;
+        String url = "https://kgnethost.oltmonitor.com/business_api/api.php?auth=K25sghf6le9b7MkzXpS652&action=onustatus&mac="+mac;
 
         onuStatusProgressbar.setVisibility(View.VISIBLE);
         tvgetOnuStatus.setVisibility(View.GONE);
@@ -693,6 +699,7 @@ public class ClientDetails extends AppCompatActivity {
                     {
                         linearLayoutOnuStatus.setVisibility(View.VISIBLE);
                         tvoltname.setText(jsonObject.getString("olt_name"));
+                        //tvolturl.setText(jsonObject.getString("olt_url"));
                         tvonuid.setText(jsonObject.getString("onu_id"));
                         tvonustatus.setText(jsonObject.getString("status"));
                         tvonumac.setText(jsonObject.getString("mac_ddress"));

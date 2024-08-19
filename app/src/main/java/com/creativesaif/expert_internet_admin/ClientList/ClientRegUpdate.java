@@ -188,7 +188,7 @@ public class ClientRegUpdate extends AppCompatActivity {
                 else if (!isNetworkConnected()){
                     Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
 
-                }else if(phone.isEmpty() || phone.length() < 11){
+                }else if(phone.length() != 11){
                     Toast.makeText(getApplicationContext(), "Enter 11 digit phone number", Toast.LENGTH_SHORT).show();
 
                 }else {

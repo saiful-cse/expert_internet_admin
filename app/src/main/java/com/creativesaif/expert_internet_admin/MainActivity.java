@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity
         linearLayoutError = findViewById(R.id.connection_error_layout);
         progressBar = findViewById(R.id.progressbar);
         swipeRefreshLayout = findViewById(R.id.viewRefresh);
-        url = URL_config.BASE_URL + URL_config.DASHBOARD_VIEW+"?emp_id="+sharedPreferences.getString("employee_id", null);
+        url = URL_config.BASE_URL + URL_config.DASHBOARD_VIEW+"?zone="+sharedPreferences.getString("zone", null);
 
         webview = findViewById(R.id.webView);
         webview.getSettings().setJavaScriptEnabled(true);

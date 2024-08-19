@@ -9,8 +9,8 @@ import android.preference.PreferenceManager;
 public class URL_config {
 
 
-    public static final String BASE_URL = "https://baycombd.com/exp-v10.0/";
-    //public static final String BASE_URL = "http://192.168.1.8/API/expert_internet_api/exp-v7.0/";
+    public static final String BASE_URL = "https://baycombd.com/exp-v12.0/";
+    //public static final String BASE_URL = "http://192.168.8.80/API/expert_internet_api/exp-v12.0/";
 
     public static final String PAYBILL_URL = "https://baycombd.com/paybill/info.php?mobile_no=";
     public static final String SEARCH = "client/search.php";
