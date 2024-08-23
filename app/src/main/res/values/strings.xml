@@ -82,6 +82,12 @@
         <item>Economy</item>
     </string-array>
 
+    <string-array name="osman_package_name">
+        <item>---</item>
+        <item>Basic</item>
+        <item>Regular</item>
+    </string-array>
+
     <string-array name="zone_name">
         <item>---</item>
         <item>All</item>

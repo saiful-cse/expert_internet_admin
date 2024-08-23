@@ -3,6 +3,7 @@ package com.creativesaif.expert_internet_admin.ClientList;
 
 
 import android.annotation.SuppressLint;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -55,9 +56,6 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Month;
-import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -77,12 +75,13 @@ public class ClientDetails extends AppCompatActivity {
     private LinearLayout linearLayoutPPPStatus, linearLayoutOnuStatus;
 
     String currentMode;
-    private String expired, last_router_mac;
+    private String expired, last_router_mac, olt_url;
     private String document, jwt, name, id, pppName, ppppass, emp_id, phone, informMessage, take_time, connected_ip, mobile_payment_reference;
     private SharedPreferences sharedPreferences;
     private ApiInterface apiInterface;
     private Client client;
     private Trns trns;
+    private Button btnDetailsEdit;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -101,7 +100,8 @@ public class ClientDetails extends AppCompatActivity {
 
     private TextView tvgetOnuStatus, tvoltname, tvolturl, tvonuid, tvonustatus, tvonumac, tvonudesc, tvonudistance, tvlastregtime, tvlastdregtime, tvdregreason, tvonuptime, tvonupower;
 
-    private CardView make_payment_layout, sms_temp_layout;
+    private CardView make_payment_layout;
+    private ImageView phonecopybtn, smscpybtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,7 +131,8 @@ public class ClientDetails extends AppCompatActivity {
 
         Button btnPaymentHistory = findViewById(R.id.btnPaymentHistory);
         ImageView user_call = findViewById(R.id.user_direct_call);
-
+        phonecopybtn = findViewById(R.id.phonecopybtn);
+        smscpybtn = findViewById(R.id.smscopybtn);
 
         //----------------------
         // Details ID initialize
@@ -189,15 +190,16 @@ public class ClientDetails extends AppCompatActivity {
         tvpaybilltemp = findViewById(R.id.templatePaybill);
         tvhelptemp = findViewById(R.id.templateHelp);
         make_payment_layout = findViewById(R.id.make_payment_layout);
-        sms_temp_layout = findViewById(R.id.make_sms_temp_layout);
         tvrouteralogin = findViewById(R.id.templaterouterlogin);
         editTextInformSms = findViewById(R.id.edInformSms);
-
+        btnDetailsEdit = findViewById(R.id.btnEdit);
         tvmode = findViewById(R.id.tvmode);
+
 
         // -----------End-----------------------
 
         progressDialog = new ProgressDialog(this);
+        editTextInformSms.setFocusable(false);
 
         apiInterface = RetrofitApiClient.getClient().create(ApiInterface.class);
         client = new Client();
@@ -213,12 +215,16 @@ public class ClientDetails extends AppCompatActivity {
             load_details(client);
         }
 
-        if (zone.equals("All")){
+        if(Objects.equals(sharedPreferences.getString("client_details_update", null), "1")){
+            btnDetailsEdit.setVisibility(View.VISIBLE);
+        }else {
+            btnDetailsEdit.setVisibility(View.GONE);
+        }
+
+        if (zone.equals("All") || zone.equals("Main")){
             make_payment_layout.setVisibility(View.VISIBLE);
-            sms_temp_layout.setVisibility(View.VISIBLE);
-        }else{
+        } else{
             make_payment_layout.setVisibility(View.GONE);
-            editTextInformSms.setFocusable(false);
         }
 
         tv_view_document.setOnClickListener(new View.OnClickListener() {
@@ -238,6 +244,22 @@ public class ClientDetails extends AppCompatActivity {
             }
         });
 
+        phonecopybtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ClipboardManager cm = (ClipboardManager)getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                cm.setText(tvphone.getText().toString().trim());
+            }
+        });
+
+        smscpybtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ClipboardManager cm = (ClipboardManager)getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                cm.setText(editTextInformSms.getText().toString().trim());
+            }
+        });
+
         tvConnectedIp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -249,7 +271,8 @@ public class ClientDetails extends AppCompatActivity {
         tvolturl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //
+                Intent in = new Intent(Intent.ACTION_VIEW, Uri.parse(olt_url+"/action/login.html"));
+                startActivity(in);
             }
         });
 
@@ -297,8 +320,8 @@ public class ClientDetails extends AppCompatActivity {
                 if(!isNetworkConnected()){
                     Toast.makeText(getApplicationContext(), "Please!! Check internet connection.", Toast.LENGTH_SHORT).show();
                     swipeRefreshLayout.setRefreshing(false);
-                }
-                else{
+
+                } else{
                     client.setJwt(jwt);
                     client.setId(id);
                     load_details(client);
@@ -442,17 +465,14 @@ public class ClientDetails extends AppCompatActivity {
          */
         //assign all objects to avoid nullPointerException
 
-        Button btnDetailsEdit = findViewById(R.id.btnEdit);
         btnDetailsEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(Objects.equals(sharedPreferences.getString("client_details_update", null), "1")){
-                    Intent i = new Intent(ClientDetails.this,ClientDetailsEdit.class);
-                    i.putExtra("id", id);
-                    i.putExtra("expired", expired);
-                    startActivity(i);
-                }
+                Intent i = new Intent(ClientDetails.this,ClientDetailsEdit.class);
+                i.putExtra("id", id);
+                i.putExtra("expired", expired);
+                startActivity(i);
 
             }
         });
@@ -699,7 +719,9 @@ public class ClientDetails extends AppCompatActivity {
                     {
                         linearLayoutOnuStatus.setVisibility(View.VISIBLE);
                         tvoltname.setText(jsonObject.getString("olt_name"));
-                        //tvolturl.setText(jsonObject.getString("olt_url"));
+                        tvolturl.setTextColor(Color.BLUE);
+                        olt_url = jsonObject.getString("olt_url");
+                        tvolturl.setText(olt_url);
                         tvonuid.setText(jsonObject.getString("onu_id"));
                         tvonustatus.setText(jsonObject.getString("status"));
                         tvonumac.setText(jsonObject.getString("mac_ddress"));

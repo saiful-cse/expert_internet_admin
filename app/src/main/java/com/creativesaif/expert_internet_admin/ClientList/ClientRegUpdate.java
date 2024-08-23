@@ -194,7 +194,6 @@ public class ClientRegUpdate extends AppCompatActivity {
                 }else {
                     generatedOtp = generateOtp();
                     if (isNetworkConnected()){
-                        //sendOtp();
                         verificatewarningShow();
                     }else{
                         Toast.makeText(getApplicationContext(), "Please check internet connection.", Toast.LENGTH_SHORT).show();
@@ -357,7 +356,6 @@ public class ClientRegUpdate extends AppCompatActivity {
                         payment_method_card.setVisibility(View.GONE);
                     }
 
-
                     if (detailsWrapper.getPaymentMethod().equals("Cash")) {
                         radioGroupPaymentMethod.check(R.id.payment_cash);
 
@@ -389,14 +387,26 @@ public class ClientRegUpdate extends AppCompatActivity {
                     int zoneSpinnerPosition = zoneArrayAdapter.getPosition(detailsWrapper.getZone());
                     zoneSpinner.setSelection(zoneSpinnerPosition);
 
+                    if(zone.equals("All") || zone.equals("Main")){
+                        ArrayAdapter<CharSequence> packageAdapter = ArrayAdapter.createFromResource(ClientRegUpdate.this,
+                                R.array.package_name, android.R.layout.simple_spinner_item);
 
-                    ArrayAdapter<CharSequence> packageAdapter = ArrayAdapter.createFromResource(ClientRegUpdate.this,
-                            R.array.package_name, android.R.layout.simple_spinner_item);
-                    packageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    packageSpinner.setAdapter(packageAdapter);
+                        packageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        packageSpinner.setAdapter(packageAdapter);
 
-                    int spinnerPosition = packageAdapter.getPosition(detailsWrapper.getPkgId());
-                    packageSpinner.setSelection(spinnerPosition);
+                        int spinnerPosition = packageAdapter.getPosition(detailsWrapper.getPkgId());
+                        packageSpinner.setSelection(spinnerPosition);
+
+                    }else{
+                        ArrayAdapter<CharSequence> packageAdapter = ArrayAdapter.createFromResource(ClientRegUpdate.this,
+                                R.array.osman_package_name, android.R.layout.simple_spinner_item);
+
+                        packageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        packageSpinner.setAdapter(packageAdapter);
+
+                        int spinnerPosition = packageAdapter.getPosition(detailsWrapper.getPkgId());
+                        packageSpinner.setSelection(spinnerPosition);
+                    }
 
 
                 }else{
@@ -438,8 +448,6 @@ public class ClientRegUpdate extends AppCompatActivity {
                             public void onClick(View view) {
                                 String otp = edotpinput.getText().toString().trim();
                                 if (otp.equals(generatedOtp)){
-                                    Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_SHORT).show();
-
                                     int selectedPaymentMethod = radioGroupPaymentMethod.getCheckedRadioButtonId();
                                     RadioButton radioButtonPaymentMethod = findViewById(selectedPaymentMethod);
                                     String payment_method = radioButtonPaymentMethod.getText().toString().trim();
