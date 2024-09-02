@@ -60,6 +60,11 @@
             android:title="Upstream"/>
 
         <item
+            android:id="@+id/nav_bkashtxncheck"
+            android:icon="@drawable/ic_baseline_search_24"
+            android:title="bKash Txn Check"/>
+
+        <item
             android:id="@+id/nav_salarylist"
             android:icon="@drawable/ic_txn_list_black_24dp"
             android:title="Salary"/>

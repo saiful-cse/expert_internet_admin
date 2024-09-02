@@ -252,6 +252,10 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtra("url", URL_config.BASE_URL + URL_config.UPSTREAM_BILL_LIST + sharedPreferences.getString("employee_id", null) + "&jwt=" + sharedPreferences.getString("jwt", null));
                 startActivity(intent);
             }
+        }else if(id == R.id.nav_bkashtxncheck){
+            Intent intent = new Intent(MainActivity.this, Webviewpage.class);
+            intent.putExtra("url", "https://baycombd.com/paybill/bkash-payment/search_txn/");
+            startActivity(intent);
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

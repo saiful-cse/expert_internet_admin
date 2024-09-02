@@ -199,7 +199,6 @@ public class ClientDetails extends AppCompatActivity {
         // -----------End-----------------------
 
         progressDialog = new ProgressDialog(this);
-        editTextInformSms.setFocusable(false);
 
         apiInterface = RetrofitApiClient.getClient().create(ApiInterface.class);
         client = new Client();
@@ -224,6 +223,7 @@ public class ClientDetails extends AppCompatActivity {
         if (zone.equals("All") || zone.equals("Main")){
             make_payment_layout.setVisibility(View.VISIBLE);
         } else{
+            editTextInformSms.setFocusable(false);
             make_payment_layout.setVisibility(View.GONE);
         }
 
