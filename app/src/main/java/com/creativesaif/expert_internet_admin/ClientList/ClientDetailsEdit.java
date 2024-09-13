@@ -399,8 +399,7 @@ public class ClientDetailsEdit extends AppCompatActivity{
                             .load(URL_config.BASE_URL+"documents/"+detailsWrapper.getDocument())
                             .into(imageDocumentView);
 
-
-                    if (zone.equals("All") || zone.equals("Main")){
+                    if (employee_id.equals("9161")){
                         if (detailsWrapper.getPaymentMethod().equals("Cash")) {
                             radioGroupPaymentMethod.check(R.id.payment_cash);
 

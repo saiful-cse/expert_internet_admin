@@ -387,26 +387,14 @@ public class ClientRegUpdate extends AppCompatActivity {
                     int zoneSpinnerPosition = zoneArrayAdapter.getPosition(detailsWrapper.getZone());
                     zoneSpinner.setSelection(zoneSpinnerPosition);
 
-                    if(zone.equals("All") || zone.equals("Main")){
-                        ArrayAdapter<CharSequence> packageAdapter = ArrayAdapter.createFromResource(ClientRegUpdate.this,
-                                R.array.package_name, android.R.layout.simple_spinner_item);
+                    ArrayAdapter<CharSequence> packageAdapter = ArrayAdapter.createFromResource(ClientRegUpdate.this,
+                            R.array.package_name, android.R.layout.simple_spinner_item);
 
-                        packageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        packageSpinner.setAdapter(packageAdapter);
+                    packageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    packageSpinner.setAdapter(packageAdapter);
 
-                        int spinnerPosition = packageAdapter.getPosition(detailsWrapper.getPkgId());
-                        packageSpinner.setSelection(spinnerPosition);
-
-                    }else{
-                        ArrayAdapter<CharSequence> packageAdapter = ArrayAdapter.createFromResource(ClientRegUpdate.this,
-                                R.array.osman_package_name, android.R.layout.simple_spinner_item);
-
-                        packageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        packageSpinner.setAdapter(packageAdapter);
-
-                        int spinnerPosition = packageAdapter.getPosition(detailsWrapper.getPkgId());
-                        packageSpinner.setSelection(spinnerPosition);
-                    }
+                    int spinnerPosition = packageAdapter.getPosition(detailsWrapper.getPkgId());
+                    packageSpinner.setSelection(spinnerPosition);
 
 
                 }else{
