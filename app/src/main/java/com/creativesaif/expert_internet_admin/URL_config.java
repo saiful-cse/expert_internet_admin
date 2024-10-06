@@ -9,8 +9,8 @@ import android.preference.PreferenceManager;
 public class URL_config {
 
 
-    public static final String BASE_URL = "https://baycombd.com/exp-v14.1/";
-    //public static final String BASE_URL = "http://192.168.8.80/API/expert_internet_api/exp-v12.0/";
+    public static final String BASE_URL = "https://baycombd.com/exp-v14.2/";
+    //public static final String BASE_URL = "http://192.168.0.101/API/expert_internet_api/exp-v14.2/";
 
     public static final String PAYBILL_URL = "https://baycombd.com/paybill/info.php?mobile_no=";
     public static final String SEARCH = "client/search.php";
@@ -35,10 +35,10 @@ public class URL_config {
     public static final String REGISTER_CLIENT = "client/registered_client.php";
     public static final String UNREGISTER_CLIENT = "client/unregistered_client.php";
     public static final String EXPIRED_CLIENT = "client/expired_client.php";
+    public static final String CLIENT_DELETE = "client/client_delete.php";
     public static final String CLIENT_DETAILS_ID = "client/client_details_id.php";
     public static final String EMPLOYEE_MAKE_PAYMENT = "txn/employee_make_payment.php";
     public static final String CLIENT_DETAILS_UPDATE = "client/client_details_update.php";
-    public static final String ONU_MAC_UPDATE = "client/onu_mac_update.php";
     public static final String  CLIENT_REG_UPDATE = "client/client_registration_update.php";
     public static final String CLIENT_REG = "client/client_registration.php";
     public static final String EXPIRING_WARNING_SMS = "sms/expiring_clients_sms.php";
@@ -59,4 +59,5 @@ public class URL_config {
     public static final String TASK_DELETE = "task/delete_task.php?taskId=";
     public static final String TASK_UPDATE = "task/update_task.php";
     public static final String TASK_ADD = "task/add_task.php";
+
 }

@@ -39,6 +39,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.creativesaif.expert_internet_admin.Login;
+import com.creativesaif.expert_internet_admin.MainActivity;
 import com.creativesaif.expert_internet_admin.Model.Client;
 import com.creativesaif.expert_internet_admin.Model.DetailsWrapper;
 import com.creativesaif.expert_internet_admin.Model.Trns;
@@ -81,7 +82,7 @@ public class ClientDetails extends AppCompatActivity {
     private ApiInterface apiInterface;
     private Client client;
     private Trns trns;
-    private Button btnDetailsEdit;
+    private Button btndeleteClient,btnDetailsEdit;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -193,6 +194,7 @@ public class ClientDetails extends AppCompatActivity {
         tvrouteralogin = findViewById(R.id.templaterouterlogin);
         editTextInformSms = findViewById(R.id.edInformSms);
         btnDetailsEdit = findViewById(R.id.btnEdit);
+        btndeleteClient = findViewById(R.id.btnDeleteClient);
         tvmode = findViewById(R.id.tvmode);
 
 
@@ -473,6 +475,14 @@ public class ClientDetails extends AppCompatActivity {
                 i.putExtra("id", id);
                 i.putExtra("expired", expired);
                 startActivity(i);
+            }
+        });
+
+        btndeleteClient.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                warningShowClientDelete();
+                //Toast.makeText(getApplicationContext(), jwt+"\n"+id+"\n"+pppName+"\n"+document, Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -533,7 +543,6 @@ public class ClientDetails extends AppCompatActivity {
                     tvGetPPPStatus.setText("Get PPP Status");
                     tvGetPPPStatus.setVisibility(View.VISIBLE);
 
-
                     id = detailsWrapper.getId();
                     phone = detailsWrapper.getPhone();
                     name = detailsWrapper.getName();
@@ -552,9 +561,11 @@ public class ClientDetails extends AppCompatActivity {
                         linearLayoutPPPStatus.setVisibility(View.GONE);
                         tvGetPPPStatus.setText("");
                         tvGetPPPStatus.setVisibility(View.GONE);
+                        btndeleteClient.setVisibility(View.VISIBLE);
 
                     }else{
                         tvmode.setTextColor(Color.GREEN);
+                        btndeleteClient.setVisibility(View.GONE);
                     }
 
                     pppName = detailsWrapper.getPppName();
@@ -878,40 +889,66 @@ public class ClientDetails extends AppCompatActivity {
     }
 
 
-    public void txn_confirm_diaglog(){
-        AlertDialog.Builder aleart1 = new AlertDialog.Builder(this);
-        aleart1.setCancelable(false);
-        aleart1.setTitle("পেমেন্টটি কনফার্ম করুন।");
-        aleart1.setMessage("নাম: "+name+"\n"+"পেমেন্টের ধরন: "+payment_type+"\n"+"পরিমান: "+amount+"\nএই মুহুর্থে এই পেমেন্টটি সাবমিট করতে চান?");
-        aleart1.setIcon(R.drawable.warning_icon);
+    public void clientDelete()
+    {
+        progressDialog.showDialog();
 
-        aleart1.setPositiveButton("সব ঠিক আছে", new DialogInterface.OnClickListener() {
+        String url = URL_config.BASE_URL+URL_config.CLIENT_DELETE;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+            public void onResponse(String response) {
 
-                trns.setJwt(jwt);
-                trns.setClientId(id);
-                trns.setName(name);
-                trns.setEmpId(emp_id);
-                trns.setTxnType(payment_type);
-                trns.setMethod(payment_method);
-                trns.setDetails(name+", "+pppName+", "+payment_type+", "+payment_method+"-"+mobile_payment_reference);
-                trns.setAmount(amount);
+                progressDialog.hideDialog();
 
-                //Toast.makeText(getApplicationContext(), client_id+"\n"+admin_id+"\n"+payment_type+"\n"+payment_method+"\n"+amount,Toast.LENGTH_LONG).show();
-                employee_make_payment(trns);
+                try{
+                    JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("status");
+                    String message = jsonObject.getString("message");
+
+                    if (status.equals("200")){
+                        Toast.makeText(ClientDetails.this, message,Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(ClientDetails.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+
+                    }else if(status.equals("401")){
+
+                        loginWarningShow(message);
+
+                    }else{
+                        warningShow(message);
+                        //Toast.makeText(ClientDetails.this, message,Toast.LENGTH_LONG).show();
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
             }
-        });
-
-        aleart1.setNegativeButton("না", new DialogInterface.OnClickListener() {
+        }, new Response.ErrorListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.hideDialog();
+                Toast.makeText(ClientDetails.this,error.toString(),Toast.LENGTH_LONG).show();
             }
-        });
-        AlertDialog dlg = aleart1.create();
-        dlg.show();
+        }){
+            @Override
+            protected Map<String, String> getParams()throws AuthFailureError {
+                Map<String,String> map = new HashMap<>();
+
+                map.put("jwt", jwt);
+                map.put("client_id", id);
+                map.put("ppp_name", pppName);
+                map.put("document", document);
+                return map;
+            }
+        };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance().addToRequestQueue(stringRequest);
     }
+
 
     public void employee_make_payment(Trns mTrns)
     {
@@ -946,6 +983,41 @@ public class ClientDetails extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    public void txn_confirm_diaglog(){
+        AlertDialog.Builder aleart1 = new AlertDialog.Builder(this);
+        aleart1.setCancelable(false);
+        aleart1.setTitle("পেমেন্টটি কনফার্ম করুন।");
+        aleart1.setMessage("নাম: "+name+"\n"+"পেমেন্টের ধরন: "+payment_type+"\n"+"পরিমান: "+amount+"\nএই মুহুর্থে এই পেমেন্টটি সাবমিট করতে চান?");
+        aleart1.setIcon(R.drawable.warning_icon);
+
+        aleart1.setPositiveButton("সব ঠিক আছে", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                trns.setJwt(jwt);
+                trns.setClientId(id);
+                trns.setName(name);
+                trns.setEmpId(emp_id);
+                trns.setTxnType(payment_type);
+                trns.setMethod(payment_method);
+                trns.setDetails(name+", "+pppName+", "+payment_type+", "+payment_method+"-"+mobile_payment_reference);
+                trns.setAmount(amount);
+
+                //Toast.makeText(getApplicationContext(), client_id+"\n"+admin_id+"\n"+payment_type+"\n"+payment_method+"\n"+amount,Toast.LENGTH_LONG).show();
+                employee_make_payment(trns);
+            }
+        });
+
+        aleart1.setNegativeButton("না", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog dlg = aleart1.create();
+        dlg.show();
     }
 
     public void inform_confirm_dialog(){
@@ -1072,6 +1144,29 @@ public class ClientDetails extends AppCompatActivity {
                 }else{
                     txn_confirm_diaglog();
                 }
+            }
+        });
+        android.app.AlertDialog dlg = alert.create();
+        dlg.show();
+    }
+
+    public void warningShowClientDelete(){
+        android.app.AlertDialog.Builder alert = new android.app.AlertDialog.Builder(this);
+        alert.setCancelable(true);
+        alert.setTitle("সতর্ক");
+        alert.setMessage("এই কাস্টমারের PPP সহ সব তথ্য ডিলিট করতে চান? যদি ডিলিট করেন আর পুনরায় ব্যাক আনা যাবেনা। ফাইবার কেবল খুলে আনার পর ডিলিট দিন।");
+        alert.setIcon(R.drawable.ic_baseline_warning_24);
+
+        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                clientDelete();
+            }
+        });
+        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
             }
         });
         android.app.AlertDialog dlg = alert.create();

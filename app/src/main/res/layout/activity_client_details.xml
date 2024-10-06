@@ -1450,6 +1450,17 @@
             </android.support.v7.widget.CardView>
 
             <Button
+                android:id="@+id/btnDeleteClient"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:text="Delete Client Info."
+                android:textColor="@color/white"
+                android:textAllCaps="false"
+                android:background="@color/red"/>
+
+            <Button
                 android:id="@+id/btnPaymentHistory"
                 android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
@@ -1459,6 +1470,7 @@
                 android:textColor="@color/colorPrimary"
                 android:textAllCaps="false"
                 android:background="@drawable/button_round"/>
+
             <Button
                 android:layout_marginTop="20dp"
                 android:id="@+id/btnEdit"
