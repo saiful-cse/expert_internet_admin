@@ -72,7 +72,7 @@ public class ClientDetails extends AppCompatActivity {
     private TextView tvname, tvphone, tvarea, tvzone,
             tvppname, tvpppass, tvpppstatus, tvactivity, tvroutermac, tvlastlogout, tvlastlogin, tvuptime, tvdownload, tvupload, tvConnectedIp,
             tvmode, tvpaymentmethod, tvpackgeid, tvregdate, tvexpiredate, tvdisabledate, tvtaketime;
-    private TextView  tv_view_document, tvExpireText, tvdiconnecttemp, tvpppinfotemp, tvpaybilltemp, tvhelptemp, tvrouteralogin;
+    private TextView  tv_ppp_macclear, tv_view_document, tvExpireText, tvdiconnecttemp, tvpppinfotemp, tvpaybilltemp, tvhelptemp, tvrouteralogin;
     private LinearLayout linearLayoutPPPStatus, linearLayoutOnuStatus;
 
     String currentMode;
@@ -150,6 +150,7 @@ public class ClientDetails extends AppCompatActivity {
         tvpppstatus = findViewById(R.id.tvppp_status);
         tvppname = findViewById(R.id.tvppp_name);
         tvpppass = findViewById(R.id.tvppp_pass);
+        tv_ppp_macclear= findViewById(R.id.tvppp_mac_clear);
 
         tvactivity = findViewById(R.id.tvppp_activity);
         tvroutermac = findViewById(R.id.tvrouter_mac);
@@ -278,6 +279,13 @@ public class ClientDetails extends AppCompatActivity {
             }
         });
 
+        tv_ppp_macclear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pppMacClear();
+            }
+        });
+
         pppswitch = findViewById(R.id.pppswitch); // initiate Switch
         pppswitch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -289,6 +297,8 @@ public class ClientDetails extends AppCompatActivity {
                 }
             }
         });
+
+
 
         tvGetPPPStatus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -405,21 +415,26 @@ public class ClientDetails extends AppCompatActivity {
             }
         });
 
-        String mainzonehelp = "WiFi বিল ও সার্ভিসের জন্য অফিস স্টাফের সাথে যোগাযোগ করুন (সকাল ৯ টা হতে বিকেল ৪ টা)\n" +
-                "01975559161 (অফিস)\n" +
-                "01906282646 (আরিফ)\n" +
-                "01621840795 (শাহরিয়া)\n" +
-                "কানেকশনের মেয়াদ শেষ হলে নিচের লিংক দিয়ে রিচার্জ করুন।\n" +
-                "https://baycombd.com/paybill/";
+        String mainzonehelp = "WiFi Help line number:\n" +
+                "01906282646 (Arif)\n" +
+                "01621840795 (Shahria)\n" +
+                "কলে না পাইলে অফিসের 01975559161 Whatsapp এ মেসেজ দিন।";
 
-        String osmanzonehelp = "WiFi বিল ও সার্ভিসের জন্য পি এম খালি প্রতিনিধির সাথে যোগাযোগ করুন (সকাল ৯ টা হতে বিকেল ৪ টা) 01893006606 (উসমান)";
+        String osmanzonehelp = "WiFi Help line number:\n" +
+                "পি এম খালি প্রতিনিধি 01893006606 (উসমান)";
+
+        String siddikzonehelp = "WiFi Help line number:\n" +
+                "ঊমখালী প্রতিনিধি 01813838162 (রাজ্জাক)";
 
         tvhelptemp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(zone.equals("Osman")){
                     editTextInformSms.setText(osmanzonehelp);
-                }else{
+                }else if(zone.equals("Siddik")){
+                    editTextInformSms.setText(siddikzonehelp);
+                }
+                else{
                     editTextInformSms.setText(mainzonehelp);
                 }
 
@@ -770,6 +785,61 @@ public class ClientDetails extends AppCompatActivity {
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         MySingleton.getInstance().addToRequestQueue(stringRequest);;
+    }
+
+
+    public void pppMacClear()
+    {
+        String url = sharedPreferences.getString("api_base", null)+"pppMacClear.php";
+
+        progressDialog.showDialog();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                progressDialog.hideDialog();
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.getString("status").equals("500")){
+                        linearLayoutPPPStatus.setVisibility(View.GONE);
+                        warningShow(jsonObject.getString("message"));
+
+                    }else if(jsonObject.getString("status").equals("200")){
+                        linearLayoutPPPStatus.setVisibility(View.GONE);
+                        warningShow(jsonObject.getString("message"));
+                    }else{
+                        linearLayoutPPPStatus.setVisibility(View.GONE);
+                        warningShow(jsonObject.getString("message"));
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.hideDialog();
+                linearLayoutPPPStatus.setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams()throws AuthFailureError {
+                Map<String,String> map = new HashMap<>();
+
+                map.put("ppp_name", pppName);
+                map.put("login_ip", Objects.requireNonNull(sharedPreferences.getString("login_ip", null)));
+                map.put("username", Objects.requireNonNull(sharedPreferences.getString("username", null)));
+                map.put("password", Objects.requireNonNull(sharedPreferences.getString("password", null)));
+                return map;
+
+            }
+        };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        MySingleton.getInstance().addToRequestQueue(stringRequest);;
+
     }
 
     public void getPPPAction(String actionType)
